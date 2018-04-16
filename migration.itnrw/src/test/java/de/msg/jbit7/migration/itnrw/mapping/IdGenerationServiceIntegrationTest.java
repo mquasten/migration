@@ -49,6 +49,9 @@ class IdGenerationServiceIntegrationTest {
 	
 	@Test
 	void createIds() {
+		
+		
+		idGenerationService.createIds(MANDATOR, true);
 		final  Map<Long, IdMapping> idMappingMap =idGenerationService.findAll();
 		
 		final List<StammImpl> owners = stammRepository.findAll().stream().filter(owner -> idGenerationOwnerRule.alive(owner) ).collect(Collectors.toList()) ; 
