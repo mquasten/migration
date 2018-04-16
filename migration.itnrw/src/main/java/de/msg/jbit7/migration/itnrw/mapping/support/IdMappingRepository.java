@@ -1,0 +1,108 @@
+package de.msg.jbit7.migration.itnrw.mapping.support;
+
+import java.beans.PropertyDescriptor;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.stereotype.Repository;
+
+import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.StartValues;
+import oracle.jdbc.OracleArray;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.internal.OracleResultSet;
+
+@Repository
+public class IdMappingRepository {
+	
+	private final JdbcOperations jdbcOperations;
+	
+	@Autowired
+	IdMappingRepository(@Qualifier("itnrwJDBCTemplate") JdbcOperations jdbcOperations) {
+		this.jdbcOperations = jdbcOperations;
+	}
+
+	public final void persist(final IdMapping idMapping) {
+		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)";
+	
+		
+		jdbcOperations.update(new PreparedStatementCreator() {
+			
+			@Override
+			public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+				final PreparedStatement statement = conn.prepareStatement(insert);
+				statement.setLong(1, idMapping.getBeihilfenr());
+				statement.setString(2, idMapping.getPartnerNr());
+				statement.setLong(3, idMapping.getContractNumber());
+				statement.setLong(4, idMapping.getProcessNumber());
+				statement.setString(5, idMapping.getMarriagePartnerNr());
+				
+				statement.setArray(6, ((OracleConnection)conn).createOracleArray("MAPPING.PARTNER_NR_VAT", idMapping.getChildrenPartnerNr()));
+				statement.setArray(7,((OracleConnection)conn).createOracleArray("MAPPING.CHILD_NR_VAT",idMapping.getChildrenNr()));
+				statement.setArray(8,((OracleConnection)conn).createOracleArray("MAPPING.COLLECTIVE_CONTRACT_VAT",idMapping.getCollectiveContractNumbers()));
+				
+				statement.setString(9,idMapping.getSchulnummer());
+				statement.setString(10,idMapping.getDienststelle());
+				statement.setLong(11,idMapping.getMandator());
+				return statement;
+			}
+		});
+		
+	}
+	
+	
+
+
+	public final void delete() {
+		jdbcOperations.execute("DELETE FROM ID_MAPPING");
+	}
+	
+	
+	public final List<IdMapping> findAll() {
+		final BeanPropertyRowMapper<IdMapping> rowMapper = new BeanPropertyRowMapper<IdMapping>( IdMapping.class) {
+			  protected Object getColumnValue(ResultSet rs, int index,PropertyDescriptor pd) throws SQLException {
+				 
+				 // System.out.println(">>>" + pd.getName());
+				  if (pd.getName().equals("childrenPartnerNr") ) {
+					  
+					final OracleArray array =    ((OracleResultSet) rs).getARRAY(index);
+					final String[] result = (String[]) array.getArray();
+					
+					return result;
+				  }
+				  
+				  if(pd.getName().equals("childrenNr")) {
+					  final OracleArray array =    ((OracleResultSet) rs).getARRAY(index);
+					  return array.getLongArray();
+				  }
+				  
+				  
+				  if(pd.getName().equals("collectiveContractNumbers" )) {
+						final OracleArray array =    ((OracleResultSet) rs).getARRAY(index);
+						return array.getLongArray();
+				  }
+				  
+				 
+				  
+				  return super.getColumnValue(rs, index, pd);
+			  }
+			  
+		};
+			 
+		return jdbcOperations.query("Select * from ID_MAPPING", rowMapper);
+	}
+
+	
+	public Counters findCounters(final long mandator) {
+		return new CountersImpl(DataAccessUtils.requiredSingleResult(jdbcOperations.query("Select * from START_VALUES where mandator = ?", new Long[] {mandator}, new BeanPropertyRowMapper<StartValues>(StartValues.class))));
+	}
+}

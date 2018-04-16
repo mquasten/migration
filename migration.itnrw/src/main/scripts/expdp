@@ -1,0 +1,10 @@
+
+CREATE OR REPLACE DIRECTORY expdir AS 'C:\db
+expdp itnrw/itnrw SCHEMAS=itnrw  content=DATA_ONLY  DIRECTORY=EXPDIR  dumpfile=db.dmp
+
+
+
+
+GRANT read, write ON DIRECTORY expdir TO itnrw
+impdp itnrw/itnrw SCHEMAS=itnrw  content=DATA_ONLY  DIRECTORY=EXPDIR  dumpfile=db.dmp
+

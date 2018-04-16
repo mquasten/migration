@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+
+	<!-- Initialization for data source -->
+	<bean id="itNrwDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl" />
+		<property name="username" value="beihilfe" />
+		<property name="password" value="beihilfe" />
+	</bean>
+
+
+
+	<!-- Definition for studentJDBCTemplate bean -->
+	<bean id="itnrwJDBCTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="itNrwDataSource" />
+	</bean>
+	
+	
+	
+	<!-- Initialization for data source -->
+	<bean id="healthFactoryDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl" />
+		<property name="username" value="MIGRATION" />
+		<property name="password" value="migration" />
+	</bean>
+	
+	
+	<!-- Definition for studentJDBCTemplate bean -->
+	<bean id="healthFactoryJDBCTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="healthFactoryDataSource" />
+	</bean>
+	
+	
+
+	<context:component-scan base-package="de.msg.jbit7.migration.itnrw.stamm,de.msg.jbit7.migration.itnrw.partner,de.msg.jbit7.migration.itnrw.mapping" />
+
+
+
+</beans>
