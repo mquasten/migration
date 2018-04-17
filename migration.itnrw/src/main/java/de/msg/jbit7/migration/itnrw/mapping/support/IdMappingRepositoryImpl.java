@@ -16,21 +16,26 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.mapping.StartValues;
 import oracle.jdbc.OracleArray;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.internal.OracleResultSet;
 
 @Repository
-public class IdMappingRepository {
+public class IdMappingRepositoryImpl implements IdMappingRepository {
 	
 	private final JdbcOperations jdbcOperations;
 	
 	@Autowired
-	IdMappingRepository(@Qualifier("itnrwJDBCTemplate") JdbcOperations jdbcOperations) {
+	IdMappingRepositoryImpl(@Qualifier("itnrwJDBCTemplate") JdbcOperations jdbcOperations) {
 		this.jdbcOperations = jdbcOperations;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#persist(de.msg.jbit7.migration.itnrw.mapping.IdMapping)
+	 */
+	@Override
 	public final void persist(final IdMapping idMapping) {
 		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)";
 	
@@ -62,11 +67,19 @@ public class IdMappingRepository {
 	
 
 
+	/* (non-Javadoc)
+	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#delete()
+	 */
+	@Override
 	public final void delete() {
 		jdbcOperations.execute("DELETE FROM ID_MAPPING");
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#findAll()
+	 */
+	@Override
 	public final List<IdMapping> findAll() {
 		final BeanPropertyRowMapper<IdMapping> rowMapper = new BeanPropertyRowMapper<IdMapping>( IdMapping.class) {
 			  protected Object getColumnValue(ResultSet rs, int index,PropertyDescriptor pd) throws SQLException {
@@ -102,6 +115,10 @@ public class IdMappingRepository {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#findCounters(long)
+	 */
+	@Override
 	public Counters findCounters(final long mandator) {
 		return new CountersImpl(DataAccessUtils.requiredSingleResult(jdbcOperations.query("Select * from START_VALUES where mandator = ?", new Long[] {mandator}, new BeanPropertyRowMapper<StartValues>(StartValues.class))));
 	}

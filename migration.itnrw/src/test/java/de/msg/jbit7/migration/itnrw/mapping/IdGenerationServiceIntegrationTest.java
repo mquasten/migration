@@ -19,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.support.IdGenerationOwnerRule;
-import de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 

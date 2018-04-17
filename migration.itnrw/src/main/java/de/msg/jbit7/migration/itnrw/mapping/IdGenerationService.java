@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
-import de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
