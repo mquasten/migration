@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
@@ -19,10 +19,10 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 public class StammRepository {
 	
 	
-	private final JdbcOperations jdbcOperations;
+	private final NamedParameterJdbcOperations jdbcOperations;
 	
 	@Autowired
-	StammRepository(@Qualifier("itnrwJDBCTemplate") final JdbcOperations jdbcOperations) {
+	StammRepository(@Qualifier("itnrwJDBCTemplate") final NamedParameterJdbcOperations jdbcOperations) {
 		this.jdbcOperations = jdbcOperations;
 	}
 

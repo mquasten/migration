@@ -24,7 +24,7 @@ public class IdGenerationMain {
 		final String mandatorAsString = cmd.getOptionValue("m");
 		try (final AbstractRefreshableConfigApplicationContext applicationContext = new ClassPathXmlApplicationContext(XML_APPLICATION_CONFIGURATION)) {
 			final ConversionService conversionService = applicationContext.getBean(ConversionService.class);
-			applicationContext.getBean(IdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite);
+			applicationContext.getBean(AbstractIdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite);
 		}
 	
 		System.exit(0);

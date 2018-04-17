@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcOperations;
+
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -20,19 +21,19 @@ class MetaDataRepositoryTest {
 	
 	@Autowired
 	@Qualifier("itnrwJDBCTemplate")
-	private JdbcOperations jdbcOperationsBeihilfe; 
+	private NamedParameterJdbcOperations jdbcOperationsBeihilfe; 
 	
 	@Autowired
 	@Qualifier("healthFactoryJDBCTemplate")
-	private JdbcOperations jdbcOperationsHealthFactory; 
+	private NamedParameterJdbcOperations jdbcOperationsHealthFactory; 
 	
 	private  MetaDataRepositoryImpl metaDataRepositoryBeihilfe ;
 	private  MetaDataRepositoryImpl metaDataRepositoryHealthFactory ;
 	
 	@BeforeEach
 	void setup() {
-		metaDataRepositoryBeihilfe = new MetaDataRepositoryImpl(jdbcOperationsBeihilfe);
-		metaDataRepositoryHealthFactory = new MetaDataRepositoryImpl( jdbcOperationsHealthFactory);
+		metaDataRepositoryBeihilfe = new MetaDataRepositoryImpl(jdbcOperationsBeihilfe.getJdbcOperations());
+		metaDataRepositoryHealthFactory = new MetaDataRepositoryImpl( jdbcOperationsHealthFactory.getJdbcOperations());
 	}
 	@Test
 	@Disabled

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
@@ -30,7 +31,7 @@ public class PartnerRepository {
 	
 	
 	@Autowired
-	PartnerRepository(final NamedParameterJdbcOperations namedParameterJdbcOperations) {
+	PartnerRepository(@Qualifier("healthFactoryJDBCTemplate") final NamedParameterJdbcOperations namedParameterJdbcOperations) {
 		this.namedParameterJdbcOperations=namedParameterJdbcOperations;
 	}
 	

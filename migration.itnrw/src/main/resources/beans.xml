@@ -21,8 +21,9 @@
 
 
 	<!-- Definition for studentJDBCTemplate bean -->
-	<bean id="itnrwJDBCTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="itNrwDataSource" />
+	<bean id="itnrwJDBCTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		
+		     <constructor-arg ref="itNrwDataSource"></constructor-arg> 
 	</bean>
 	
 	
@@ -37,12 +38,7 @@
 	</bean>
 	
 	
-	<!-- Definition for studentJDBCTemplate bean -->
-	<bean id="healthFactoryJDBCTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="healthFactoryDataSource" />
-	</bean>
-	
-	<bean id="healthFactoryNamedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">  
+	<bean id="healthFactoryJDBCTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">  
         <constructor-arg ref="healthFactoryDataSource"></constructor-arg> 
     </bean> 
 

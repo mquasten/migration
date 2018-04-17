@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import de.msg.jbit7.migration.itnrw.mapping.IdGenerationService;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
@@ -30,10 +31,12 @@ class PartnerServiceIntegrationTest {
 	
 	@Autowired
 	private IdMappingRepository idMappingRepository;
+	@Autowired
+	private IdGenerationService idGenerationService;
 	
 	@Test
 	final void createPartners() {
-		
+		idGenerationService.createIds(MANDATOR, true);
 		partnerService.importPartners(MANDATOR, true);
 		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll().stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
 		

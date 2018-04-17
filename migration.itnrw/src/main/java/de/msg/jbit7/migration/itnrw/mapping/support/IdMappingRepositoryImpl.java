@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
@@ -25,10 +25,10 @@ import oracle.jdbc.internal.OracleResultSet;
 @Repository
 public class IdMappingRepositoryImpl implements IdMappingRepository {
 	
-	private final JdbcOperations jdbcOperations;
+	private final NamedParameterJdbcOperations jdbcOperations;
 	
 	@Autowired
-	IdMappingRepositoryImpl(@Qualifier("itnrwJDBCTemplate") JdbcOperations jdbcOperations) {
+	IdMappingRepositoryImpl(@Qualifier("itnrwJDBCTemplate") NamedParameterJdbcOperations jdbcOperations) {
 		this.jdbcOperations = jdbcOperations;
 	}
 
@@ -40,7 +40,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)";
 	
 		
-		jdbcOperations.update(new PreparedStatementCreator() {
+		jdbcOperations.getJdbcOperations().update(new PreparedStatementCreator() {
 			
 			@Override
 			public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
@@ -72,7 +72,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 */
 	@Override
 	public final void delete() {
-		jdbcOperations.execute("DELETE FROM ID_MAPPING");
+		jdbcOperations.getJdbcOperations().execute("DELETE FROM ID_MAPPING");
 	}
 	
 	
@@ -120,6 +120,6 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 */
 	@Override
 	public Counters findCounters(final long mandator) {
-		return new CountersImpl(DataAccessUtils.requiredSingleResult(jdbcOperations.query("Select * from START_VALUES where mandator = ?", new Long[] {mandator}, new BeanPropertyRowMapper<StartValues>(StartValues.class))));
+		return new CountersImpl(DataAccessUtils.requiredSingleResult(jdbcOperations.getJdbcOperations().query("Select * from START_VALUES where mandator = ?", new Long[] {mandator}, new BeanPropertyRowMapper<StartValues>(StartValues.class))));
 	}
 }
