@@ -61,11 +61,11 @@ abstract class IdGenerationService {
 			final IdMapping idMapping = new IdMapping();
 			final Facts  facts = new Facts();
 			facts.put(IdGenerationFacts.OWNER, stamm);
-			facts.put("counters",  counters);
-			facts.put("idMapping",  idMapping);
+			facts.put(IdGenerationFacts.COUNTERS,  counters);
+			facts.put(IdGenerationFacts.ID_MAPPING,  idMapping);
 		
-			facts.put("marriagePartners",  marriagePartners);
-			facts.put("children",  children);
+			facts.put(IdGenerationFacts.MARRIAGE_PARTNERS,  marriagePartners);
+			facts.put(IdGenerationFacts.CHILDREN,  children);
 			final DefaultRulesEngine rulesEngine = rulesEngine();
 			final CatchExceptionRuleListener ruleListener = ruleListener();
 			rulesEngine.registerRuleListener(ruleListener);
