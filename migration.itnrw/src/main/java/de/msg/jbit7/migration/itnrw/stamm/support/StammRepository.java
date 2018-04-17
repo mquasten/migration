@@ -1,6 +1,9 @@
 package de.msg.jbit7.migration.itnrw.stamm.support;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,5 +46,13 @@ public class StammRepository {
 		return jdbcOperations.query(sql, rowMapper);
 	}
 	
+	
+	public final Map<Long, Date> beginDates() {
+		final Map<Long,Date> beginDates = new HashMap<>();  
+		jdbcOperations.query("select beihilfenr , min(to_date(beginn_datum, 'yyyymmdd'))  from hi_antragsteller group by beihilfenr", resultSet -> {
+			  beginDates.put(resultSet.getLong(1), resultSet.getDate(2));
+		  });
+		return beginDates;
+	}
 
 }

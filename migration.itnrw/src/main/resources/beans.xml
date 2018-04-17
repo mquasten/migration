@@ -42,7 +42,9 @@
 		<property name="dataSource" ref="healthFactoryDataSource" />
 	</bean>
 	
-	
+	<bean id="healthFactoryNamedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">  
+        <constructor-arg ref="healthFactoryDataSource"></constructor-arg> 
+    </bean> 
 
 	<context:component-scan base-package="de.msg.jbit7.migration.itnrw.stamm,de.msg.jbit7.migration.itnrw.partner,de.msg.jbit7.migration.itnrw.mapping" />
 

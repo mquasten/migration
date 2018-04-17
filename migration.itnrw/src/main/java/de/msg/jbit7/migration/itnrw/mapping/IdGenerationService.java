@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
@@ -34,7 +35,7 @@ abstract class IdGenerationService {
 	private final Rules rules;
 
 	@Autowired
-	IdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository, final Rules rules) {
+	IdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository,   @Qualifier("idMappingRules") final Rules  rules) {
 		this.stammRepository = stammRepository;
 		this.idMappingRepository=idMappingRepository;
 		this.rules=rules;

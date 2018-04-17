@@ -12,9 +12,9 @@ import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
 @EnableAspectJAutoProxy()
-class RulesConfiguration {
+class IdMappingRulesConfiguration {
 
-	@Bean
+	@Bean("idMappingRules")
 	Rules rulesIdGeneration() {
 
 		final ConditionalRuleGroup group = new ConditionalRuleGroup("ConditionalRuleIdGeneration");
