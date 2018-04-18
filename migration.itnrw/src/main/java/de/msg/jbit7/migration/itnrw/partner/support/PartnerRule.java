@@ -1,7 +1,5 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jeasy.rules.annotation.Action;
@@ -9,7 +7,6 @@ import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Fact;
 import org.jeasy.rules.annotation.Rule;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
@@ -21,11 +18,16 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 @Rule(name = "partner", priority = 0)
 public class PartnerRule {
 
-	private final ConversionService conversionService = new DefaultConversionService();
+	
+
+	private final ConversionService conversionService;
 
 	static final String BLANK = " ";
 	static final String UNDEFINED = "NOT_DEFINED";
-
+	public PartnerRule(ConversionService conversionService) {
+		this.conversionService = conversionService;
+	}
+	
 	@Condition
 	public boolean evaluate() {
 		return true;
@@ -50,8 +52,9 @@ public class PartnerRule {
 		partnerCore.setCciNumber(null);
 		partnerCore.setCitizenNumber(BLANK);
 		partnerCore.setDatastate("0");
-		partnerCore.setDateOfBirth(toDate(stamm.getGebDatum()));
-		partnerCore.setDateOfDeath(toDate(stamm.getSterbedatum()));
+		
+		partnerCore.setDateOfBirth(conversionService.convert( stamm.getGebDatum(), Date.class));
+		partnerCore.setDateOfDeath(conversionService.convert( stamm.getSterbedatum(), Date.class));
 		partnerCore.setDefaultAddress(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultBank(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultCommunication(defaultCommunication(stamm));
@@ -160,23 +163,6 @@ public class PartnerRule {
 		return sepaBankVerbindung != null && StringUtils.hasText(sepaBankVerbindung.getIban()) ? "1" : "0";
 	}
 
-	private Date toDate(Long dateAsLong) {
-		if (dateAsLong == null) {
-			return null;
-		}
-		final String dateString = conversionService.convert(dateAsLong, String.class);
-		if (dateString.length() != 8) {
-			return null;
-		}
-
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-
-		try {
-			return sdf.parse(dateString);
-		} catch (final ParseException parseException) {
-			return null;
-		}
-
-	}
+	
 
 }

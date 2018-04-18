@@ -1,5 +1,7 @@
 package de.msg.jbit7.migration.itnrw.mapping.support;
 
+import java.util.Date;
+
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.support.ConditionalRuleGroup;
@@ -40,7 +42,10 @@ class IdMappingRulesConfiguration {
 	
 	@Bean
 	ConversionService conversionService() {
-		return new DefaultConversionService();
+		final DefaultConversionService conversionService = new DefaultConversionService();
+		
+		conversionService.addConverter(Long.class,Date.class, new SimpleLongToDateConverter());
+		return conversionService;
 	}
 
 }

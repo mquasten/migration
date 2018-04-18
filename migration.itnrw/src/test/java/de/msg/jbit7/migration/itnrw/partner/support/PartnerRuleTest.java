@@ -19,7 +19,7 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
 class PartnerRuleTest {
 
-	private final PartnerRule partnerRule = new PartnerRule();
+	private final PartnerRule partnerRule = new PartnerRule(null);
 
 	private final IdMapping idMapping = new IdMapping();
 
