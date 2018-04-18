@@ -77,7 +77,25 @@ class MetaDataRepositoryTest {
 	}
 	
 	@Test
+	@Disabled
 	final void insertForContract() {
 		System.out.println(metaDataRepositoryHealthFactory.insertFor("PM_CONTRACT"));
+	}
+	@Test
+	final void sepaBankVerbindung() throws SQLException {
+		System.out.println(metaDataRepositoryBeihilfe.generateAnemicObject("SEPA_BANKVERBINDUNG"));
+	}
+	
+	
+	@Test
+	@Disabled
+	final void insertForPartnerCore() {
+		System.out.println(metaDataRepositoryHealthFactory.insertFor("PARTNERS_CORE"));
+	}
+	
+	@Test
+	@Disabled
+	final void partnerCore() throws SQLException {
+		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("PARTNERS_CORE"));
 	}
 }

@@ -21,6 +21,8 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
+import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
+import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
 
@@ -62,10 +64,18 @@ abstract class PartnerService {
 			contractDate=defaultDate;
 			LOGGER.warn("BeihilfeNr: " + mapping.getBeihilfenr() + " no contract begin date found, 01.01.1900 used.");
 		}
+		final StammImpl stamm = stammRepository.findStamm(mapping.getBeihilfenr());
+		
+		final SepaBankVerbindung sepaBankVerbindung = stammRepository.findSepaBank(mapping.getBeihilfenr());
+		
+		
 		final Facts facts = new Facts();
 		facts.put(PartnerFacts.ID_MAPPING, mapping);
 		facts.put(PartnerFacts.CONTRACT_DATE, contractDate);
+		facts.put(PartnerFacts.STAMM, stamm);
 		facts.put(PartnerFacts.CONTRACT, new PMContract());
+		facts.put(PartnerFacts.PARTNER, new PartnerCore());
+		facts.put(PartnerFacts.SEPA_BANK, sepaBankVerbindung);
 		final DefaultRulesEngine rulesEngine = rulesEngine();
 		final CatchExceptionRuleListener ruleListener = ruleListener();
 		rulesEngine.registerRuleListener(ruleListener);
@@ -79,7 +89,8 @@ abstract class PartnerService {
 		}
 		
 		try {
-			partnerRepository.persist(facts.get(PartnerFacts.CONTRACT));
+			partnerRepository.persistContract(facts.get(PartnerFacts.CONTRACT));
+			partnerRepository.persistPartner(facts.get(PartnerFacts.PARTNER));
 		} catch (final Exception exception) {
 			LOGGER.error("Error saving contract: " + mapping.getBeihilfenr(), exception);
 		}

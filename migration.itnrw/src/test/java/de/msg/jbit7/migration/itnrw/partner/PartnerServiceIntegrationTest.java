@@ -1,6 +1,7 @@
 package de.msg.jbit7.migration.itnrw.partner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -35,12 +36,33 @@ class PartnerServiceIntegrationTest {
 	private IdGenerationService idGenerationService;
 	
 	@Test
-	final void createPartners() {
+	final void createPartnersContract() {
 		idGenerationService.createIds(MANDATOR, true);
 		partnerService.importPartners(MANDATOR, true);
 		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll().stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
 		
-		final List<PMContract>  contracts = partnerRepository.findAllContracts();
+		final List<PMContract>  contracts = partnerRepository.findContracts(MANDATOR);
+		assertContracts(idMapping, contracts);
+		assertEquals(idMapping.size(), contracts.size());
+		
+		final List<PartnerCore>  partners = partnerRepository.findPartner(MANDATOR);
+		
+		final Map<String, IdMapping> mappingByPartnerNr = idMapping.values().stream().collect(Collectors.toMap( mapping -> mapping.getPartnerNr(), mapping -> mapping));
+		
+		partners.forEach(partner -> {
+			final IdMapping mapping = mappingByPartnerNr.get(partner.getPartnersNr());
+			assertNotNull(mapping);
+			assertEquals(mapping.getPartnerNr(), partner.getPartnersNr());
+			assertEquals(mapping.getProcessNumber() , partner.getProcessnr());
+			assertEquals(Long.valueOf(mapping.getChildrenNr().length), partner.getNumberChildren());
+			
+		});
+		
+		assertEquals(idMapping.size(), partners.size());
+	}
+
+
+	private void assertContracts(final Map<Long, IdMapping> idMapping, final List<PMContract> contracts) {
 		assertTrue(contracts.size() > 0 );
 		contracts.forEach(contract -> {
 			assertTrue(idMapping.containsKey(contract.getContractNumber()));
@@ -53,8 +75,8 @@ class PartnerServiceIntegrationTest {
 			
 			assertEquals(mapping.getProcessNumber(), contract.getProcessnr());
 		});
-		
-		assertEquals(idMapping.size(), contracts.size());
 	}
-
+	
+	
+	
 }

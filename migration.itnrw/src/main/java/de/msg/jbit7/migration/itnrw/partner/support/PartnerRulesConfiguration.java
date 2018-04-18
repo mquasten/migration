@@ -11,6 +11,7 @@ class PartnerRulesConfiguration {
 	Rules rulesIdGeneration() {
 		final Rules rules = new Rules();
 		rules.register(new PartnerContractRule());
+		rules.register(new PartnerRule());
 		return rules;
 	}
 }
