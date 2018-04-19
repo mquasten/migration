@@ -7,4 +7,5 @@ public interface PartnerFacts {
 	final static String STAMM = "stamm";
 	final static String PARTNER = "partnerCore";
 	final static String SEPA_BANK = "sepaBankVerbindung";
+	final static String ADDRESS = "address";
 }

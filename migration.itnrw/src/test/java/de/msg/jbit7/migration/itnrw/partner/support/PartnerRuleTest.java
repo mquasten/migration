@@ -11,15 +11,18 @@ import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
 class PartnerRuleTest {
 
-	private final PartnerRule partnerRule = new PartnerRule(null);
+	
 
 	private final IdMapping idMapping = new IdMapping();
 
@@ -29,7 +32,9 @@ class PartnerRuleTest {
 
 	private final SepaBankVerbindung sepaBankVerbindung = new SepaBankVerbindung();
 	private final static Date CONTRACT_DATE = date(1898, 12, 26);
-
+	
+	private final DefaultConversionService conversionService =  new DefaultConversionService();
+	private final PartnerRule partnerRule = new PartnerRule(conversionService);
 	@BeforeEach
 	void setup() throws IntrospectionException {
 		idMapping.setBeihilfenr(19680528L);
@@ -49,8 +54,12 @@ class PartnerRuleTest {
 		stamm.setEmailPrivat("marie.currie@234.net");
 		sepaBankVerbindung.setIban("12345DE12345");
 		stamm.setBemerkung("Nobellpreise für Physik + Chemie");
-		stamm.setName("Currie");
+		stamm.setName("Curie");
 		stamm.setTitel("Dr");
+		stamm.setOrt("Paris");
+		stamm.setPlz("75005");
+		stamm.setStrasseNr("1 rue Pierre et Marie Curie" );
+		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 
 	@Test
@@ -130,11 +139,49 @@ class PartnerRuleTest {
 		assertNull(partnerCore.getTitleOfNobility());
 		assertEquals("MigUser", partnerCore.getUserid());
 		assertEquals(Long.valueOf(0), partnerCore.getVipFlag());
+		
+		
 
 	}
 
 	private static Date date(int year, int month, int day) {
-		Calendar calendar = new GregorianCalendar(year, month - 1, day);
+		final Calendar calendar = new GregorianCalendar(year, month - 1, day);
 		return calendar.getTime();
 	}
+	
+	@Test
+	void assignNewAddress() {
+		final Address address = new Address();
+		partnerRule.assignNewAddress(idMapping, stamm, CONTRACT_DATE, address);		
+		
+		assertEquals(PartnerRule.BLANK, address.getAddressAddition1());
+		assertEquals(PartnerRule.BLANK, address.getAddressAddition2());
+		assertEquals("1", address.getAddressNr());
+		assertEquals(Long.valueOf(0), address.getAddressState());
+		assertNull(address.getAddressType());
+		assertEquals(stamm.getOrt(), address.getCity1());
+		
+		assertEquals(PartnerRule.BLANK, address.getCity2());
+		assertEquals(PartnerRule.BLANK, address.getCoInformation());
+		assertEquals(PartnerRule.BLANK, address.getContact());
+		assertEquals("0", address.getDatastate());
+		assertEquals(CONTRACT_DATE, address.getDop());
+		assertEquals(Long.valueOf(1L), address.getHistnr());
+		assertEquals(PartnerRule.BLANK, address.getHouseNumber());
+		assertNull(address.getHouseNumberAddition());
+		assertEquals(CONTRACT_DATE,address.getInd());
+		assertNull(address.getLatitude());
+		assertNull(address.getLongitude());
+		assertEquals(Long.valueOf(0l),address.getOutdated());
+		assertEquals(idMapping.getPartnerNr(), address.getPartnersNr());
+		assertEquals(PartnerRule.BLANK, address.getPoBox());
+		assertEquals(stamm.getPlz(), address.getPostcode());
+		assertEquals(idMapping.getProcessNumber(), address.getProcessnr());
+		
+		assertEquals(Long.valueOf(0), address.getReasonForChange());
+		assertEquals(stamm.getStrasseNr(), address.getStreet());
+		assertEquals(Long.valueOf(0L), address.getTerminationflag());
+		assertEquals(Long.valueOf(1L), address.getValidationState());
+	}
+
 }

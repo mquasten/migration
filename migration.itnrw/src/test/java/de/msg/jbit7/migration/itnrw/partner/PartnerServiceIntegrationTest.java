@@ -49,6 +49,29 @@ class PartnerServiceIntegrationTest {
 		
 		final Map<String, IdMapping> mappingByPartnerNr = idMapping.values().stream().collect(Collectors.toMap( mapping -> mapping.getPartnerNr(), mapping -> mapping));
 		
+		assertPartner(partners, mappingByPartnerNr);
+		assertEquals(idMapping.size(), partners.size());
+		
+		final List<Address>  addresses = partnerRepository.findAddresses(MANDATOR);
+		
+		assertEquals(idMapping.size(), partners.size());
+		
+		assertAddress(mappingByPartnerNr, addresses);
+	}
+
+
+	private void assertAddress(final Map<String, IdMapping> mappingByPartnerNr, final List<Address> addresses) {
+		addresses.forEach(address -> {
+			
+			final IdMapping mapping = mappingByPartnerNr.get(address.getPartnersNr());
+			assertNotNull(mapping);
+			assertEquals(mapping.getPartnerNr(), address.getPartnersNr());
+			assertEquals(mapping.getProcessNumber(), address.getProcessnr());
+		});
+	}
+
+
+	private void assertPartner(final List<PartnerCore> partners, final Map<String, IdMapping> mappingByPartnerNr) {
 		partners.forEach(partner -> {
 			final IdMapping mapping = mappingByPartnerNr.get(partner.getPartnersNr());
 			assertNotNull(mapping);
@@ -57,8 +80,6 @@ class PartnerServiceIntegrationTest {
 			assertEquals(Long.valueOf(mapping.getChildrenNr().length), partner.getNumberChildren());
 			
 		});
-		
-		assertEquals(idMapping.size(), partners.size());
 	}
 
 

@@ -76,6 +76,7 @@ abstract class PartnerService {
 		facts.put(PartnerFacts.CONTRACT, new PMContract());
 		facts.put(PartnerFacts.PARTNER, new PartnerCore());
 		facts.put(PartnerFacts.SEPA_BANK, sepaBankVerbindung);
+		facts.put(PartnerFacts.ADDRESS, new Address());
 		final DefaultRulesEngine rulesEngine = rulesEngine();
 		final CatchExceptionRuleListener ruleListener = ruleListener();
 		rulesEngine.registerRuleListener(ruleListener);
@@ -91,6 +92,7 @@ abstract class PartnerService {
 		try {
 			partnerRepository.persistContract(facts.get(PartnerFacts.CONTRACT));
 			partnerRepository.persistPartner(facts.get(PartnerFacts.PARTNER));
+			partnerRepository.persistAddress(facts.get(PartnerFacts.ADDRESS));
 		} catch (final Exception exception) {
 			LOGGER.error("Error saving contract: " + mapping.getBeihilfenr(), exception);
 		}

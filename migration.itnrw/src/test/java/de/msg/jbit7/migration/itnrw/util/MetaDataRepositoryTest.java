@@ -98,4 +98,17 @@ class MetaDataRepositoryTest {
 	final void partnerCore() throws SQLException {
 		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("PARTNERS_CORE"));
 	}
+	
+	
+	@Test
+	@Disabled
+	final void address() throws SQLException {
+		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("ADDRESS"));
+	}
+	
+	@Test
+	@Disabled
+	final void insertForAddress() {
+		System.out.println(metaDataRepositoryHealthFactory.insertFor("ADDRESS"));
+	}
 }

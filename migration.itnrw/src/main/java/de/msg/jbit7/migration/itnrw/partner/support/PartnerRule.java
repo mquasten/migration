@@ -10,6 +10,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
@@ -89,6 +90,7 @@ public class PartnerRule {
 		partnerCore.setNameAddition2(null);
 		partnerCore.setNameAddition(null);
 		partnerCore.setNamePrefix(stamm.getZusatz1Name());
+		
 		partnerCore.setNationality("DE");
 		partnerCore.setNationality2(null);
 		partnerCore.setNameAddition3(null);
@@ -161,6 +163,48 @@ public class PartnerRule {
 
 	private String defaultBank(SepaBankVerbindung sepaBankVerbindung) {
 		return sepaBankVerbindung != null && StringUtils.hasText(sepaBankVerbindung.getIban()) ? "1" : "0";
+	}
+
+	
+	@Action(order = 2)
+	public final void assignNewAddress(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+			@Fact(PartnerFacts.STAMM) StammImpl stamm,
+			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.ADDRESS) Address address) {
+		
+			address.setAddressAddition1(BLANK);
+			address.setAddressAddition2(BLANK);
+			address.setAddressNr("1");
+			address.setAddressState(0L);
+			address.setAddressType(null);
+			address.setCity1(stamm.getOrt());
+			address.setCity2(BLANK);
+			address.setCityCan("?");
+			address.setCityPhon("?");
+			address.setCoInformation(BLANK);
+			address.setContact(BLANK);
+			address.setCountry(stamm.getLaenderKennz());
+			address.setDatastate("0");
+			address.setDop(contractDate);
+			address.setHistnr(1L);
+			address.setHouseNumber(BLANK);
+			address.setHouseNumberAddition(null);
+			address.setInd(contractDate);
+			address.setLatitude(null);
+			address.setLongitude(null);
+			address.setMandator(idMapping.getMandator());
+			address.setOutdated(0L);
+			address.setPartnersNr(idMapping.getPartnerNr());
+			address.setPoBox(BLANK);
+			address.setPostcode(stamm.getPlz());
+			address.setProcessnr(idMapping.getProcessNumber());
+			address.setProximateTown(null);
+			address.setReasonForChange(0L);
+			address.setRprocessnr(null);
+			address.setStreet(stamm.getStrasseNr());
+			address.setTerminationflag(0L);
+			address.setUserid("MigUser");
+			address.setValidationState(1L);
 	}
 
 	
