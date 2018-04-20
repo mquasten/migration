@@ -37,7 +37,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 */
 	@Override
 	public final void persist(final IdMapping idMapping) {
-		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR) VALUES ( ?,?,?,?,?,?,?,?,?,?,?)";
+		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR, MIGRATION_USER) VALUES ( ?,?,?,?,?,?,?,?,?,?,?, ?)";
 	
 		
 		jdbcOperations.getJdbcOperations().update(new PreparedStatementCreator() {
@@ -58,6 +58,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 				statement.setString(9,idMapping.getSchulnummer());
 				statement.setString(10,idMapping.getDienststelle());
 				statement.setLong(11,idMapping.getMandator());
+				statement.setString(12, idMapping.getMigrationUser());
 				return statement;
 			}
 		});

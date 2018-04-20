@@ -28,6 +28,8 @@ import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 class IdGenerationServiceIntegrationTest {
 	
 	private static final long MANDATOR = 4711L;
+	
+	private static final String USER = "Migration";
 
 	@Autowired
 	private IdGenerationService idGenerationService; 
@@ -50,7 +52,7 @@ class IdGenerationServiceIntegrationTest {
 	void createIds() {
 		
 		
-		idGenerationService.createIds(MANDATOR, true);
+		idGenerationService.createIds(MANDATOR, true, USER);
 		final  Map<Long, IdMapping> idMappingMap =idGenerationService.findAll();
 		
 		final List<StammImpl> owners = stammRepository.findAll().stream().filter(owner -> idGenerationOwnerRule.alive(owner) ).collect(Collectors.toList()) ; 
@@ -67,6 +69,7 @@ class IdGenerationServiceIntegrationTest {
 			
 			final IdMapping idMapping = idMappingMap.get(owner.getBeihilfenr());
 			assertNotNull(idMapping);
+			assertEquals(USER, idMapping.getMigrationUser());
 			assertEquals(MANDATOR, (long) idMapping.getMandator());
 			assertNotNull(idMapping.getPartnerNr());
 			assertTrue(Long.valueOf(idMapping.getContractNumber()) > startValues.getContractNumber());

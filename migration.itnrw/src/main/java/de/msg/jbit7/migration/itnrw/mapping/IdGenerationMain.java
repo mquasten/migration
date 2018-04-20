@@ -20,11 +20,11 @@ public class IdGenerationMain {
 		
 		
 		final boolean overwrite = cmd.hasOption("f");
-		
+		final String migUser = cmd.getOptionValue("u");
 		final String mandatorAsString = cmd.getOptionValue("m");
 		try (final AbstractRefreshableConfigApplicationContext applicationContext = new ClassPathXmlApplicationContext(XML_APPLICATION_CONFIGURATION)) {
 			final ConversionService conversionService = applicationContext.getBean(ConversionService.class);
-			applicationContext.getBean(AbstractIdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite);
+			applicationContext.getBean(IdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite, migUser);
 		}
 	
 		System.exit(0);
@@ -36,6 +36,7 @@ public class IdGenerationMain {
 		options.addOption("f", false , "Overwrite existing idMapping.");
 		options.addOption("h", false , "Print help.");
 		options.addOption("m", true, "Mandators id.");
+		options.addOption("u", true, "Migration user.");
 		
 		final CommandLineParser parser = new DefaultParser();
 		
@@ -43,6 +44,11 @@ public class IdGenerationMain {
 		
 		if( !cmd.hasOption("m")) {
 			System.err.println("Mandator is required");
+			printHelpAndExit(options);
+		}
+		
+		if( ! cmd.hasOption("u")) {
+			System.err.println("User is required");
 			printHelpAndExit(options);
 		}
 		

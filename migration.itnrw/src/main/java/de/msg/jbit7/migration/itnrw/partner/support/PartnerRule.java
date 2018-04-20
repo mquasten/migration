@@ -121,7 +121,7 @@ public class PartnerRule {
 		partnerCore.setTerminationflag(0L);
 		partnerCore.setTitle(notNull(stamm.getTitel()));
 		partnerCore.setTitleOfNobility(null);
-		partnerCore.setUserid("MigUser");
+		partnerCore.setUserid(idMapping.getMigrationUser());
 		partnerCore.setVipFlag(0L);
 
 		results.add(partnerCore);
@@ -206,7 +206,7 @@ public class PartnerRule {
 			address.setRprocessnr(null);
 			address.setStreet(stamm.getStrasseNr());
 			address.setTerminationflag(0L);
-			address.setUserid("MigUser");
+			address.setUserid(idMapping.getMigrationUser());
 			address.setValidationState(1L);
 			results.add(address);
 	}

@@ -45,6 +45,7 @@ class PartnerRuleTest {
 		idMapping.setMandator(4711L);
 		idMapping.setMarriagePartnerNr("1234");
 		idMapping.setChildrenNr(new Long[] { 1L, 2L });
+		idMapping.setMigrationUser("Migration");
 
 		stamm.setBeihilfenr(idMapping.getBeihilfenr());
 		stamm.setGeburtsname("Skłodowska");
@@ -141,9 +142,8 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(0L), partnerCore.getTerminationflag());
 		assertEquals(stamm.getTitel(), partnerCore.getTitle());
 		assertNull(partnerCore.getTitleOfNobility());
-		assertEquals("MigUser", partnerCore.getUserid());
+		assertEquals(idMapping.getMigrationUser(), partnerCore.getUserid());
 		assertEquals(Long.valueOf(0), partnerCore.getVipFlag());
-		
 		
 
 	}
@@ -188,6 +188,7 @@ class PartnerRuleTest {
 		assertEquals(stamm.getStrasseNr(), address.getStreet());
 		assertEquals(Long.valueOf(0L), address.getTerminationflag());
 		assertEquals(Long.valueOf(1L), address.getValidationState());
+		assertEquals(idMapping.getMigrationUser(), address.getUserid());
 	}
 
 }

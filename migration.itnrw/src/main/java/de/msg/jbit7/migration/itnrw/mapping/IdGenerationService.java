@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface IdGenerationService {
 
-	void createIds(long mandator, boolean deleteFirst);
+	void createIds(final long mandator, final boolean deleteFirst, final String migUser);
 	
 	Map<Long, IdMapping> findAll();
 

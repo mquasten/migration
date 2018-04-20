@@ -16,6 +16,8 @@ public class IdMapping {
 	private String dienststelle;
 	
 	private Long mandator; 
+	
+	private String migrationUser;
 
 	public Long getBeihilfenr() {
 		return beihilfenr;
@@ -106,5 +108,14 @@ public class IdMapping {
 	public void setMandator(Long mandator) {
 		this.mandator = mandator;
 	}
+	
+	public String getMigrationUser() {
+		return migrationUser;
+	}
+
+	public void setMigrationUser(String migrationUser) {
+		this.migrationUser = migrationUser;
+	}
+
 	
 }

@@ -23,6 +23,7 @@ import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 class PartnerServiceIntegrationTest {
 	
 	private final long MANDATOR = 4711L;
+	private final String USER = "Migration";
 	
 	@Autowired
 	private PartnerService partnerService;
@@ -37,7 +38,7 @@ class PartnerServiceIntegrationTest {
 	
 	@Test
 	final void createPartnersContract() {
-		idGenerationService.createIds(MANDATOR, true);
+		idGenerationService.createIds(MANDATOR, true, USER);
 		partnerService.importPartners(MANDATOR, true);
 		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll().stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
 		
@@ -67,6 +68,7 @@ class PartnerServiceIntegrationTest {
 			assertNotNull(mapping);
 			assertEquals(mapping.getPartnerNr(), address.getPartnersNr());
 			assertEquals(mapping.getProcessNumber(), address.getProcessnr());
+			assertEquals(USER, address.getUserid());
 		});
 	}
 
@@ -78,6 +80,7 @@ class PartnerServiceIntegrationTest {
 			assertEquals(mapping.getPartnerNr(), partner.getPartnersNr());
 			assertEquals(mapping.getProcessNumber() , partner.getProcessnr());
 			assertEquals(Long.valueOf(mapping.getChildrenNr().length), partner.getNumberChildren());
+			assertEquals(USER, partner.getUserid());
 			
 		});
 	}

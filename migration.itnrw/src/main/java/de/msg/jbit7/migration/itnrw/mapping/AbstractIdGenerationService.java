@@ -46,7 +46,7 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	 * @see de.msg.jbit7.migration.itnrw.mapping.GenerationService#createIds(long, boolean)
 	 */
 	@Override
-	public  void createIds(final long mandator, final boolean deleteFirst) {
+	public  void createIds(final long mandator, final boolean deleteFirst, final String migrationUser) {
 		
 		if( deleteFirst) {
 			idMappingRepository.delete();
@@ -63,6 +63,7 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 		stammRepository.findAll().forEach(stamm -> {
 			
 			final IdMapping idMapping = new IdMapping();
+			idMapping.setMigrationUser(migrationUser);
 			final Facts  facts = new Facts();
 			facts.put(IdGenerationFacts.OWNER, stamm);
 			facts.put(IdGenerationFacts.COUNTERS,  counters);
