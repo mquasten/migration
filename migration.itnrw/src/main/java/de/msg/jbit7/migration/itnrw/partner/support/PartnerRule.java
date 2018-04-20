@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import java.util.Collection;
 import java.util.Date;
 
 import org.jeasy.rules.annotation.Action;
@@ -39,10 +40,11 @@ public class PartnerRule {
 			@Fact(PartnerFacts.STAMM) StammImpl stamm,
 			@Fact(PartnerFacts.SEPA_BANK) SepaBankVerbindung sepaBankVerbindung,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
-			@Fact(PartnerFacts.PARTNER) PartnerCore partnerCore) {
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 
 		final String toDo = "?";
 
+		PartnerCore partnerCore = new PartnerCore();
 		partnerCore.setActivityState(UNDEFINED);
 		partnerCore.setAdvertising(0L);
 		partnerCore.setBasicType(0L);
@@ -122,6 +124,7 @@ public class PartnerRule {
 		partnerCore.setUserid("MigUser");
 		partnerCore.setVipFlag(0L);
 
+		results.add(partnerCore);
 	}
 
 	private String notNull(final String text) {
@@ -170,8 +173,8 @@ public class PartnerRule {
 	public final void assignNewAddress(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) StammImpl stamm,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
-			@Fact(PartnerFacts.ADDRESS) Address address) {
-		
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+			final Address address = new Address();
 			address.setAddressAddition1(BLANK);
 			address.setAddressAddition2(BLANK);
 			address.setAddressNr("1");
@@ -205,6 +208,7 @@ public class PartnerRule {
 			address.setTerminationflag(0L);
 			address.setUserid("MigUser");
 			address.setValidationState(1L);
+			results.add(address);
 	}
 
 	

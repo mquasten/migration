@@ -2,9 +2,13 @@ package de.msg.jbit7.migration.itnrw.partner;
 
 import java.util.Date;
 
+import de.msg.jbit7.migration.itnrw.util.Persistence;
+
+@Persistence(PartnerCore.INSERT_PARTNER)
 public class PartnerCore {
-	
-	
+
+
+	final static String INSERT_PARTNER = "INSERT INTO PARTNERS_CORE (MANDATOR,DATASTATE,PROCESSNR,HISTNR,RPROCESSNR,DOP,DOR,IND,TERMINATIONFLAG,PARTNERS_NR,LEGAL_PERSON,FIRST_NAME,SECOND_NAME,DATE_OF_BIRTH,SEX,NATIONALITY,NATIONALITY_2,NATIONALITY_3,PROFESSION,ACTIVITY_STATE,TITLE,LANGUAGE_CORRESPONDENCE,VIP_FLAG,PARTNER_STATE,FIRST_NAME_CAN,FIRST_NAME_PHON,SECOND_NAME_CAN,SECOND_NAME_PHON,NOTICE,NAME_ADDITION,NAME_ADDITION2,DEFAULT_ADDRESS,DEFAULT_BANK,DEFAULT_COMMUNICATION,MARITAL_STATUS,SOCIAL_INSURANCE_NUMBER,SOCIAL_INSURANCE_NUMBER_SP,PLACE_OF_BIRTH,BIRTH_NAME,EXT_CUSTOMER_NUMBER,NUMBER_CHILDREN,ADVERTISING,REASON_FOR_CHANGE,EMPLOYER,SALUTATION,HEALTH_INSURANCE_NUMBER,CITIZEN_NUMBER,ID_DOCUMENT_TYPE,ID_DOCUMENT_NR,ID_DOCUMENT_ISSUED_DATE,ID_DOCUMENT_EXPIRY_DATE,ID_DOCUMENT_AUTHORITY,ID_DOCUMENT_AUTHORITY_COUNTRY,TENANT,BASIC_TYPE,FIRST_SECONDARY_TYPE,SECOND_SECONDARY_TYPE,CCI_NUMBER,SECTOR,DENOMINATION,PERSONNEL_NR,USERID,NAME_ADDITION3,MANAGEMENT,CANCELLATION,CANCELLATION_DATE,DISPATCH_TYPE,DATE_OF_DEATH,TITLE_OF_NOBILITY,HONORARY_TITLE,NAME_PREFIX,PEP_FLAG,EU_SANCTION_FLAG) VALUES (:mandator,:datastate,:processnr,:histnr,:rprocessnr,:dop,:dor,:ind,:terminationflag,:partnersNr,:legalPerson,:firstName,:secondName,:dateOfBirth,:sex,:nationality,:nationality2,:nationality3,:profession,:activityState,:title,:languageCorrespondence,:vipFlag,:partnerState,:firstNameCan,:firstNamePhon,:secondNameCan,:secondNamePhon,:notice,:nameAddition,:nameAddition2,:defaultAddress,:defaultBank,:defaultCommunication,:maritalStatus,:socialInsuranceNumber,:socialInsuranceNumberSp,:placeOfBirth,:birthName,:extCustomerNumber,:numberChildren,:advertising,:reasonForChange,:employer,:salutation,:healthInsuranceNumber,:citizenNumber,:idDocumentType,:idDocumentNr,:idDocumentIssuedDate,:idDocumentExpiryDate,:idDocumentAuthority,:idDocumentAuthorityCountry,:tenant,:basicType,:firstSecondaryType,:secondSecondaryType,:cciNumber,:sector,:denomination,:personnelNr,:userid,:nameAddition3,:management,:cancellation,:cancellationDate,:dispatchType,:dateOfDeath,:titleOfNobility,:honoraryTitle,:namePrefix,:pepFlag,:euSanctionFlag)";
 	private Long mandator;
 	   private String datastate;
 	   private Long processnr;

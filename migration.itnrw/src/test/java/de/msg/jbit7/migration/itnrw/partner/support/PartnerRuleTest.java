@@ -5,13 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.IntrospectionException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.dao.support.DataAccessUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
@@ -28,7 +31,6 @@ class PartnerRuleTest {
 
 	private final StammImpl stamm = new StammImpl();
 
-	private final PartnerCore partnerCore = new PartnerCore();
 
 	private final SepaBankVerbindung sepaBankVerbindung = new SepaBankVerbindung();
 	private final static Date CONTRACT_DATE = date(1898, 12, 26);
@@ -70,8 +72,10 @@ class PartnerRuleTest {
 	@Test
 	void assignNewPartner() {
 
-		partnerRule.assignNewPartner(idMapping, stamm, sepaBankVerbindung, CONTRACT_DATE, partnerCore);
+		final Collection<Object> results = new ArrayList<>();
+		partnerRule.assignNewPartner(idMapping, stamm, sepaBankVerbindung, CONTRACT_DATE, results);
 
+		final PartnerCore partnerCore = (PartnerCore) DataAccessUtils.requiredSingleResult(results);
 		assertEquals(PartnerRule.UNDEFINED, partnerCore.getActivityState());
 		assertEquals(Long.valueOf(0L), partnerCore.getAdvertising());
 		assertEquals(Long.valueOf(0L), partnerCore.getBasicType());
@@ -151,8 +155,10 @@ class PartnerRuleTest {
 	
 	@Test
 	void assignNewAddress() {
-		final Address address = new Address();
-		partnerRule.assignNewAddress(idMapping, stamm, CONTRACT_DATE, address);		
+		final Collection<Object> results = new ArrayList<>();
+		partnerRule.assignNewAddress(idMapping, stamm, CONTRACT_DATE, results);
+		
+		final Address address = (Address) DataAccessUtils.requiredSingleResult(results);
 		
 		assertEquals(PartnerRule.BLANK, address.getAddressAddition1());
 		assertEquals(PartnerRule.BLANK, address.getAddressAddition2());

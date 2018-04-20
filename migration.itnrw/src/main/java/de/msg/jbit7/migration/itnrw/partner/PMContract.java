@@ -2,8 +2,11 @@ package de.msg.jbit7.migration.itnrw.partner;
 
 import java.util.Date;
 
-public class PMContract {
+import de.msg.jbit7.migration.itnrw.util.Persistence;
 
+@Persistence(PMContract.INSERT_PM_CONTRACT)
+public class PMContract {
+	final static String INSERT_PM_CONTRACT = "INSERT INTO PM_CONTRACT (MANDATOR,DATASTATE,PROCESSNR,HISTNR,RPROCESSNR,DOP,DOR,IND,TERMINATIONFLAG,PRIONR,CONTRACT_NUMBER,REASON_FOR_CHANGE,BEGIN_OF_CONTRACT,TERMINATION_DATE,RISK_CARRIER,POLICY_NUMBER,MEMBER_OF_STAFF,COLLECTIVE_CONTRACT_NUMBER,INTERNAL_NUMBER_COLL_CONTRACT,POLICY_CONFIRMATION_FLAG,CONTRACT_TYPE,POSTING_TEXT_1,POSTING_TEXT_2,POSTING_TEXT_3) VALUES (:mandator,:datastate,:processnr,:histnr,:rprocessnr,:dop,:dor,:ind,:terminationflag,:prionr,:contractNumber,:reasonForChange,:beginOfContract,:terminationDate,:riskCarrier,:policyNumber,:memberOfStaff,:collectiveContractNumber,:internalNumberCollContract,:policyConfirmationFlag,:contractType,:postingText1,:postingText2,:postingText3)";
 	private String datastate;
 	private Long processnr;
 	private Long histnr;

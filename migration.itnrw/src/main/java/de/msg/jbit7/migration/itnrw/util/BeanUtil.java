@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+
 public class BeanUtil {
 
 	public static Map<String, Object> toMap(final Object entity) {
@@ -18,6 +20,13 @@ public class BeanUtil {
 			throw new IllegalStateException(ex);
 		}
 
+	}
+	
+	public static <T> String insert(T entity) {
+		Assert.notNull(entity , "Entity can not be null.");
+		Assert.isTrue(entity.getClass().isAnnotationPresent(Persistence.class), "Persistentence Annotation is missing Class: " + entity.getClass().getName());
+		
+		return entity.getClass().getAnnotation(Persistence.class).value();
 	}
 
 	private static Map<String, Object> doMapping(final Object entity)

@@ -2,6 +2,7 @@ package de.msg.jbit7.migration.itnrw.partner;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -68,15 +69,14 @@ abstract class PartnerService {
 		
 		final SepaBankVerbindung sepaBankVerbindung = stammRepository.findSepaBank(mapping.getBeihilfenr());
 		
-		
+		final List<Object> results = new ArrayList<>();
 		final Facts facts = new Facts();
 		facts.put(PartnerFacts.ID_MAPPING, mapping);
 		facts.put(PartnerFacts.CONTRACT_DATE, contractDate);
 		facts.put(PartnerFacts.STAMM, stamm);
-		facts.put(PartnerFacts.CONTRACT, new PMContract());
-		facts.put(PartnerFacts.PARTNER, new PartnerCore());
+	
 		facts.put(PartnerFacts.SEPA_BANK, sepaBankVerbindung);
-		facts.put(PartnerFacts.ADDRESS, new Address());
+		facts.put(PartnerFacts.RESULTS, results );
 		final DefaultRulesEngine rulesEngine = rulesEngine();
 		final CatchExceptionRuleListener ruleListener = ruleListener();
 		rulesEngine.registerRuleListener(ruleListener);
@@ -89,12 +89,15 @@ abstract class PartnerService {
 			LOGGER.info("Regeln erfolgreich verarbeitet Beihilfenr: " + mapping.getBeihilfenr());
 		}
 		
+		results.forEach(result -> persist(mapping.getBeihilfenr(), result));
+		
+	}
+
+	private <T> void persist(final Long beihilfeNr, T object ) {
 		try {
-			partnerRepository.persistContract(facts.get(PartnerFacts.CONTRACT));
-			partnerRepository.persistPartner(facts.get(PartnerFacts.PARTNER));
-			partnerRepository.persistAddress(facts.get(PartnerFacts.ADDRESS));
+			partnerRepository.persist(object);
 		} catch (final Exception exception) {
-			LOGGER.error("Error saving contract: " + mapping.getBeihilfenr(), exception);
+			LOGGER.error("Error saving contract: " + beihilfeNr, exception);
 		}
 	}
 	

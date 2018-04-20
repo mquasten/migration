@@ -2,7 +2,13 @@ package de.msg.jbit7.migration.itnrw.partner;
 
 import java.util.Date;
 
+import de.msg.jbit7.migration.itnrw.util.Persistence;
+
+@Persistence(Address.INSERT_ADDRESS)
 public class Address {
+	
+
+	static final String INSERT_ADDRESS = "INSERT INTO ADDRESS (MANDATOR,DATASTATE,PROCESSNR,HISTNR,RPROCESSNR,DOP,DOR,IND,TERMINATIONFLAG,PARTNERS_NR,ADDRESS_NR,POSTCODE,CITY1,CITY2,STREET,PO_BOX,COUNTRY,ADDRESS_ADDITION1,ADDRESS_ADDITION2,CITY_CAN,CITY_PHON,OUTDATED,CO_INFORMATION,REASON_FOR_CHANGE,ADDRESS_TYPE,HOUSE_NUMBER,HOUSE_NUMBER_ADDITION,CONTACT,ADDRESS_STATE,VALIDATION_STATE,USERID,PROXIMATE_TOWN,LATITUDE,LONGITUDE) VALUES (:mandator,:datastate,:processnr,:histnr,:rprocessnr,:dop,:dor,:ind,:terminationflag,:partnersNr,:addressNr,:postcode,:city1,:city2,:street,:poBox,:country,:addressAddition1,:addressAddition2,:cityCan,:cityPhon,:outdated,:coInformation,:reasonForChange,:addressType,:houseNumber,:houseNumberAddition,:contact,:addressState,:validationState,:userid,:proximateTown,:latitude,:longitude)";
 
 	private Long mandator;
 	private String datastate;

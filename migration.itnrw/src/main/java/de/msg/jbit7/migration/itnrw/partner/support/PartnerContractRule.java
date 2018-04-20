@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import java.util.Collection;
 import java.util.Date;
 
 import org.jeasy.rules.annotation.Action;
@@ -27,8 +28,9 @@ public class PartnerContractRule {
 	@Action(order = 1)
 	public final void assignNewContract(@Fact(PartnerFacts.ID_MAPPING) final IdMapping idMapping,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
-			@Fact(PartnerFacts.CONTRACT) final PMContract contract) {
+			@Fact(PartnerFacts.RESULTS) final Collection<Object> results) {
 
+		final PMContract contract = new PMContract();
 		contract.setBeginOfContract(contractDate);
 		if (idMapping.getCollectiveContractNumbers().length > 0) {
 			contract.setCollectiveContractNumber(idMapping.getCollectiveContractNumbers()[0]);
@@ -60,7 +62,7 @@ public class PartnerContractRule {
 		contract.setRprocessnr(null);
 		contract.setTerminationDate(null);
 		contract.setTerminationflag(0L);
-
+		results.add(contract);
 	}
 
 }

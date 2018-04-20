@@ -30,7 +30,7 @@ class IdGenerationServiceIntegrationTest {
 	private static final long MANDATOR = 4711L;
 
 	@Autowired
-	private AbstractIdGenerationService idGenerationService; 
+	private IdGenerationService idGenerationService; 
 	
 	@Autowired
 	private IdMappingRepository idMappingRepository;

@@ -82,6 +82,7 @@ class MetaDataRepositoryTest {
 		System.out.println(metaDataRepositoryHealthFactory.insertFor("PM_CONTRACT"));
 	}
 	@Test
+	@Disabled
 	final void sepaBankVerbindung() throws SQLException {
 		System.out.println(metaDataRepositoryBeihilfe.generateAnemicObject("SEPA_BANKVERBINDUNG"));
 	}

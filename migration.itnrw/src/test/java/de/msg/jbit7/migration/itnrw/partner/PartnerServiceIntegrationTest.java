@@ -54,7 +54,7 @@ class PartnerServiceIntegrationTest {
 		
 		final List<Address>  addresses = partnerRepository.findAddresses(MANDATOR);
 		
-		assertEquals(idMapping.size(), partners.size());
+		assertEquals(idMapping.size(), addresses.size());
 		
 		assertAddress(mappingByPartnerNr, addresses);
 	}
