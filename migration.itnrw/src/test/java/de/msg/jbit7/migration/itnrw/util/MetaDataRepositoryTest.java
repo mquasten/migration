@@ -137,6 +137,18 @@ class MetaDataRepositoryTest {
 	final void communication() throws SQLException {
 		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("COMMUNICATION"));
 	}
+	
+	@Test
+	@Disabled
+	final void communicationRole() throws SQLException {
+		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("COMMUNICATION_ROLE"));
+	}
+	
+	@Test
+	@Disabled
+	final void insertCommunicationRole() {
+		System.out.println(metaDataRepositoryHealthFactory.insertFor("COMMUNICATION_ROLE"));
+	}
 
 	
 }

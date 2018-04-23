@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
+import de.msg.jbit7.migration.itnrw.partner.Communication;
+import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.util.BeanUtil;
@@ -35,6 +37,9 @@ public class PartnerRepository {
 	
 	private static final String DELETE_COMMUNICATION_BY_MANDATOR_SQL = String
 			.format("DELETE FROM COMMUNICATION WHERE MANDATOR = :%s", MANDATOR_NAME);
+	
+	private static final String DELETE_COMMUNICATION_ROLE_BY_MANDATOR_SQL = String
+			.format("DELETE FROM COMMUNICATION_ROLE WHERE MANDATOR = :%s", MANDATOR_NAME);
 	
 	private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
@@ -61,6 +66,7 @@ public class PartnerRepository {
 		namedParameterJdbcOperations.update(DELETE_ADDRESS_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_BANK_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_COMMUNICATION_BY_MANDATOR_SQL, parameters);
+		namedParameterJdbcOperations.update(DELETE_COMMUNICATION_ROLE_BY_MANDATOR_SQL, parameters);
 		
 	}
 
@@ -87,5 +93,14 @@ public class PartnerRepository {
 		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(Bank.class));
 	}
 	
+	public final List<Communication> findCommunications(final long mandator) {
+		final String sql = String.format("SELECT * from COMMUNICATION where mandator=%s", mandator);
+		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(Communication.class));
+	}
+	
+	public final List<CommunicationRole> findCommunicationRoles(final long mandator) {
+		final String sql = String.format("SELECT * from COMMUNICATION_ROLE where mandator=%s", mandator);
+		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(CommunicationRole.class));
+	}
 
 }

@@ -19,6 +19,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.Communication;
+import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
@@ -295,7 +296,15 @@ public class PartnerRule {
 			}
 			
 			if( communicationNumber > 1) {
+				final CommunicationRole communicationRole = new CommunicationRole();
 				
+				communicationRole.setMandator(idMapping.getMandator());
+				communicationRole.setDatastate("0");
+				communicationRole.setProcessnr(idMapping.getProcessNumber());
+				communicationRole.setCommunicationKey(Long.valueOf(idMapping.getPartnerNr()));
+				communicationRole.setCommunicationRoleKey(Long.valueOf(idMapping.getPartnerNr()));
+				communicationRole.setCommunicationNr("1");
+				results.add(communicationRole);
 			}
 			
 	}

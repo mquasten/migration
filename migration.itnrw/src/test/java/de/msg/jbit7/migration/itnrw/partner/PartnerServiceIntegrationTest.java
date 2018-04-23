@@ -63,6 +63,42 @@ class PartnerServiceIntegrationTest {
 		final double missingBanks = (banks.size() - idMapping.size()) / (1d*idMapping.size());
 		// der relative Fehler sollte 0 sein!, mindestens eine Bank ist doch wohl erforderlich.  
 		assertTrue(-0.1d <  missingBanks);
+		assertBanks(mappingByPartnerNr, banks);
+		
+		final List<Communication> communications = partnerRepository.findCommunications(MANDATOR);
+		assertCommunications(mappingByPartnerNr, communications);
+		
+		final List<CommunicationRole> communicationRoles  = partnerRepository.findCommunicationRoles(MANDATOR);
+		assertCommunicationRole(mappingByPartnerNr, communicationRoles);
+	}
+
+
+	private void assertCommunicationRole(final Map<String, IdMapping> mappingByPartnerNr,
+			final List<CommunicationRole> communicationRoles) {
+		communicationRoles.forEach(role -> {
+			final IdMapping mapping = mappingByPartnerNr.get("" + role.getCommunicationKey());
+			assertEquals(mapping.getPartnerNr(), "" + role.getCommunicationKey());
+			assertEquals(mapping.getPartnerNr(), "" + role.getCommunicationRoleKey());
+			assertEquals(mapping.getProcessNumber(), role.getProcessnr());
+			
+		});
+	}
+
+
+	private void assertCommunications(final Map<String, IdMapping> mappingByPartnerNr,
+			final List<Communication> communications) {
+		communications.forEach(communication -> {
+			final IdMapping mapping = mappingByPartnerNr.get(communication.getPartnersNr());
+			assertNotNull(mapping);
+			assertEquals(mapping.getPartnerNr(), communication.getPartnersNr());
+			assertTrue(communication.getCommunicationNr().equals("1") || communication.getCommunicationNr().equals("2") );
+			assertEquals(mapping.getProcessNumber(), communication.getProcessnr());
+			
+		});
+	}
+
+
+	private void assertBanks(final Map<String, IdMapping> mappingByPartnerNr, final List<Bank> banks) {
 		banks.forEach(bank -> {
 			final IdMapping mapping = mappingByPartnerNr.get(bank.getPartnersNr());
 			assertNotNull(mapping);

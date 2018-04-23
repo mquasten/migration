@@ -23,6 +23,7 @@ import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.Communication;
+import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -255,7 +256,7 @@ class PartnerRuleTest {
 		partnerRule.assignNewCommunication(idMapping, stamm, CONTRACT_DATE, results);
 		
 		
-		assertEquals(2, results.size());
+		assertEquals(3, results.size());
 		
 		final Communication resultEmailPrivate = (Communication) results.get(0) ; 
 		assertEmailDefaults(resultEmailPrivate);
@@ -269,6 +270,15 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(4), resultEmailOffice.getCommunicationType());
 		assertEquals(stamm.getEmailDienst(), resultEmailOffice.getValue());
 		assertEquals("2", resultEmailOffice.getCommunicationNr());
+		
+		final CommunicationRole communicationRole = (CommunicationRole) results.get(2);
+		assertEquals(idMapping.getMandator(), communicationRole.getMandator());
+		assertEquals("0", communicationRole.getDatastate());
+		assertEquals(idMapping.getProcessNumber(), communicationRole.getProcessnr());
+		assertEquals(idMapping.getPartnerNr(), "" + communicationRole.getCommunicationKey());
+		assertEquals(idMapping.getPartnerNr(), "" + communicationRole.getCommunicationRoleKey());
+		assertEquals("1", communicationRole.getCommunicationNr());
+		
 		
 	}
 
