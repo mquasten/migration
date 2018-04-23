@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -80,7 +81,7 @@ class PartnerRuleTest {
 	void assignNewPartner() {
 
 		final Collection<Object> results = new ArrayList<>();
-		partnerRule.assignNewPartner(idMapping, stamm, sepaBankVerbindung, CONTRACT_DATE, results);
+		partnerRule.assignNewPartner(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
 
 		final PartnerCore partnerCore = (PartnerCore) DataAccessUtils.requiredSingleResult(results);
 		assertEquals(PartnerRule.UNDEFINED, partnerCore.getActivityState());
@@ -201,7 +202,7 @@ class PartnerRuleTest {
 	@Test
 	void assignNewBank() {
 		final Collection<Object> results = new ArrayList<>();
-		partnerRule.assignNewBank(idMapping, sepaBankVerbindung, CONTRACT_DATE, results);
+		partnerRule.assignNewBank(idMapping, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
 		
 		final Bank bank = (Bank) DataAccessUtils.requiredSingleResult(results);
 		
@@ -209,7 +210,7 @@ class PartnerRuleTest {
 	
 		assertEquals(PartnerRule.BLANK, bank.getAccountHolder());
 		assertEquals(PartnerRule.BLANK, bank.getAccountNumber());
-		assertNull(bank.getAccountType());
+		assertEquals(Long.valueOf(0), bank.getAccountType());
 		assertEquals(PartnerRule.BLANK, bank.getBankCode());
 		assertEquals(PartnerRule.BLANK, bank.getBankDistrict());
 		assertEquals(sepaBankVerbindung.getNameBank(), bank.getBankName());

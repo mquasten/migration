@@ -76,16 +76,14 @@ public class StammRepository {
 		return parameter;
 	}
 	
-	public final SepaBankVerbindung findSepaBank(final long beihilfeNr) {
-		final List<SepaBankVerbindung>  results = jdbcOperations.query(String.format("SELECT * FROM SEPA_BANKVERBINDUNG " +   "WHERE BEIHILFENR = :%s" , BEIHILFE_NR_PARAMETER), parameterMapBeihilfeNr(beihilfeNr), new BeanPropertyRowMapper<>(SepaBankVerbindung.class));
-	   
-		results.sort((b1,b2) -> (int) Math.signum(b2.getVersion().intValue() -b1.getVersion().intValue()));
-		
-		if( results.isEmpty()) {
-			return null;
-		}
-		return results.get(0);
+	public final List<SepaBankVerbindung> findSepaBank(final long beihilfeNr) {
 
+		final String sql = String.format("select * from SEPA_BANKVERBINDUNG sb  where beihilfenr = :%s and  sb.version = ( select  max(version) from SEPA_BANKVERBINDUNG where beihilfenr = sb.beihilfenr and sb.typ = typ) order by sb.typ  ", BEIHILFE_NR_PARAMETER);
+		
+		
+		return jdbcOperations.query(sql , parameterMapBeihilfeNr(beihilfeNr), new BeanPropertyRowMapper<>(SepaBankVerbindung.class));
+	   
+		
 	}
 
 }

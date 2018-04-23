@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.partner.Address;
+import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.util.BeanUtil;
@@ -26,6 +27,10 @@ public class PartnerRepository {
 	
 	private static final String DELETE_ADDRESS_BY_MANDATOR_SQL = String
 			.format("DELETE FROM ADDRESS WHERE MANDATOR = :%s", MANDATOR_NAME);
+	
+	
+	private static final String DELETE_BANK_BY_MANDATOR_SQL = String
+			.format("DELETE FROM BANK WHERE MANDATOR = :%s", MANDATOR_NAME);
 	private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
 	
@@ -49,6 +54,7 @@ public class PartnerRepository {
 		namedParameterJdbcOperations.update(DELETE_CONTRACT_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_PARTNER_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_ADDRESS_BY_MANDATOR_SQL, parameters);
+		namedParameterJdbcOperations.update(DELETE_BANK_BY_MANDATOR_SQL, parameters);
 	}
 
 	
@@ -69,6 +75,10 @@ public class PartnerRepository {
 		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(Address.class));
 	}
 	
+	public final List<Bank> findBanks(final long mandator) {
+		final String sql = String.format("SELECT * from BANK where mandator=%s", mandator);
+		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(Bank.class));
+	}
 	
 
 }

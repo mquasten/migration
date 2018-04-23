@@ -2,6 +2,7 @@ package de.msg.jbit7.migration.itnrw.partner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -58,6 +59,18 @@ class PartnerServiceIntegrationTest {
 		assertEquals(idMapping.size(), addresses.size());
 		
 		assertAddress(mappingByPartnerNr, addresses);
+		
+		final List<Bank> banks = partnerRepository.findBanks(MANDATOR);
+		final double missingBanks = (banks.size() - idMapping.size()) / (1d*idMapping.size());
+		// der relative Fehler sollte 0 sein!, mindestens eine Bank ist doch wohl erforderlich.  
+		assertTrue(-0.1d <  missingBanks);
+		banks.forEach(bank -> {
+			final IdMapping mapping = mappingByPartnerNr.get(bank.getPartnersNr());
+			assertNotNull(mapping);
+			assertEquals(mapping.getPartnerNr(), bank.getPartnersNr());
+			assertEquals(mapping.getProcessNumber(), bank.getProcessnr());
+			
+		});
 	}
 
 

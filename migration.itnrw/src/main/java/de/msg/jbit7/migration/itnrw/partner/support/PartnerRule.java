@@ -2,12 +2,17 @@ package de.msg.jbit7.migration.itnrw.partner.support;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Fact;
 import org.jeasy.rules.annotation.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
@@ -22,7 +27,7 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 public class PartnerRule {
 
 	
-
+	final static Logger LOGGER = LoggerFactory.getLogger(PartnerRule.class);
 	private final ConversionService conversionService;
 
 	static final String BLANK = " ";
@@ -39,7 +44,7 @@ public class PartnerRule {
 	@Action(order = 1)
 	public final void assignNewPartner(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) StammImpl stamm,
-			@Fact(PartnerFacts.SEPA_BANK) SepaBankVerbindung sepaBankVerbindung,
+			@Fact(PartnerFacts.SEPA_BANK) Collection<SepaBankVerbindung> sepaBankVerbindung,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 
@@ -165,8 +170,8 @@ public class PartnerRule {
 		return 0L;
 	}
 
-	private String defaultBank(SepaBankVerbindung sepaBankVerbindung) {
-		return sepaBankVerbindung != null && StringUtils.hasText(sepaBankVerbindung.getIban()) ? "1" : "0";
+	private String defaultBank(Collection<SepaBankVerbindung> sepaBankVerbindungen) {
+		return CollectionUtils.isEmpty(sepaBankVerbindungen)?  "0" : "1";
 	}
 
 	
@@ -216,22 +221,30 @@ public class PartnerRule {
 	@Action(order = 3)
 	public final void assignNewBank(
 			@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
-			@Fact(PartnerFacts.SEPA_BANK) SepaBankVerbindung sepaBankVerbindung,
+			@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 		
 		
-		if( ! defaultBank(sepaBankVerbindung).equals("1") ) {
+		if(  CollectionUtils.isEmpty(sepaBankVerbindungen) ) {
+			LOGGER.warn(String.format("No BankingAccount found for BeihilfeNr:%s", idMapping.getBeihilfenr()));
 			return;
 		}
+		
+		IntStream.range(0, sepaBankVerbindungen.size()).forEach(i -> results.add(toBank(idMapping, contractDate, sepaBankVerbindungen.get(i), i))); 
+		
+	}
+	
+
+	private Bank toBank(IdMapping idMapping, final Date contractDate, final SepaBankVerbindung sepaBankVerbindung, final int i) {
 		final Bank bank = new Bank() ;
 		bank.setAccountHolder(BLANK);
 		bank.setAccountNumber(BLANK);
-		bank.setAccountType(null);
+		bank.setAccountType(0L);
 		bank.setBankCode(BLANK);
 		bank.setBankDistrict(BLANK);
 		bank.setBankName(notNull(sepaBankVerbindung.getNameBank()));
-		bank.setBankNr("1");
+		bank.setBankNr( String.valueOf(i +1 ));
 		bank.setBankState(1L);
 		bank.setBic(notNull(sepaBankVerbindung.getBic()));
 		bank.setCountry(BLANK);
@@ -259,7 +272,7 @@ public class PartnerRule {
 		bank.setTerminationflag(0L);
 		bank.setTown(null);
 		bank.setUserid(idMapping.getMigrationUser());
-		results.add(bank);
+		return bank;
 	}
 
 	

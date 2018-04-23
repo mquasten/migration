@@ -67,7 +67,7 @@ abstract class PartnerService {
 		}
 		final StammImpl stamm = stammRepository.findStamm(mapping.getBeihilfenr());
 		
-		final SepaBankVerbindung sepaBankVerbindung = stammRepository.findSepaBank(mapping.getBeihilfenr());
+		final List<SepaBankVerbindung> sepaBankVerbindung = stammRepository.findSepaBank(mapping.getBeihilfenr());
 		
 		final List<Object> results = new ArrayList<>();
 		final Facts facts = new Facts();
