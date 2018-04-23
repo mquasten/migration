@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
+import de.msg.jbit7.migration.itnrw.partner.Communication;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
@@ -275,6 +276,51 @@ public class PartnerRule {
 		return bank;
 	}
 
+	
+	@Action(order = 4)
+	public final void assignNewCommunication(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+	@Fact(PartnerFacts.STAMM) StammImpl stamm,
+	@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+	@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+		
+		
+			long communicationNumber =1 ; 
+			if( StringUtils.hasText(stamm.getEmailPrivat())) {
+				results.add(newCommunication(idMapping, stamm.getEmailPrivat(), contractDate, communicationNumber, 3));
+				communicationNumber++;
+			}
+			
+			if(StringUtils.hasText(stamm.getEmailDienst()) ) {
+				results.add(newCommunication(idMapping, stamm.getEmailDienst(), contractDate, communicationNumber, 4));
+			}
+			
+			if( communicationNumber > 1) {
+				
+			}
+			
+	}
+
+	private Communication newCommunication(final IdMapping idMapping, final String value, final Date contractDate, final long communicationNr, final long type) {
+		final Communication emailPrivate = new Communication();
+		emailPrivate.setMandator(idMapping.getMandator());
+		emailPrivate.setDatastate("0");
+		emailPrivate.setProcessnr(idMapping.getProcessNumber());
+		emailPrivate.setHistnr(1L);
+		emailPrivate.setDop(contractDate);
+		emailPrivate.setDor(null);
+		emailPrivate.setInd(contractDate);
+		emailPrivate.setTerminationflag(0L);
+		emailPrivate.setPartnersNr(idMapping.getPartnerNr());
+		emailPrivate.setCommunicationNr("" + communicationNr);
+		emailPrivate.setCommunicationType(type);
+		emailPrivate.setValue(value);
+		emailPrivate.setReasonForChange(null);
+		emailPrivate.setAvailability(null);
+		emailPrivate.setUserid(idMapping.getMigrationUser());
+		emailPrivate.setOutdated(0L);
+		emailPrivate.setUsageAgreement(0L);
+		return emailPrivate;
+	}		
 	
 	
 }

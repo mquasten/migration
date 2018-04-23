@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
+import de.msg.jbit7.migration.itnrw.partner.Communication;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -56,7 +58,8 @@ class PartnerRuleTest {
 		stamm.setVorname("Marie");
 		stamm.setZusatz1Name("Dr. sc. nat. ");
 		stamm.setGeschlecht("w");
-		stamm.setEmailPrivat("marie.currie@234.net");
+		stamm.setEmailPrivat("marie.currie@1234.net");
+		stamm.setEmailDienst("marie.currie@institute-de-radium.net");
 		sepaBankVerbindung.setIban("12345DE12345");
 		sepaBankVerbindung.setNameBank("EineBank");
 		sepaBankVerbindung.setBic("BIC");
@@ -243,6 +246,50 @@ class PartnerRuleTest {
 		assertNull(bank.getTown());
 		assertEquals(idMapping.getMigrationUser(), bank.getUserid());
 		results.add(bank);
+	}
+	
+	
+	@Test
+	void assignNewCommunication() {
+		final List<Object> results = new ArrayList<>();
+		partnerRule.assignNewCommunication(idMapping, stamm, CONTRACT_DATE, results);
+		
+		
+		assertEquals(2, results.size());
+		
+		final Communication resultEmailPrivate = (Communication) results.get(0) ; 
+		assertEmailDefaults(resultEmailPrivate);
+		assertEquals(Long.valueOf(3), resultEmailPrivate.getCommunicationType());
+		assertEquals(stamm.getEmailPrivat(), resultEmailPrivate.getValue());
+		assertEquals("1", resultEmailPrivate.getCommunicationNr());
+		
+		final Communication resultEmailOffice = (Communication) results.get(1) ; 
+		assertEmailDefaults(resultEmailOffice);
+		
+		assertEquals(Long.valueOf(4), resultEmailOffice.getCommunicationType());
+		assertEquals(stamm.getEmailDienst(), resultEmailOffice.getValue());
+		assertEquals("2", resultEmailOffice.getCommunicationNr());
+		
+	}
+
+	private void assertEmailDefaults(final Communication resultEmailPrivate) {
+		assertEquals(idMapping.getMandator(), resultEmailPrivate.getMandator());
+		assertEquals("0", resultEmailPrivate.getDatastate());
+		assertEquals(idMapping.getProcessNumber(), resultEmailPrivate.getProcessnr());
+		assertEquals(Long.valueOf(1), resultEmailPrivate.getHistnr());
+		
+		assertEquals(CONTRACT_DATE, resultEmailPrivate.getDop());
+		assertNull(resultEmailPrivate.getDor());
+		assertEquals(CONTRACT_DATE, resultEmailPrivate.getInd());
+		assertEquals(Long.valueOf(0), resultEmailPrivate.getTerminationflag());
+		assertEquals(idMapping.getPartnerNr(), resultEmailPrivate.getPartnersNr());
+		
+		
+		assertNull(resultEmailPrivate.getReasonForChange());
+		assertNull(resultEmailPrivate.getAvailability());
+		assertEquals(idMapping.getMigrationUser(), resultEmailPrivate.getUserid());
+		assertEquals(Long.valueOf(0), resultEmailPrivate.getOutdated());
+		assertEquals(Long.valueOf(0), resultEmailPrivate.getUsageAgreement());
 	}
 
 }

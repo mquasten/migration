@@ -31,6 +31,11 @@ public class PartnerRepository {
 	
 	private static final String DELETE_BANK_BY_MANDATOR_SQL = String
 			.format("DELETE FROM BANK WHERE MANDATOR = :%s", MANDATOR_NAME);
+	
+	
+	private static final String DELETE_COMMUNICATION_BY_MANDATOR_SQL = String
+			.format("DELETE FROM COMMUNICATION WHERE MANDATOR = :%s", MANDATOR_NAME);
+	
 	private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
 	
@@ -55,6 +60,8 @@ public class PartnerRepository {
 		namedParameterJdbcOperations.update(DELETE_PARTNER_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_ADDRESS_BY_MANDATOR_SQL, parameters);
 		namedParameterJdbcOperations.update(DELETE_BANK_BY_MANDATOR_SQL, parameters);
+		namedParameterJdbcOperations.update(DELETE_COMMUNICATION_BY_MANDATOR_SQL, parameters);
+		
 	}
 
 	

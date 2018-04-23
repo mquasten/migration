@@ -124,6 +124,19 @@ class MetaDataRepositoryTest {
 	final void insertForBank() {
 		System.out.println(metaDataRepositoryHealthFactory.insertFor("BANK"));
 	}
+	
+	@Test
+	@Disabled
+	final void insertCommunication() {
+		System.out.println(metaDataRepositoryHealthFactory.insertFor("COMMUNICATION"));
+	}
+	
+	
+	@Test
+	@Disabled
+	final void communication() throws SQLException {
+		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("COMMUNICATION"));
+	}
 
 	
 }
