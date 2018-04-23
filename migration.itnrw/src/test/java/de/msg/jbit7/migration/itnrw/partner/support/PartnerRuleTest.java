@@ -19,6 +19,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.Address;
+import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -56,12 +57,17 @@ class PartnerRuleTest {
 		stamm.setGeschlecht("w");
 		stamm.setEmailPrivat("marie.currie@234.net");
 		sepaBankVerbindung.setIban("12345DE12345");
+		sepaBankVerbindung.setNameBank("EineBank");
+		sepaBankVerbindung.setBic("BIC");
+		sepaBankVerbindung.setIban("IBAN");
 		stamm.setBemerkung("Nobellpreise für Physik + Chemie");
 		stamm.setName("Curie");
 		stamm.setTitel("Dr");
 		stamm.setOrt("Paris");
 		stamm.setPlz("75005");
 		stamm.setStrasseNr("1 rue Pierre et Marie Curie" );
+		
+		
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 
@@ -189,6 +195,53 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(0L), address.getTerminationflag());
 		assertEquals(Long.valueOf(1L), address.getValidationState());
 		assertEquals(idMapping.getMigrationUser(), address.getUserid());
+	}
+	
+	
+	@Test
+	void assignNewBank() {
+		final Collection<Object> results = new ArrayList<>();
+		partnerRule.assignNewBank(idMapping, sepaBankVerbindung, CONTRACT_DATE, results);
+		
+		final Bank bank = (Bank) DataAccessUtils.requiredSingleResult(results);
+		
+		
+	
+		assertEquals(PartnerRule.BLANK, bank.getAccountHolder());
+		assertEquals(PartnerRule.BLANK, bank.getAccountNumber());
+		assertNull(bank.getAccountType());
+		assertEquals(PartnerRule.BLANK, bank.getBankCode());
+		assertEquals(PartnerRule.BLANK, bank.getBankDistrict());
+		assertEquals(sepaBankVerbindung.getNameBank(), bank.getBankName());
+		assertEquals("1", bank.getBankNr());
+		assertEquals(Long.valueOf(1L), bank.getBankState());
+		assertEquals(sepaBankVerbindung.getBic(), bank.getBic());
+		assertEquals(PartnerRule.BLANK, bank.getCountry());
+		
+		assertEquals(PartnerRule.BLANK, bank.getCreditCardCompany());
+		assertNull(bank.getCreditCardExpiry());
+		assertEquals(PartnerRule.BLANK, bank.getCreditCardNumber());
+		assertNull(bank.getCreditCardSecurityCode());
+		assertEquals(PartnerRule.BLANK, bank.getCreditCardType());
+		assertNull(bank.getCurrencyOfAccount());
+		assertEquals("0", bank.getDatastate());
+		assertEquals(PartnerRule.BLANK, bank.getDistrictBankCode());
+		assertEquals(CONTRACT_DATE, bank.getDop());
+		assertNull(bank.getDor());
+		assertEquals(Long.valueOf(1), bank.getHistnr());
+		assertEquals(sepaBankVerbindung.getIban(), bank.getIban());
+		assertEquals(CONTRACT_DATE, bank.getInd());
+		assertEquals(idMapping.getMandator(), bank.getMandator());
+		assertEquals(Long.valueOf(0), bank.getOutdated());
+		assertEquals(idMapping.getPartnerNr(), bank.getPartnersNr());
+		assertNull(bank.getPostcode());
+		assertEquals(idMapping.getProcessNumber(), bank.getProcessnr());
+		assertNull(bank.getReasonForChange());
+		assertNull(bank.getRprocessnr());
+		assertEquals(Long.valueOf(0l), bank.getTerminationflag());
+		assertNull(bank.getTown());
+		assertEquals(idMapping.getMigrationUser(), bank.getUserid());
+		results.add(bank);
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.Address;
+import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
@@ -58,7 +59,7 @@ public class PartnerRule {
 		
 		partnerCore.setDateOfBirth(conversionService.convert( stamm.getGebDatum(), Date.class));
 		partnerCore.setDateOfDeath(conversionService.convert( stamm.getSterbedatum(), Date.class));
-		partnerCore.setDefaultAddress(defaultBank(sepaBankVerbindung));
+		partnerCore.setDefaultAddress("1");
 		partnerCore.setDefaultBank(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultCommunication(defaultCommunication(stamm));
 		partnerCore.setDenomination(null);
@@ -212,5 +213,55 @@ public class PartnerRule {
 	}
 
 	
+	@Action(order = 3)
+	public final void assignNewBank(
+			@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+			@Fact(PartnerFacts.SEPA_BANK) SepaBankVerbindung sepaBankVerbindung,
+			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+		
+		
+		if( ! defaultBank(sepaBankVerbindung).equals("1") ) {
+			return;
+		}
+		final Bank bank = new Bank() ;
+		bank.setAccountHolder(BLANK);
+		bank.setAccountNumber(BLANK);
+		bank.setAccountType(null);
+		bank.setBankCode(BLANK);
+		bank.setBankDistrict(BLANK);
+		bank.setBankName(notNull(sepaBankVerbindung.getNameBank()));
+		bank.setBankNr("1");
+		bank.setBankState(1L);
+		bank.setBic(notNull(sepaBankVerbindung.getBic()));
+		bank.setCountry(BLANK);
+		bank.setCreditCardCompany(BLANK);
+		bank.setCreditCardExpiry(null);
+		bank.setCreditCardNumber(BLANK);
+		bank.setCreditCardSecurityCode(null);
+		bank.setCreditCardType(BLANK);
+		bank.setCurrencyOfAccount(null);
+		bank.setDatastate("0");
+		bank.setDistrictBankCode(BLANK);
+		bank.setDop(contractDate);
+		bank.setDor(null);
+		bank.setHistnr(1L);
+		bank.setIban(sepaBankVerbindung.getIban());
+		bank.setInd(contractDate);
+		bank.setMandator(idMapping.getMandator());
+		bank.setOutdated(0L);
+		bank.setPartnersNr(idMapping.getPartnerNr());
+		bank.setPostcode(null);
+		bank.setProcessnr(idMapping.getProcessNumber());
+		bank.setReasonForChange(null);
+		bank.setRprocessnr(null);
+		bank.setStreetAndNo(null);
+		bank.setTerminationflag(0L);
+		bank.setTown(null);
+		bank.setUserid(idMapping.getMigrationUser());
+		results.add(bank);
+	}
 
+	
+	
 }
