@@ -25,6 +25,7 @@ import de.msg.jbit7.migration.itnrw.partner.Bank;
 import de.msg.jbit7.migration.itnrw.partner.Communication;
 import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
@@ -300,6 +301,35 @@ class PartnerRuleTest {
 		assertEquals(idMapping.getMigrationUser(), resultEmailPrivate.getUserid());
 		assertEquals(Long.valueOf(0), resultEmailPrivate.getOutdated());
 		assertEquals(Long.valueOf(0), resultEmailPrivate.getUsageAgreement());
+	}
+	
+	
+	@Test
+	void  assignNewPartnersRole() {
+		final List<Object> results = new ArrayList<>();
+		partnerRule.assignNewPartnersRole(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
+		
+		final PartnersRole partnersRole = (PartnersRole) results.get(0);
+		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
+		assertEquals("0", partnersRole.getDatastate());
+		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEquals(Long.valueOf(1), partnersRole.getHistnr());
+		assertNull(partnersRole.getRprocessnr());
+		assertEquals(CONTRACT_DATE, partnersRole.getDop());
+		assertNull(partnersRole.getDor());
+		assertEquals(CONTRACT_DATE, partnersRole.getInd());
+		assertEquals(Long.valueOf(0), partnersRole.getTerminationflag());
+		assertEquals("PH", partnersRole.getRole());
+		assertEquals(Long.valueOf(1L), partnersRole.getOrderNrRole());
+		assertEquals("" + idMapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEquals("1", partnersRole.getOrderNrLeftSide());
+		assertEquals(idMapping.getPartnerNr(), partnersRole.getRightSide());
+		assertEquals("1", partnersRole.getAddressNr());
+		assertEquals("1", partnersRole.getBankNr());
+		assertEquals(idMapping.getPartnerNr(), "" +partnersRole.getCommunicationRoleKey());
+		assertEquals("BB" + idMapping.getContractNumber() , partnersRole.getExternKey());
+		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
+		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());
 	}
 
 }

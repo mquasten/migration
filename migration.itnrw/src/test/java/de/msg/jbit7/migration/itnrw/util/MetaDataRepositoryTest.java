@@ -151,4 +151,18 @@ class MetaDataRepositoryTest {
 	}
 
 	
+	@Test
+	@Disabled
+	final void partnersRole() throws SQLException {
+		System.out.println(metaDataRepositoryHealthFactory.generateAnemicObject("PARTNERS_ROLE"));
+	}
+	
+	@Test
+	@Disabled
+	final void insertPartnersRole() {
+		System.out.println(metaDataRepositoryHealthFactory.insertFor("PARTNERS_ROLE"));
+	}
+
+
+	
 }

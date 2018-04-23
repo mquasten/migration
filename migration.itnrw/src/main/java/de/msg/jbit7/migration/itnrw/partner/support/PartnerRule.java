@@ -22,6 +22,7 @@ import de.msg.jbit7.migration.itnrw.partner.Communication;
 import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
@@ -331,5 +332,38 @@ public class PartnerRule {
 		return emailPrivate;
 	}		
 	
-	
+	@Action(order = 5)
+	public final void assignNewPartnersRole(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+	@Fact(PartnerFacts.STAMM) StammImpl stamm,
+	@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
+	@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+	@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+		
+		final String bankNr = sepaBankVerbindungen.size() > 0 ?"1" : null ;
+		final Long communicationRoleKey  = StringUtils.hasText(stamm.getEmailDienst())|StringUtils.hasText(stamm.getEmailPrivat()) ? Long.valueOf(idMapping.getPartnerNr()): null;
+		
+		final PartnersRole partnersRole = new PartnersRole();
+		partnersRole.setMandator(idMapping.getMandator());
+		partnersRole.setDatastate("0");
+		partnersRole.setProcessnr(idMapping.getProcessNumber());
+		partnersRole.setHistnr(1L);
+		partnersRole.setRprocessnr(null);
+		partnersRole.setDop(contractDate);
+		partnersRole.setDor(null);
+		partnersRole.setInd(contractDate);
+		partnersRole.setTerminationflag(0L);
+		partnersRole.setRole("PH");
+		partnersRole.setOrderNrRole(1L);
+		partnersRole.setLeftSide(""+idMapping.getContractNumber());
+		partnersRole.setOrderNrLeftSide("1");
+		partnersRole.setRightSide(idMapping.getPartnerNr());
+		partnersRole.setAddressNr("1");
+		partnersRole.setBankNr(bankNr);
+		partnersRole.setCommunicationRoleKey(communicationRoleKey);
+		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
+		partnersRole.setRoleState(1L);
+		partnersRole.setRiskCarrier(1L);
+		results.add(partnersRole);
+	}
+		
 }
