@@ -309,7 +309,35 @@ class PartnerRuleTest {
 		final List<Object> results = new ArrayList<>();
 		partnerRule.assignNewPartnersRole(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
 		
-		final PartnersRole partnersRole = (PartnersRole) results.get(0);
+		final PartnersRole partnersRolePH = (PartnersRole) results.get(0);
+		assertPartnerRolePH(partnersRolePH);
+		
+		final PartnersRole partnersRoleIp = (PartnersRole) results.get(1);
+		
+		assertEquals(idMapping.getMandator(), partnersRoleIp.getMandator());
+		assertEquals("0", partnersRoleIp.getDatastate());
+		assertEquals(idMapping.getProcessNumber(),  partnersRoleIp.getProcessnr());
+		assertEquals(Long.valueOf(1), partnersRoleIp.getHistnr());
+		assertNull(partnersRoleIp.getRprocessnr());
+		assertEquals(CONTRACT_DATE, partnersRoleIp.getDop());
+		assertNull(partnersRoleIp.getDor());
+		assertEquals(CONTRACT_DATE, partnersRoleIp.getInd());
+		assertEquals(Long.valueOf(0), partnersRoleIp.getTerminationflag());
+		assertEquals("IP", partnersRoleIp.getRole());
+		assertEquals(Long.valueOf(1L), partnersRoleIp.getOrderNrRole());
+		assertEquals("" + idMapping.getContractNumber(), partnersRoleIp.getLeftSide());
+		assertEquals("1", partnersRoleIp.getOrderNrLeftSide());
+		assertEquals(idMapping.getPartnerNr(), partnersRoleIp.getRightSide());
+		assertNull(partnersRoleIp.getAddressNr());
+		assertNull(partnersRoleIp.getBankNr());
+		
+		assertNull(partnersRoleIp.getCommunicationRoleKey());
+		assertEquals("BB" + idMapping.getContractNumber() , partnersRoleIp.getExternKey());
+		assertEquals(Long.valueOf(1), partnersRoleIp.getRoleState());
+		assertEquals(Long.valueOf(1), partnersRoleIp.getRiskCarrier());
+	}
+
+	private void assertPartnerRolePH(final PartnersRole partnersRole) {
 		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
 		assertEquals("0", partnersRole.getDatastate());
 		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
@@ -327,6 +355,7 @@ class PartnerRuleTest {
 		assertEquals("1", partnersRole.getAddressNr());
 		assertEquals("1", partnersRole.getBankNr());
 		assertEquals(idMapping.getPartnerNr(), "" +partnersRole.getCommunicationRoleKey());
+		
 		assertEquals("BB" + idMapping.getContractNumber() , partnersRole.getExternKey());
 		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
 		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());

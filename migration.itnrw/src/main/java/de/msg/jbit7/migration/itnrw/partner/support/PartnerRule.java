@@ -342,6 +342,25 @@ public class PartnerRule {
 		final String bankNr = sepaBankVerbindungen.size() > 0 ?"1" : null ;
 		final Long communicationRoleKey  = StringUtils.hasText(stamm.getEmailDienst())|StringUtils.hasText(stamm.getEmailPrivat()) ? Long.valueOf(idMapping.getPartnerNr()): null;
 		
+		final PartnersRole partnersRolePH = newPartnerRolePH(idMapping, contractDate);
+		partnersRolePH.setAddressNr("1");
+		partnersRolePH.setBankNr(bankNr);
+		partnersRolePH.setCommunicationRoleKey(communicationRoleKey);
+		partnersRolePH.setRole("PH");
+		
+		
+		final PartnersRole partnersRoleIp = newPartnerRolePH(idMapping, contractDate);
+		partnersRoleIp.setAddressNr(null);
+		partnersRoleIp.setBankNr(null);
+		partnersRoleIp.setCommunicationRoleKey(null);
+		partnersRoleIp.setRole("IP");
+		results.add(partnersRolePH);
+		results.add(partnersRoleIp);
+		
+		
+	}
+
+	private PartnersRole newPartnerRolePH(IdMapping idMapping, final Date contractDate) {
 		final PartnersRole partnersRole = new PartnersRole();
 		partnersRole.setMandator(idMapping.getMandator());
 		partnersRole.setDatastate("0");
@@ -352,18 +371,15 @@ public class PartnerRule {
 		partnersRole.setDor(null);
 		partnersRole.setInd(contractDate);
 		partnersRole.setTerminationflag(0L);
-		partnersRole.setRole("PH");
 		partnersRole.setOrderNrRole(1L);
 		partnersRole.setLeftSide(""+idMapping.getContractNumber());
 		partnersRole.setOrderNrLeftSide("1");
 		partnersRole.setRightSide(idMapping.getPartnerNr());
-		partnersRole.setAddressNr("1");
-		partnersRole.setBankNr(bankNr);
-		partnersRole.setCommunicationRoleKey(communicationRoleKey);
+		
 		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
 		partnersRole.setRoleState(1L);
 		partnersRole.setRiskCarrier(1L);
-		results.add(partnersRole);
+		return partnersRole;
 	}
 		
 }

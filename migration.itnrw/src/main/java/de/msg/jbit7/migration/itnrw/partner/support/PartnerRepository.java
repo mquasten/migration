@@ -16,6 +16,7 @@ import de.msg.jbit7.migration.itnrw.partner.Communication;
 import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.util.BeanUtil;
 
 @Repository
@@ -109,4 +110,9 @@ public class PartnerRepository {
 		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(CommunicationRole.class));
 	}
 
+	public final List<PartnersRole> findPartnersRoles(final long mandator) {
+		final String sql = String.format("SELECT * from PARTNERS_ROLE where mandator=%s", mandator);
+		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(PartnersRole.class));
+		
+	}
 }

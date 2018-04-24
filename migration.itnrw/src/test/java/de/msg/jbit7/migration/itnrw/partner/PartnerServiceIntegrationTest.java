@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,6 +71,34 @@ class PartnerServiceIntegrationTest {
 		
 		final List<CommunicationRole> communicationRoles  = partnerRepository.findCommunicationRoles(MANDATOR);
 		assertCommunicationRole(mappingByPartnerNr, communicationRoles);
+		
+		final List<PartnersRole> partnersRole =  partnerRepository.findPartnersRoles(MANDATOR);
+		
+		final Collection<PartnersRole> rolesPH = partnersRole.stream().filter(role -> role.getRole().equalsIgnoreCase("PH")).collect(Collectors.toList());
+		final Map<String,PartnersRole> rolesIP = partnersRole.stream().filter(role -> role.getRole().equalsIgnoreCase("IP")).collect(Collectors.toMap(role -> role.getRightSide(), role -> role ));
+		
+		assertEquals(idMapping.size(), rolesPH.size());
+		assertEquals(idMapping.size(), rolesIP.size());
+		
+		assertPartnerRole(mappingByPartnerNr, rolesPH, rolesIP);
+	}
+
+
+	private void assertPartnerRole(final Map<String, IdMapping> mappingByPartnerNr,
+			final Collection<PartnersRole> rolesPH, final Map<String, PartnersRole> rolesIP) {
+		rolesPH.forEach(role -> {
+			final IdMapping mapping = mappingByPartnerNr.get( role.getRightSide());
+			assertNotNull(mapping);
+			assertEquals(mapping.getProcessNumber(), role.getProcessnr());
+			assertEquals(mapping.getPartnerNr(), role.getRightSide());
+			assertEquals("" + mapping.getContractNumber(), role.getLeftSide());
+			final PartnersRole ip = rolesIP.get(mapping.getPartnerNr());
+			assertNotNull(ip);
+			assertEquals(mapping.getPartnerNr(), ip.getRightSide());
+			assertEquals(mapping.getProcessNumber(), ip.getProcessnr());
+			assertEquals("" + mapping.getContractNumber(), ip.getLeftSide());
+			//assertNotNull(mapping);
+		});
 	}
 
 
