@@ -9,10 +9,17 @@ import org.springframework.core.convert.ConversionService;
 class PartnerRulesConfiguration {
 
 	@Bean("partnerRules")
-	Rules rulesIdGeneration(ConversionService conversionService) {
+	Rules partnerRules(ConversionService conversionService) {
 		final Rules rules = new Rules();
 		rules.register(new PartnerContractRule());
 		rules.register(new PartnerRule(conversionService));
+		return rules;
+	}
+	
+	@Bean("partnerFamilyRules")
+	Rules partnerFamilyRules(final ConversionService conversionService) {
+		final Rules rules = new Rules();
+		rules.register(new MarriagePartnerRule(conversionService));
 		return rules;
 	}
 	

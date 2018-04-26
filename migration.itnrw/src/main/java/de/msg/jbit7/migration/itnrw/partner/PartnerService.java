@@ -97,7 +97,7 @@ abstract class PartnerService {
 		try {
 			partnerRepository.persist(object);
 		} catch (final Exception exception) {
-			LOGGER.error("Error saving contract: " + beihilfeNr, exception);
+			LOGGER.error("Error saving entity: " + beihilfeNr, exception);
 		}
 	}
 	

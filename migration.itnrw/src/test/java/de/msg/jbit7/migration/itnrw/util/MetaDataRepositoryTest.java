@@ -165,4 +165,11 @@ class MetaDataRepositoryTest {
 
 
 	
+	@Test
+	//@Disabled
+	final void ehepartner() throws Exception {
+		System.out.println(metaDataRepositoryBeihilfe.generateAnemicObject("EHEGATTE"));
+	
+	}
+	
 }
