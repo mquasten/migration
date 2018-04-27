@@ -20,6 +20,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
@@ -49,6 +50,7 @@ class ChildrenPartnerRuleTest {
 		idMapping.setProcessNumber(67890L);
 		idMapping.setChildrenPartnerNr(new String[] { "8490" });
 		idMapping.setMigrationUser("MigUser");
+		idMapping.setMarriagePartnerNr("73111");
 		kindInfo.setVorname("James Clerk");
 		stamm.setName("Maxwell");
 		kindInfo.setGebDatum(18310613L);
@@ -142,5 +144,35 @@ class ChildrenPartnerRuleTest {
 		assertNull(partnerCore.getNamePrefix());
 		assertEquals(Long.valueOf(0), partnerCore.getPepFlag());
 		assertEquals(Long.valueOf(0), partnerCore.getEuSanctionFlag());
+	}
+	
+	@Test
+	void assignNewPartnersRole() {
+		final Collection<Object> results = new ArrayList<>();
+		childrenPartnerRule.assignNewPartnersRole(idMapping, children,contractDate, results);
+		
+		assertEquals(1, results.size());
+		final PartnersRole partnersRole = (PartnersRole) results.iterator().next();
+		
+		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
+		assertEquals("0", partnersRole.getDatastate());
+		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEquals(Long.valueOf(1), partnersRole.getHistnr());
+		assertNull(partnersRole.getRprocessnr());
+		assertEquals(contractDate, partnersRole.getDop());
+		assertNull(partnersRole.getDor());
+		assertEquals(contractDate, partnersRole.getInd());
+		assertEquals(Long.valueOf(0l), partnersRole.getTerminationflag());
+		assertEquals("IP", partnersRole.getRole());
+		assertEquals(Long.valueOf(1), partnersRole.getOrderNrRole());
+		assertEquals(idMapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEquals("3", partnersRole.getOrderNrLeftSide());
+		assertEquals(idMapping.getChildrenPartnerNr()[0], partnersRole.getRightSide());
+		assertNull(partnersRole.getAddressNr());
+		assertNull(partnersRole.getBankNr());
+		assertNull(partnersRole.getCommunicationRoleKey());
+		assertEquals("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEquals(Long.valueOf(1L), partnersRole.getRoleState());
+		assertEquals(Long.valueOf(1L), partnersRole.getRiskCarrier());
 	}
 }

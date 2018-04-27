@@ -52,7 +52,7 @@ public class ChildrenPartnerRule {
 		
 	}
 	
-	//@Action(order = 2)
+	@Action(order = 2)
 	public final void assignNewPartnersRole(@Fact(PartnerFamilyFacts.ID_MAPPING) IdMapping idMapping,
 		
 			@Fact(PartnerFamilyFacts.CHILDREN) List<KindInfo> kindInfos ,
@@ -68,7 +68,16 @@ public class ChildrenPartnerRule {
 
 	private PartnersRole assignChildRole(final IdMapping idMapping, final KindInfo kindInfo, final Date contractDate, final int i) {
 		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
-		
+		partnersRole.setMandator(idMapping.getMandator());
+		partnersRole.setProcessnr(idMapping.getProcessNumber());
+		partnersRole.setDop(contractDate);
+		partnersRole.setInd(contractDate);
+		partnersRole.setRole("IP");
+		partnersRole.setLeftSide(conversionService.convert(idMapping.getContractNumber(), String.class));
+		partnersRole.setOrderNrLeftSide(conversionService.convert(StringUtils.hasText(idMapping.getMarriagePartnerNr()) ? 3+i: 2+i, String.class));
+		Assert.isTrue(idMapping.getChildrenNr().length > i,String.format("Child %s with index doesn't exist.", i));
+		partnersRole.setRightSide(idMapping.getChildrenPartnerNr()[i]);
+		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
 		return partnersRole;
 	}
 

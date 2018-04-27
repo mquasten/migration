@@ -71,6 +71,13 @@ public class PartnerFamilyServiceIntegrationTest {
 				assertNotNull(kindInfo);
 				assertEquals(mapping.getBeihilfenr(), kindInfo.getBeihilfenr());
 				assertEquals(kindNr, kindInfo.getLfdKind());
+				
+				final PartnersRole partnersRole = partnersRoles.get(partnerNumber);
+				assertNotNull(partnersRole);
+				assertEquals(mapping.getProcessNumber(), partnersRole.getProcessnr());
+				
+				final Integer expectedOrderNr =StringUtils.hasText(mapping.getMarriagePartnerNr()) ? 3+index :2+index;
+				assertEquals(expectedOrderNr,  Integer.valueOf(partnersRole.getOrderNrLeftSide()));
 				counters[0]++;
 			}));
 		assertEquals(kindInfos.size(), counters[0]);
@@ -79,7 +86,6 @@ public class PartnerFamilyServiceIntegrationTest {
 
 	private void assertPartnerRoleEhegatte(final Collection<IdMapping> idMappingMarriageWithPartner,
 			final Map<String, PartnersRole> partnersRoles) {
-		assertEquals(idMappingMarriageWithPartner.size(), partnersRoles.size());	
 		idMappingMarriageWithPartner.forEach(mapping -> {
 			final PartnersRole role = partnersRoles.get(mapping.getMarriagePartnerNr());
 			assertNotNull(role);
