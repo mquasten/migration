@@ -42,7 +42,8 @@ class PartnerRuleTest {
 	private final static Date CONTRACT_DATE = date(1898, 12, 26);
 	
 	private final DefaultConversionService conversionService =  new DefaultConversionService();
-	private final PartnerRule partnerRule = new PartnerRule(conversionService);
+	private final PartnerFactory partnerFactory = new PartnerFactory();
+	private final PartnerRule partnerRule = new PartnerRule(partnerFactory,conversionService);
 	@BeforeEach
 	void setup() throws IntrospectionException {
 		idMapping.setBeihilfenr(19680528L);

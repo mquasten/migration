@@ -79,7 +79,7 @@ public class PartnerRepository {
 
 	
 
-	public final List<PartnerCore> findPartner(final long mandator) {
+	public final List<PartnerCore> findPartners(final long mandator) {
 		final String sql = String.format("SELECT * from PARTNERS_CORE where mandator=%s", mandator);
 		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(PartnerCore.class));
 	}

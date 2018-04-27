@@ -9,19 +9,23 @@ import org.springframework.core.convert.ConversionService;
 class PartnerRulesConfiguration {
 
 	@Bean("partnerRules")
-	Rules partnerRules(ConversionService conversionService) {
+	Rules partnerRules(final PartnerFactory partnerFactory, final ConversionService conversionService) {
 		final Rules rules = new Rules();
 		rules.register(new PartnerContractRule());
-		rules.register(new PartnerRule(conversionService));
+		rules.register(new PartnerRule(partnerFactory, conversionService));
 		return rules;
 	}
 	
 	@Bean("partnerFamilyRules")
-	Rules partnerFamilyRules(final ConversionService conversionService) {
+	Rules partnerFamilyRules(final PartnerFactory partnerFactory, final ConversionService conversionService) {
 		final Rules rules = new Rules();
-		rules.register(new MarriagePartnerRule(conversionService));
+		rules.register(new MarriagePartnerRule(partnerFactory, conversionService));
 		return rules;
 	}
 	
+	@Bean
+	PartnerFactory partnerFactory  () {
+		return new PartnerFactory();
+	}
 	
 }

@@ -32,11 +32,13 @@ public class PartnerRule {
 	
 	final static Logger LOGGER = LoggerFactory.getLogger(PartnerRule.class);
 	private final ConversionService conversionService;
+	private final PartnerFactory partnerFactory;
 
 	static final String BLANK = " ";
 	static final String UNDEFINED = "NOT_DEFINED";
-	public PartnerRule(ConversionService conversionService) {
+	public PartnerRule(PartnerFactory partnerFactory, final ConversionService conversionService) {
 		this.conversionService = conversionService;
+		this.partnerFactory=partnerFactory;
 	}
 	
 	@Condition
@@ -53,86 +55,53 @@ public class PartnerRule {
 
 		final String toDo = "?";
 
-		PartnerCore partnerCore = new PartnerCore();
-		partnerCore.setActivityState(UNDEFINED);
-		partnerCore.setAdvertising(0L);
-		partnerCore.setBasicType(0L);
-
+		PartnerCore partnerCore =  partnerFactory.newPartnerCore();
+		
 		partnerCore.setBirthName(notNull(stamm.getGeburtsname()));
-		partnerCore.setCancellation(null);
-		partnerCore.setCancellationDate(null);
-		partnerCore.setCciNumber(null);
-		partnerCore.setCitizenNumber(BLANK);
-		partnerCore.setDatastate("0");
+		
 		
 		partnerCore.setDateOfBirth(conversionService.convert( stamm.getGebDatum(), Date.class));
 		partnerCore.setDateOfDeath(conversionService.convert( stamm.getSterbedatum(), Date.class));
 		partnerCore.setDefaultAddress("1");
 		partnerCore.setDefaultBank(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultCommunication(defaultCommunication(stamm));
-		partnerCore.setDenomination(null);
-		partnerCore.setDispatchType(0L);
+	
 		partnerCore.setDop(contractDate);
-		partnerCore.setDor(null);
-		partnerCore.setEmployer(BLANK);
-		partnerCore.setEuSanctionFlag(0L);
-		partnerCore.setExtCustomerNumber(BLANK);
+		
 		partnerCore.setFirstName(stamm.getVorname());
 
 		partnerCore.setFirstNameCan(toDo);
 		partnerCore.setFirstNamePhon(toDo);
-		partnerCore.setFirstSecondaryType(0L);
-		partnerCore.setHealthInsuranceNumber(BLANK);
-		partnerCore.setHistnr(1L);
-		partnerCore.setHonoraryTitle(null);
-		partnerCore.setIdDocumentAuthority(BLANK);
-		partnerCore.setIdDocumentAuthorityCountry(BLANK);
-		partnerCore.setIdDocumentExpiryDate(null);
-		partnerCore.setIdDocumentIssuedDate(null);
-		partnerCore.setIdDocumentNr(BLANK);
-		partnerCore.setIdDocumentType(0L);
+		
 		partnerCore.setInd(contractDate);
-		partnerCore.setLanguageCorrespondence("de");
-		partnerCore.setLegalPerson(1L);
-		partnerCore.setManagement(null);
+		
 		partnerCore.setMandator(idMapping.getMandator());
 		partnerCore.setMaritalStatus(StringUtils.hasText(idMapping.getMarriagePartnerNr()) ? 2L : 1L);
-		partnerCore.setNameAddition(null);
-		partnerCore.setNameAddition2(null);
-		partnerCore.setNameAddition(null);
+		
 		partnerCore.setNamePrefix(stamm.getZusatz1Name());
 		
-		partnerCore.setNationality("DE");
-		partnerCore.setNationality2(null);
-		partnerCore.setNameAddition3(null);
+		
 		partnerCore.setNotice(stamm.getBemerkung());
 		partnerCore.setNumberChildren(
 				idMapping.getChildrenNr() != null ? Long.valueOf(idMapping.getChildrenNr().length) : 0L);
 		partnerCore.setPartnersNr(idMapping.getPartnerNr());
-		partnerCore.setPartnerState(0L);
-		partnerCore.setPepFlag(0L);
-		partnerCore.setPersonnelNr(BLANK);
-		partnerCore.setPlaceOfBirth(BLANK);
+		
 		partnerCore.setProcessnr(idMapping.getProcessNumber());
-		partnerCore.setProfession(0L);
-		partnerCore.setReasonForChange(null);
-		partnerCore.setRprocessnr(null);
+		
 		partnerCore.setSalutation(salutationAndSex(stamm));
 		partnerCore.setSecondName(stamm.getName());
 		partnerCore.setSecondNameCan(toDo);
 		partnerCore.setSecondNamePhon(toDo);
-		partnerCore.setSecondSecondaryType(0L);
-		partnerCore.setSector(null);
+		
+		
 		partnerCore.setSex(salutationAndSex(stamm));
 		partnerCore.setSocialInsuranceNumber(BLANK);
 		partnerCore.setSocialInsuranceNumberSp(BLANK);
-		partnerCore.setTenant(0L);
-		partnerCore.setTerminationflag(0L);
+		
 		partnerCore.setTitle(notNull(stamm.getTitel()));
-		partnerCore.setTitleOfNobility(null);
+		
 		partnerCore.setUserid(idMapping.getMigrationUser());
-		partnerCore.setVipFlag(0L);
-
+		
 		results.add(partnerCore);
 	}
 

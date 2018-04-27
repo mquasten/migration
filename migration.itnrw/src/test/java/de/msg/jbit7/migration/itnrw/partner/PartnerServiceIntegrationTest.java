@@ -47,7 +47,7 @@ class PartnerServiceIntegrationTest {
 		assertContracts(idMapping, contracts);
 		assertEquals(idMapping.size(), contracts.size());
 		
-		final List<PartnerCore>  partners = partnerRepository.findPartner(MANDATOR);
+		final List<PartnerCore>  partners = partnerRepository.findPartners(MANDATOR);
 		
 		final Map<String, IdMapping> mappingByPartnerNr = idMapping.values().stream().collect(Collectors.toMap( mapping -> mapping.getPartnerNr(), mapping -> mapping));
 		
