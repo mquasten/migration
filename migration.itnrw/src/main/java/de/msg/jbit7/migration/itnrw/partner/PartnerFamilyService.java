@@ -3,6 +3,7 @@ package de.msg.jbit7.migration.itnrw.partner;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
+import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
@@ -54,13 +56,16 @@ abstract class PartnerFamilyService {
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
 		
 		final Map<Long, Ehegatte> marrigePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(mp -> mp.getBeihilfenr(), mp -> mp));
+		
 		idMappings.forEach(mapping -> {
 			Date contractDate = contractDates.get(mapping.getBeihilfenr());
 			if( contractDate == null) {
 				contractDate=defaultDate;
 				LOGGER.warn("BeihilfeNr: " + mapping.getBeihilfenr() + " no contract begin date found, 01.01.1900 used.");
 			}
-			StammImpl stamm = stammRepository.findStamm(mapping.getBeihilfenr());
+			final StammImpl stamm = stammRepository.findStamm(mapping.getBeihilfenr());
+			final Collection<KindInfo> children = stammRepository.findChildren(mapping.getBeihilfenr(), mapping.getChildrenNr());
+
 			final List<Object> results = new ArrayList<>();
 			final Facts facts = new Facts();
 			facts.put(PartnerFamilyFacts.ID_MAPPING, mapping);
@@ -68,6 +73,7 @@ abstract class PartnerFamilyService {
 			facts.put(PartnerFamilyFacts.STAMM, stamm);
 			facts.put(PartnerFamilyFacts.CONTRACT_DATE, contractDate);
 			facts.put(PartnerFamilyFacts.MARRIAGE_PARTNER, marrigePartners.get(mapping.getBeihilfenr()));
+			facts.put(PartnerFamilyFacts.CHILDREN, children);
 			
 			final DefaultRulesEngine rulesEngine = rulesEngine();
 			final CatchExceptionRuleListener ruleListener = ruleListener();

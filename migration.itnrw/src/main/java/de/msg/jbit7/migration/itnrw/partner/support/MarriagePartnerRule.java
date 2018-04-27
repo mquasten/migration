@@ -40,8 +40,13 @@ public class MarriagePartnerRule {
 			@Fact(PartnerFamilyFacts.CONTRACT_DATE) Date contractDate ,
 			@Fact(PartnerFamilyFacts.RESULTS) Collection<Object> results) {
 	
-		final PartnerCore partnerCore = newPartnerCoreIP(idMapping, stamm, ehegatte, contractDate);
+		results.add(newPartnerCoreIP(idMapping, stamm, ehegatte, contractDate));
+		results.add(newPartnerRole(idMapping, contractDate));
 		
+		
+	}
+
+	private PartnersRole newPartnerRole(IdMapping idMapping, Date contractDate) {
 		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
 		
 		partnersRole.setMandator(idMapping.getMandator());
@@ -53,10 +58,7 @@ public class MarriagePartnerRule {
 		partnersRole.setOrderNrLeftSide("2");
 		partnersRole.setRightSide(idMapping.getMarriagePartnerNr());
 		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
-		results.add(partnerCore);
-		results.add(partnersRole);
-		
-		
+		return partnersRole;
 	}
 
 	private PartnerCore newPartnerCoreIP(IdMapping idMapping, StammImpl stamm, Ehegatte ehegatte, Date contractDate) {

@@ -7,6 +7,7 @@ public interface  PartnerFamilyFacts {
 		final static String RESULTS = "results";
 		final static String MARRIAGE_PARTNER = "marriagePartner";
 		final static String STAMM = "stamm";
+		final static String CHILDREN = "children";
 
 
 }

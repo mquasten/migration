@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdGenerationService;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
+import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
 @ExtendWith(value = { SpringExtension.class })
@@ -54,6 +56,24 @@ public class PartnerFamilyServiceIntegrationTest {
 		
 		assertPartnerRoleEhegatte(idMappingMarriageWithPartner, partnersRoles);	
 		
+		
+		final Map<String,KindInfo> kindInfos = stammRepository.findAllChildren().stream().collect(Collectors.toMap(kindInfo -> kindInfo.getBeihilfenr() + "-" + kindInfo.getLfdKind(), kindInfo -> kindInfo));
+		final Collection<IdMapping> idMappingWithChildren = idMappings.stream().filter(mapping -> mapping.getChildrenNr().length > 0).collect(Collectors.toList());
+		
+		final int counters[] = {0};
+		idMappingWithChildren.forEach(mapping ->IntStream.range(0, mapping.getChildrenNr().length).forEach(index -> {
+				final String partnerNumber = mapping.getChildrenPartnerNr()[index];
+				final PartnerCore partnerCore = partners.get(partnerNumber);
+				assertNotNull(partnerCore);
+				assertEquals(mapping.getProcessNumber(), partnerCore.getProcessnr());
+				final Long kindNr = mapping.getChildrenNr()[index];
+				final KindInfo kindInfo = kindInfos.get(mapping.getBeihilfenr() + "-" + kindNr);
+				assertNotNull(kindInfo);
+				assertEquals(mapping.getBeihilfenr(), kindInfo.getBeihilfenr());
+				assertEquals(kindNr, kindInfo.getLfdKind());
+				counters[0]++;
+			}));
+		assertEquals(kindInfos.size(), counters[0]);
 		
 	}
 

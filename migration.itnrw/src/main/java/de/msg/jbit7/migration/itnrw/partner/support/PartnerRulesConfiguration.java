@@ -20,6 +20,7 @@ class PartnerRulesConfiguration {
 	Rules partnerFamilyRules(final PartnerFactory partnerFactory, final ConversionService conversionService) {
 		final Rules rules = new Rules();
 		rules.register(new MarriagePartnerRule(partnerFactory, conversionService));
+		rules.register(new ChildrenPartnerRule(conversionService, partnerFactory));
 		return rules;
 	}
 	
