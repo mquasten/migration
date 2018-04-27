@@ -44,16 +44,32 @@ public class PartnerFamilyServiceIntegrationTest {
 		partnerRepository.cleanMandator(MANDATOR);
 		partnerFamilyService.createPartners(MANDATOR);
 		
-		Map<String,PartnerCore> partners = partnerRepository.findPartners(MANDATOR).stream().collect(Collectors.toMap(p -> p.getPartnersNr(), p -> p));
+		final Map<String,PartnerCore> partners = partnerRepository.findPartners(MANDATOR).stream().collect(Collectors.toMap(p -> p.getPartnersNr(), p -> p));
 		final Collection<IdMapping> idMappings = idGenerationService.findAll().values();
+		final Collection<IdMapping> idMappingMarriageWithPartner=idMappings.stream().filter(mapping -> StringUtils.hasText(mapping.getMarriagePartnerNr())).collect(Collectors.toList());
+		assertEhegatten(partners, idMappingMarriageWithPartner);
 		
-		assertEhegatten(partners, idMappings);
+		
+		final Map<String, PartnersRole> partnersRoles = partnerRepository.findPartnersRoles(MANDATOR).stream().collect(Collectors.toMap(role -> role.getRightSide(), role -> role));
+		
+		assertPartnerRoleEhegatte(idMappingMarriageWithPartner, partnersRoles);	
 		
 		
 	}
 
-	private void assertEhegatten(Map<String, PartnerCore> partners, final Collection<IdMapping> idMappings) {
-		final Collection<IdMapping> idMappingMarriageWithPartner=idMappings.stream().filter(mapping -> StringUtils.hasText(mapping.getMarriagePartnerNr())).collect(Collectors.toList());
+	private void assertPartnerRoleEhegatte(final Collection<IdMapping> idMappingMarriageWithPartner,
+			final Map<String, PartnersRole> partnersRoles) {
+		assertEquals(idMappingMarriageWithPartner.size(), partnersRoles.size());	
+		idMappingMarriageWithPartner.forEach(mapping -> {
+			final PartnersRole role = partnersRoles.get(mapping.getMarriagePartnerNr());
+			assertNotNull(role);
+			assertEquals(""+ mapping.getContractNumber(),role.getLeftSide());
+			assertEquals(mapping.getProcessNumber(), role.getProcessnr());
+		});
+	}
+
+	private void assertEhegatten(Map<String, PartnerCore> partners, final Collection<IdMapping> idMappingMarriageWithPartner) {
+	
 		final Map<Long,Ehegatte> ehegatten = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(ehegatte -> ehegatte.getBeihilfenr(), ehegatte -> ehegatte));
 		assertEquals(ehegatten.size(), idMappingMarriageWithPartner.size());
 		idMappingMarriageWithPartner.forEach(mapping -> {

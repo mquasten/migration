@@ -29,18 +29,18 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 @Rule(name = "partner", priority = 0)
 public class PartnerRule {
 
-	
 	final static Logger LOGGER = LoggerFactory.getLogger(PartnerRule.class);
 	private final ConversionService conversionService;
 	private final PartnerFactory partnerFactory;
 
 	static final String BLANK = " ";
 	static final String UNDEFINED = "NOT_DEFINED";
+
 	public PartnerRule(PartnerFactory partnerFactory, final ConversionService conversionService) {
 		this.conversionService = conversionService;
-		this.partnerFactory=partnerFactory;
+		this.partnerFactory = partnerFactory;
 	}
-	
+
 	@Condition
 	public boolean evaluate() {
 		return true;
@@ -53,55 +53,45 @@ public class PartnerRule {
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 
-		final String toDo = "?";
+		final PartnerCore partnerCore = partnerFactory.newPartnerCore();
 
-		PartnerCore partnerCore =  partnerFactory.newPartnerCore();
-		
 		partnerCore.setBirthName(notNull(stamm.getGeburtsname()));
-		
-		
-		partnerCore.setDateOfBirth(conversionService.convert( stamm.getGebDatum(), Date.class));
-		partnerCore.setDateOfDeath(conversionService.convert( stamm.getSterbedatum(), Date.class));
+
+		partnerCore.setDateOfBirth(conversionService.convert(stamm.getGebDatum(), Date.class));
+		partnerCore.setDateOfDeath(conversionService.convert(stamm.getSterbedatum(), Date.class));
 		partnerCore.setDefaultAddress("1");
 		partnerCore.setDefaultBank(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultCommunication(defaultCommunication(stamm));
-	
+
 		partnerCore.setDop(contractDate);
-		
+
 		partnerCore.setFirstName(stamm.getVorname());
 
-		partnerCore.setFirstNameCan(toDo);
-		partnerCore.setFirstNamePhon(toDo);
-		
 		partnerCore.setInd(contractDate);
-		
+
 		partnerCore.setMandator(idMapping.getMandator());
 		partnerCore.setMaritalStatus(StringUtils.hasText(idMapping.getMarriagePartnerNr()) ? 2L : 1L);
-		
+
 		partnerCore.setNamePrefix(stamm.getZusatz1Name());
-		
-		
+
 		partnerCore.setNotice(stamm.getBemerkung());
 		partnerCore.setNumberChildren(
 				idMapping.getChildrenNr() != null ? Long.valueOf(idMapping.getChildrenNr().length) : 0L);
 		partnerCore.setPartnersNr(idMapping.getPartnerNr());
-		
+
 		partnerCore.setProcessnr(idMapping.getProcessNumber());
-		
+
 		partnerCore.setSalutation(salutationAndSex(stamm));
 		partnerCore.setSecondName(stamm.getName());
-		partnerCore.setSecondNameCan(toDo);
-		partnerCore.setSecondNamePhon(toDo);
-		
-		
+
 		partnerCore.setSex(salutationAndSex(stamm));
 		partnerCore.setSocialInsuranceNumber(BLANK);
 		partnerCore.setSocialInsuranceNumberSp(BLANK);
-		
+
 		partnerCore.setTitle(notNull(stamm.getTitel()));
-		
+
 		partnerCore.setUserid(idMapping.getMigrationUser());
-		
+
 		results.add(partnerCore);
 	}
 
@@ -143,80 +133,76 @@ public class PartnerRule {
 	}
 
 	private String defaultBank(Collection<SepaBankVerbindung> sepaBankVerbindungen) {
-		return CollectionUtils.isEmpty(sepaBankVerbindungen)?  "0" : "1";
+		return CollectionUtils.isEmpty(sepaBankVerbindungen) ? "0" : "1";
 	}
 
-	
 	@Action(order = 2)
 	public final void assignNewAddress(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
-			@Fact(PartnerFacts.STAMM) StammImpl stamm,
-			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.STAMM) StammImpl stamm, @Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
-			final Address address = new Address();
-			address.setAddressAddition1(BLANK);
-			address.setAddressAddition2(BLANK);
-			address.setAddressNr("1");
-			address.setAddressState(0L);
-			address.setAddressType(null);
-			address.setCity1(stamm.getOrt());
-			address.setCity2(BLANK);
-			address.setCityCan("?");
-			address.setCityPhon("?");
-			address.setCoInformation(BLANK);
-			address.setContact(BLANK);
-			address.setCountry(stamm.getLaenderKennz());
-			address.setDatastate("0");
-			address.setDop(contractDate);
-			address.setHistnr(1L);
-			address.setHouseNumber(BLANK);
-			address.setHouseNumberAddition(null);
-			address.setInd(contractDate);
-			address.setLatitude(null);
-			address.setLongitude(null);
-			address.setMandator(idMapping.getMandator());
-			address.setOutdated(0L);
-			address.setPartnersNr(idMapping.getPartnerNr());
-			address.setPoBox(BLANK);
-			address.setPostcode(stamm.getPlz());
-			address.setProcessnr(idMapping.getProcessNumber());
-			address.setProximateTown(null);
-			address.setReasonForChange(0L);
-			address.setRprocessnr(null);
-			address.setStreet(stamm.getStrasseNr());
-			address.setTerminationflag(0L);
-			address.setUserid(idMapping.getMigrationUser());
-			address.setValidationState(1L);
-			results.add(address);
+		final Address address = new Address();
+		address.setAddressAddition1(BLANK);
+		address.setAddressAddition2(BLANK);
+		address.setAddressNr("1");
+		address.setAddressState(0L);
+		address.setAddressType(null);
+		address.setCity1(stamm.getOrt());
+		address.setCity2(BLANK);
+		address.setCityCan("?");
+		address.setCityPhon("?");
+		address.setCoInformation(BLANK);
+		address.setContact(BLANK);
+		address.setCountry(stamm.getLaenderKennz());
+		address.setDatastate("0");
+		address.setDop(contractDate);
+		address.setHistnr(1L);
+		address.setHouseNumber(BLANK);
+		address.setHouseNumberAddition(null);
+		address.setInd(contractDate);
+		address.setLatitude(null);
+		address.setLongitude(null);
+		address.setMandator(idMapping.getMandator());
+		address.setOutdated(0L);
+		address.setPartnersNr(idMapping.getPartnerNr());
+		address.setPoBox(BLANK);
+		address.setPostcode(stamm.getPlz());
+		address.setProcessnr(idMapping.getProcessNumber());
+		address.setProximateTown(null);
+		address.setReasonForChange(0L);
+		address.setRprocessnr(null);
+		address.setStreet(stamm.getStrasseNr());
+		address.setTerminationflag(0L);
+		address.setUserid(idMapping.getMigrationUser());
+		address.setValidationState(1L);
+		results.add(address);
 	}
 
-	
 	@Action(order = 3)
-	public final void assignNewBank(
-			@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+	public final void assignNewBank(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
-		
-		
-		if(  CollectionUtils.isEmpty(sepaBankVerbindungen) ) {
+
+		if (CollectionUtils.isEmpty(sepaBankVerbindungen)) {
 			LOGGER.warn(String.format("No BankingAccount found for BeihilfeNr:%s", idMapping.getBeihilfenr()));
 			return;
 		}
-		
-		IntStream.range(0, sepaBankVerbindungen.size()).forEach(i -> results.add(toBank(idMapping, contractDate, sepaBankVerbindungen.get(i), i))); 
-		
-	}
-	
 
-	private Bank toBank(IdMapping idMapping, final Date contractDate, final SepaBankVerbindung sepaBankVerbindung, final int i) {
-		final Bank bank = new Bank() ;
+		IntStream.range(0, sepaBankVerbindungen.size())
+				.forEach(i -> results.add(toBank(idMapping, contractDate, sepaBankVerbindungen.get(i), i)));
+
+	}
+
+	private Bank toBank(IdMapping idMapping, final Date contractDate, final SepaBankVerbindung sepaBankVerbindung,
+			final int i) {
+		final Bank bank = new Bank();
 		bank.setAccountHolder(BLANK);
 		bank.setAccountNumber(BLANK);
 		bank.setAccountType(0L);
 		bank.setBankCode(BLANK);
 		bank.setBankDistrict(BLANK);
 		bank.setBankName(notNull(sepaBankVerbindung.getNameBank()));
-		bank.setBankNr( String.valueOf(i +1 ));
+		bank.setBankNr(String.valueOf(i + 1));
 		bank.setBankState(1L);
 		bank.setBic(notNull(sepaBankVerbindung.getBic()));
 		bank.setCountry(BLANK);
@@ -247,39 +233,37 @@ public class PartnerRule {
 		return bank;
 	}
 
-	
 	@Action(order = 4)
 	public final void assignNewCommunication(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
-	@Fact(PartnerFacts.STAMM) StammImpl stamm,
-	@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
-	@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
-		
-		
-			long communicationNumber =1 ; 
-			if( StringUtils.hasText(stamm.getEmailPrivat())) {
-				results.add(newCommunication(idMapping, stamm.getEmailPrivat(), contractDate, communicationNumber, 3));
-				communicationNumber++;
-			}
-			
-			if(StringUtils.hasText(stamm.getEmailDienst()) ) {
-				results.add(newCommunication(idMapping, stamm.getEmailDienst(), contractDate, communicationNumber, 4));
-			}
-			
-			if( communicationNumber > 1) {
-				final CommunicationRole communicationRole = new CommunicationRole();
-				
-				communicationRole.setMandator(idMapping.getMandator());
-				communicationRole.setDatastate("0");
-				communicationRole.setProcessnr(idMapping.getProcessNumber());
-				communicationRole.setCommunicationKey(Long.valueOf(idMapping.getPartnerNr()));
-				communicationRole.setCommunicationRoleKey(Long.valueOf(idMapping.getPartnerNr()));
-				communicationRole.setCommunicationNr("1");
-				results.add(communicationRole);
-			}
-			
+			@Fact(PartnerFacts.STAMM) StammImpl stamm, @Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+
+		long communicationNumber = 1;
+		if (StringUtils.hasText(stamm.getEmailPrivat())) {
+			results.add(newCommunication(idMapping, stamm.getEmailPrivat(), contractDate, communicationNumber, 3));
+			communicationNumber++;
+		}
+
+		if (StringUtils.hasText(stamm.getEmailDienst())) {
+			results.add(newCommunication(idMapping, stamm.getEmailDienst(), contractDate, communicationNumber, 4));
+		}
+
+		if (communicationNumber > 1) {
+			final CommunicationRole communicationRole = new CommunicationRole();
+
+			communicationRole.setMandator(idMapping.getMandator());
+			communicationRole.setDatastate("0");
+			communicationRole.setProcessnr(idMapping.getProcessNumber());
+			communicationRole.setCommunicationKey(Long.valueOf(idMapping.getPartnerNr()));
+			communicationRole.setCommunicationRoleKey(Long.valueOf(idMapping.getPartnerNr()));
+			communicationRole.setCommunicationNr("1");
+			results.add(communicationRole);
+		}
+
 	}
 
-	private Communication newCommunication(final IdMapping idMapping, final String value, final Date contractDate, final long communicationNr, final long type) {
+	private Communication newCommunication(final IdMapping idMapping, final String value, final Date contractDate,
+			final long communicationNr, final long type) {
 		final Communication emailPrivate = new Communication();
 		emailPrivate.setMandator(idMapping.getMandator());
 		emailPrivate.setDatastate("0");
@@ -299,56 +283,44 @@ public class PartnerRule {
 		emailPrivate.setOutdated(0L);
 		emailPrivate.setUsageAgreement(0L);
 		return emailPrivate;
-	}		
-	
+	}
+
 	@Action(order = 5)
 	public final void assignNewPartnersRole(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
-	@Fact(PartnerFacts.STAMM) StammImpl stamm,
-	@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
-	@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
-	@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
-		
-		final String bankNr = sepaBankVerbindungen.size() > 0 ?"1" : null ;
-		final Long communicationRoleKey  = StringUtils.hasText(stamm.getEmailDienst())|StringUtils.hasText(stamm.getEmailPrivat()) ? Long.valueOf(idMapping.getPartnerNr()): null;
-		
-		final PartnersRole partnersRolePH = newPartnerRolePH(idMapping, contractDate);
+			@Fact(PartnerFacts.STAMM) StammImpl stamm,
+			@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
+			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+
+		final String bankNr = sepaBankVerbindungen.size() > 0 ? "1" : null;
+		final Long communicationRoleKey = StringUtils.hasText(stamm.getEmailDienst())
+				| StringUtils.hasText(stamm.getEmailPrivat()) ? Long.valueOf(idMapping.getPartnerNr()) : null;
+
+		final PartnersRole partnersRolePH = newPartnerRole(idMapping, contractDate);
 		partnersRolePH.setAddressNr("1");
 		partnersRolePH.setBankNr(bankNr);
 		partnersRolePH.setCommunicationRoleKey(communicationRoleKey);
 		partnersRolePH.setRole("PH");
+
+		final PartnersRole partnersRoleIp = newPartnerRole(idMapping, contractDate);
 		
-		
-		final PartnersRole partnersRoleIp = newPartnerRolePH(idMapping, contractDate);
-		partnersRoleIp.setAddressNr(null);
-		partnersRoleIp.setBankNr(null);
-		partnersRoleIp.setCommunicationRoleKey(null);
 		partnersRoleIp.setRole("IP");
 		results.add(partnersRolePH);
 		results.add(partnersRoleIp);
-		
-		
+
 	}
 
-	private PartnersRole newPartnerRolePH(IdMapping idMapping, final Date contractDate) {
-		final PartnersRole partnersRole = new PartnersRole();
+	private PartnersRole newPartnerRole(IdMapping idMapping, final Date contractDate) {
+		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
 		partnersRole.setMandator(idMapping.getMandator());
-		partnersRole.setDatastate("0");
 		partnersRole.setProcessnr(idMapping.getProcessNumber());
-		partnersRole.setHistnr(1L);
-		partnersRole.setRprocessnr(null);
 		partnersRole.setDop(contractDate);
-		partnersRole.setDor(null);
 		partnersRole.setInd(contractDate);
-		partnersRole.setTerminationflag(0L);
-		partnersRole.setOrderNrRole(1L);
-		partnersRole.setLeftSide(""+idMapping.getContractNumber());
-		partnersRole.setOrderNrLeftSide("1");
+		partnersRole.setLeftSide("" + idMapping.getContractNumber());
 		partnersRole.setRightSide(idMapping.getPartnerNr());
-		
 		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
-		partnersRole.setRoleState(1L);
-		partnersRole.setRiskCarrier(1L);
+
 		return partnersRole;
 	}
-		
+
 }

@@ -17,6 +17,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
@@ -58,9 +59,10 @@ public class MarriagePartnerRuleTest {
 		final List<Object> results = new ArrayList<>();
 		marriagePartnerRule.assignNewPartner(idMapping, stamm, ehegatte, contractDate, results);
 		
+		assertEquals(2, results.size());
+		
 		final PartnerCore partnerCore = (PartnerCore) results.get(0);
 		assertEquals(idMapping.getMandator(), partnerCore.getMandator());
-		assertEquals(1, results.size());
 		assertEquals("0", partnerCore.getDatastate());
 		assertEquals(idMapping.getProcessNumber(), partnerCore.getProcessnr());
 		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
@@ -136,6 +138,28 @@ public class MarriagePartnerRuleTest {
 		
 		assertEquals(PartnerRule.BLANK, partnerCore.getBirthName());
 		
+		final PartnersRole partnersRole = (PartnersRole) results.get(1);
+		
+		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
+		assertEquals("0", partnersRole.getDatastate());
+		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
+		assertNull(partnersRole.getRprocessnr());
+		assertEquals(contractDate, partnersRole.getDop());
+		assertNull(partnersRole.getDor());
+		assertEquals(contractDate, partnersRole.getInd());
+		assertEquals(Long.valueOf(0L), partnersRole.getTerminationflag());
+		assertEquals("IP", partnersRole.getRole());
+		assertEquals(Long.valueOf(1), partnersRole.getOrderNrRole());
+		assertEquals(idMapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEquals("2", partnersRole.getOrderNrLeftSide());
+		assertEquals(idMapping.getMarriagePartnerNr(), partnersRole.getRightSide());
+		assertNull(partnersRole.getAddressNr());
+		assertNull(partnersRole.getBankNr());
+		assertNull(partnersRole.getCommunicationRoleKey());
+		assertEquals("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEquals(Long.valueOf(1L), partnersRole.getRoleState());
+		assertEquals(Long.valueOf(1L),  partnersRole.getRiskCarrier());
 	}
 
 	

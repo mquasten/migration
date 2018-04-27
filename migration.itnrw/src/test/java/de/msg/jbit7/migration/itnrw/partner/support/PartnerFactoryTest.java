@@ -6,13 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 
 public class PartnerFactoryTest {
 
 	private final PartnerFactory partnerFactory = new PartnerFactory();
 
 	@Test
-	void newPartner() {
+	void newPartnerCore() {
 
 		final PartnerCore partnerCore = partnerFactory.newPartnerCore();
 
@@ -87,4 +88,31 @@ public class PartnerFactoryTest {
 
 	}
 
+	@Test
+	void newPartnersRole() {
+
+		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
+
+		assertEquals("0", partnersRole.getDatastate());
+
+		assertEquals(Long.valueOf(1), partnersRole.getHistnr());
+		assertNull(partnersRole.getRprocessnr());
+
+		assertNull(partnersRole.getDor());
+
+		assertEquals(Long.valueOf(0), partnersRole.getTerminationflag());
+
+		assertEquals(Long.valueOf(1L), partnersRole.getOrderNrRole());
+
+		assertEquals("1", partnersRole.getOrderNrLeftSide());
+
+		assertNull(partnersRole.getAddressNr());
+		assertNull(partnersRole.getBankNr());
+
+		assertNull(partnersRole.getCommunicationRoleKey());
+
+		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
+		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());
+
+	}
 }

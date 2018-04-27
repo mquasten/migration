@@ -1,22 +1,22 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 
 class PartnerFactory {
 	public final PartnerCore newPartnerCore() {
-		final PartnerCore partnerCore =  new PartnerCore();
-		
+		final PartnerCore partnerCore = new PartnerCore();
+
 		partnerCore.setDatastate("0");
-		
+
 		partnerCore.setHistnr(Long.valueOf(1L));
-		
+
 		partnerCore.setDor(null);
-		
+
 		partnerCore.setTerminationflag(Long.valueOf(0));
-		
+
 		partnerCore.setLegalPerson(Long.valueOf(1L));
-		
-		
+
 		partnerCore.setSex(0L);
 		partnerCore.setNationality("DE");
 		partnerCore.setNationality2(null);
@@ -67,7 +67,7 @@ class PartnerFactory {
 		partnerCore.setCancellation(null);
 		partnerCore.setCancellationDate(null);
 		partnerCore.setDispatchType(0L);
-		
+
 		partnerCore.setTitleOfNobility(null);
 		partnerCore.setHonoraryTitle(null);
 		partnerCore.setNamePrefix(null);
@@ -79,5 +79,24 @@ class PartnerFactory {
 		partnerCore.setSecondSecondaryType(0L);
 		return partnerCore;
 	}
-	
+
+	public final PartnersRole newPartnersRole() {
+		final PartnersRole partnersRole = new PartnersRole();
+
+		partnersRole.setDatastate("0");
+
+		partnersRole.setHistnr(1L);
+		partnersRole.setRprocessnr(null);
+
+		partnersRole.setDor(null);
+
+		partnersRole.setTerminationflag(0L);
+		partnersRole.setOrderNrRole(1L);
+
+		partnersRole.setOrderNrLeftSide("1");
+		partnersRole.setRoleState(1L);
+		partnersRole.setRiskCarrier(1L);
+		return partnersRole;
+	}
+
 }

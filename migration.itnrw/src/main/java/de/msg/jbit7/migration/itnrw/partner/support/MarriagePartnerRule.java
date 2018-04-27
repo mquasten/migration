@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFamilyFacts;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
@@ -39,6 +40,26 @@ public class MarriagePartnerRule {
 			@Fact(PartnerFamilyFacts.CONTRACT_DATE) Date contractDate ,
 			@Fact(PartnerFamilyFacts.RESULTS) Collection<Object> results) {
 	
+		final PartnerCore partnerCore = newPartnerCoreIP(idMapping, stamm, ehegatte, contractDate);
+		
+		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
+		
+		partnersRole.setMandator(idMapping.getMandator());
+		partnersRole.setProcessnr(idMapping.getProcessNumber());
+		partnersRole.setDop(contractDate);
+		partnersRole.setInd(contractDate);
+		partnersRole.setRole("IP");
+		partnersRole.setLeftSide(conversionService.convert(idMapping.getContractNumber(), String.class));
+		partnersRole.setOrderNrLeftSide("2");
+		partnersRole.setRightSide(idMapping.getMarriagePartnerNr());
+		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
+		results.add(partnerCore);
+		results.add(partnersRole);
+		
+		
+	}
+
+	private PartnerCore newPartnerCoreIP(IdMapping idMapping, StammImpl stamm, Ehegatte ehegatte, Date contractDate) {
 		final PartnerCore partnerCore = partnerFactory.newPartnerCore();
 		partnerCore.setMandator(idMapping.getMandator());
 		partnerCore.setProcessnr(idMapping.getProcessNumber());
@@ -51,8 +72,7 @@ public class MarriagePartnerRule {
 		partnerCore.setMaritalStatus(2L);
 		partnerCore.setUserid(idMapping.getMigrationUser());
 		partnerCore.setDateOfDeath(conversionService.convert(ehegatte.getSterbedatum(), Date.class));
-		results.add(partnerCore);
-		
+		return partnerCore;
 	}
 
 }
