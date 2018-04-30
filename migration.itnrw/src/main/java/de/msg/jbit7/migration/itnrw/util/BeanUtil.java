@@ -33,11 +33,12 @@ public class BeanUtil {
 			throws IntrospectionException, IllegalAccessException, InvocationTargetException {
 		final Map<String, Object> values = new HashMap<>();
 
-		final BeanInfo info = Introspector.getBeanInfo(entity.getClass());
+		
+	    final BeanInfo info = Introspector.getBeanInfo(entity.getClass());
 		for (final PropertyDescriptor pd : info.getPropertyDescriptors()) {
 			final Method reader = pd.getReadMethod();
 			values.put(pd.getName(), reader.invoke(entity));
-		}
+		} 
 		return values;
 	}
 

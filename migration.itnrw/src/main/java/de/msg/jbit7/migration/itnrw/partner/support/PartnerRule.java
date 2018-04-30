@@ -33,7 +33,6 @@ public class PartnerRule {
 	private final ConversionService conversionService;
 	private final PartnerFactory partnerFactory;
 
-	static final String BLANK = " ";
 	static final String UNDEFINED = "NOT_DEFINED";
 
 	public PartnerRule(PartnerFactory partnerFactory, final ConversionService conversionService) {
@@ -85,8 +84,8 @@ public class PartnerRule {
 		partnerCore.setSecondName(stamm.getName());
 
 		partnerCore.setSex(salutationAndSex(stamm));
-		partnerCore.setSocialInsuranceNumber(BLANK);
-		partnerCore.setSocialInsuranceNumberSp(BLANK);
+		partnerCore.setSocialInsuranceNumber(PartnerFactory.BLANK);
+		partnerCore.setSocialInsuranceNumberSp(PartnerFactory.BLANK);
 
 		partnerCore.setTitle(notNull(stamm.getTitel()));
 
@@ -97,10 +96,10 @@ public class PartnerRule {
 
 	private String notNull(final String text) {
 		if (text == null) {
-			return BLANK;
+			return PartnerFactory.BLANK;
 		}
 		if (text.isEmpty()) {
-			return BLANK;
+			return PartnerFactory.BLANK;
 		}
 		return text;
 	}
@@ -141,22 +140,22 @@ public class PartnerRule {
 			@Fact(PartnerFacts.STAMM) StammImpl stamm, @Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 		final Address address = new Address();
-		address.setAddressAddition1(BLANK);
-		address.setAddressAddition2(BLANK);
+		address.setAddressAddition1(PartnerFactory.BLANK);
+		address.setAddressAddition2(PartnerFactory.BLANK);
 		address.setAddressNr("1");
 		address.setAddressState(0L);
 		address.setAddressType(null);
 		address.setCity1(stamm.getOrt());
-		address.setCity2(BLANK);
+		address.setCity2(PartnerFactory.BLANK);
 		address.setCityCan("?");
 		address.setCityPhon("?");
-		address.setCoInformation(BLANK);
-		address.setContact(BLANK);
+		address.setCoInformation(PartnerFactory.BLANK);
+		address.setContact(PartnerFactory.BLANK);
 		address.setCountry(stamm.getLaenderKennz());
 		address.setDatastate("0");
 		address.setDop(contractDate);
 		address.setHistnr(1L);
-		address.setHouseNumber(BLANK);
+		address.setHouseNumber(PartnerFactory.BLANK);
 		address.setHouseNumberAddition(null);
 		address.setInd(contractDate);
 		address.setLatitude(null);
@@ -164,7 +163,7 @@ public class PartnerRule {
 		address.setMandator(idMapping.getMandator());
 		address.setOutdated(0L);
 		address.setPartnersNr(idMapping.getPartnerNr());
-		address.setPoBox(BLANK);
+		address.setPoBox(PartnerFactory.BLANK);
 		address.setPostcode(stamm.getPlz());
 		address.setProcessnr(idMapping.getProcessNumber());
 		address.setProximateTown(null);
@@ -196,24 +195,24 @@ public class PartnerRule {
 	private Bank toBank(IdMapping idMapping, final Date contractDate, final SepaBankVerbindung sepaBankVerbindung,
 			final int i) {
 		final Bank bank = new Bank();
-		bank.setAccountHolder(BLANK);
-		bank.setAccountNumber(BLANK);
+		bank.setAccountHolder(PartnerFactory.BLANK);
+		bank.setAccountNumber(PartnerFactory.BLANK);
 		bank.setAccountType(0L);
-		bank.setBankCode(BLANK);
-		bank.setBankDistrict(BLANK);
+		bank.setBankCode(PartnerFactory.BLANK);
+		bank.setBankDistrict(PartnerFactory.BLANK);
 		bank.setBankName(notNull(sepaBankVerbindung.getNameBank()));
 		bank.setBankNr(String.valueOf(i + 1));
 		bank.setBankState(1L);
 		bank.setBic(notNull(sepaBankVerbindung.getBic()));
-		bank.setCountry(BLANK);
-		bank.setCreditCardCompany(BLANK);
+		bank.setCountry(PartnerFactory.BLANK);
+		bank.setCreditCardCompany(PartnerFactory.BLANK);
 		bank.setCreditCardExpiry(null);
-		bank.setCreditCardNumber(BLANK);
+		bank.setCreditCardNumber(PartnerFactory.BLANK);
 		bank.setCreditCardSecurityCode(null);
-		bank.setCreditCardType(BLANK);
+		bank.setCreditCardType(PartnerFactory.BLANK);
 		bank.setCurrencyOfAccount(null);
 		bank.setDatastate("0");
-		bank.setDistrictBankCode(BLANK);
+		bank.setDistrictBankCode(PartnerFactory.BLANK);
 		bank.setDop(contractDate);
 		bank.setDor(null);
 		bank.setHistnr(1L);

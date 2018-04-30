@@ -11,7 +11,7 @@ class PartnerRulesConfiguration {
 	@Bean("partnerRules")
 	Rules partnerRules(final PartnerFactory partnerFactory, final ConversionService conversionService) {
 		final Rules rules = new Rules();
-		rules.register(new PartnerContractRule());
+		rules.register(new PartnerContractRule(partnerFactory, conversionService));
 		rules.register(new PartnerRule(partnerFactory, conversionService));
 		return rules;
 	}

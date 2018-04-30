@@ -96,7 +96,7 @@ class PartnerRuleTest {
 		assertEquals(stamm.getGeburtsname(), partnerCore.getBirthName());
 		assertNull(partnerCore.getCancellation());
 		assertNull(partnerCore.getCciNumber());
-		assertEquals(PartnerRule.BLANK, partnerCore.getCitizenNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getCitizenNumber());
 		assertEquals("0", partnerCore.getDatastate());
 		assertEquals(date(1867, 11, 7), partnerCore.getDateOfBirth());
 		assertEquals(date(1934, 7, 4), partnerCore.getDateOfDeath());
@@ -106,19 +106,19 @@ class PartnerRuleTest {
 		assertNull(partnerCore.getDenomination());
 		assertEquals(Long.valueOf(0L), partnerCore.getDispatchType());
 		assertEquals(CONTRACT_DATE, partnerCore.getDop());
-		assertEquals(PartnerRule.BLANK, partnerCore.getEmployer());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getEmployer());
 		assertEquals(Long.valueOf(0L), partnerCore.getEuSanctionFlag());
-		assertEquals(PartnerRule.BLANK, partnerCore.getExtCustomerNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getExtCustomerNumber());
 		assertEquals(stamm.getVorname(), partnerCore.getFirstName());
 		assertEquals(Long.valueOf(0L), partnerCore.getFirstSecondaryType());
-		assertEquals(PartnerRule.BLANK, partnerCore.getHealthInsuranceNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getHealthInsuranceNumber());
 		assertEquals(Long.valueOf(1L), partnerCore.getHistnr());
 		assertNull(partnerCore.getHonoraryTitle());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentAuthority());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentAuthorityCountry());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthority());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthorityCountry());
 		assertNull(partnerCore.getIdDocumentExpiryDate());
 		assertNull(partnerCore.getIdDocumentIssuedDate());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentNr());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentNr());
 		assertEquals(Long.valueOf(0L), partnerCore.getIdDocumentType());
 		assertEquals(CONTRACT_DATE, partnerCore.getInd());
 		assertEquals("de", partnerCore.getLanguageCorrespondence());
@@ -139,8 +139,8 @@ class PartnerRuleTest {
 		assertEquals(idMapping.getPartnerNr(), partnerCore.getPartnersNr());
 		assertEquals(Long.valueOf(0L), partnerCore.getPartnerState());
 		assertEquals(Long.valueOf(0L), partnerCore.getPepFlag());
-		assertEquals(PartnerRule.BLANK, partnerCore.getPersonnelNr());
-		assertEquals(PartnerRule.BLANK, partnerCore.getPlaceOfBirth());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getPersonnelNr());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getPlaceOfBirth());
 		assertEquals(idMapping.getProcessNumber(), partnerCore.getProcessnr());
 		assertEquals(Long.valueOf(0L), partnerCore.getProfession());
 		assertNull(partnerCore.getReasonForChange());
@@ -149,8 +149,8 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(0L), partnerCore.getSecondSecondaryType());
 		assertNull(partnerCore.getSector());
 		assertEquals(Long.valueOf(2L), partnerCore.getSex());
-		assertEquals(PartnerRule.BLANK, partnerCore.getSocialInsuranceNumber());
-		assertEquals(PartnerRule.BLANK, partnerCore.getSocialInsuranceNumberSp());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumberSp());
 		assertEquals(Long.valueOf(0L), partnerCore.getTenant());
 		assertEquals(Long.valueOf(0L), partnerCore.getTerminationflag());
 		assertEquals(stamm.getTitel(), partnerCore.getTitle());
@@ -173,27 +173,27 @@ class PartnerRuleTest {
 		
 		final Address address = (Address) DataAccessUtils.requiredSingleResult(results);
 		
-		assertEquals(PartnerRule.BLANK, address.getAddressAddition1());
-		assertEquals(PartnerRule.BLANK, address.getAddressAddition2());
+		assertEquals(PartnerFactory.BLANK, address.getAddressAddition1());
+		assertEquals(PartnerFactory.BLANK, address.getAddressAddition2());
 		assertEquals("1", address.getAddressNr());
 		assertEquals(Long.valueOf(0), address.getAddressState());
 		assertNull(address.getAddressType());
 		assertEquals(stamm.getOrt(), address.getCity1());
 		
-		assertEquals(PartnerRule.BLANK, address.getCity2());
-		assertEquals(PartnerRule.BLANK, address.getCoInformation());
-		assertEquals(PartnerRule.BLANK, address.getContact());
+		assertEquals(PartnerFactory.BLANK, address.getCity2());
+		assertEquals(PartnerFactory.BLANK, address.getCoInformation());
+		assertEquals(PartnerFactory.BLANK, address.getContact());
 		assertEquals("0", address.getDatastate());
 		assertEquals(CONTRACT_DATE, address.getDop());
 		assertEquals(Long.valueOf(1L), address.getHistnr());
-		assertEquals(PartnerRule.BLANK, address.getHouseNumber());
+		assertEquals(PartnerFactory.BLANK, address.getHouseNumber());
 		assertNull(address.getHouseNumberAddition());
 		assertEquals(CONTRACT_DATE,address.getInd());
 		assertNull(address.getLatitude());
 		assertNull(address.getLongitude());
 		assertEquals(Long.valueOf(0l),address.getOutdated());
 		assertEquals(idMapping.getPartnerNr(), address.getPartnersNr());
-		assertEquals(PartnerRule.BLANK, address.getPoBox());
+		assertEquals(PartnerFactory.BLANK, address.getPoBox());
 		assertEquals(stamm.getPlz(), address.getPostcode());
 		assertEquals(idMapping.getProcessNumber(), address.getProcessnr());
 		
@@ -214,25 +214,25 @@ class PartnerRuleTest {
 		
 		
 	
-		assertEquals(PartnerRule.BLANK, bank.getAccountHolder());
-		assertEquals(PartnerRule.BLANK, bank.getAccountNumber());
+		assertEquals(PartnerFactory.BLANK, bank.getAccountHolder());
+		assertEquals(PartnerFactory.BLANK, bank.getAccountNumber());
 		assertEquals(Long.valueOf(0), bank.getAccountType());
-		assertEquals(PartnerRule.BLANK, bank.getBankCode());
-		assertEquals(PartnerRule.BLANK, bank.getBankDistrict());
+		assertEquals(PartnerFactory.BLANK, bank.getBankCode());
+		assertEquals(PartnerFactory.BLANK, bank.getBankDistrict());
 		assertEquals(sepaBankVerbindung.getNameBank(), bank.getBankName());
 		assertEquals("1", bank.getBankNr());
 		assertEquals(Long.valueOf(1L), bank.getBankState());
 		assertEquals(sepaBankVerbindung.getBic(), bank.getBic());
-		assertEquals(PartnerRule.BLANK, bank.getCountry());
+		assertEquals(PartnerFactory.BLANK, bank.getCountry());
 		
-		assertEquals(PartnerRule.BLANK, bank.getCreditCardCompany());
+		assertEquals(PartnerFactory.BLANK, bank.getCreditCardCompany());
 		assertNull(bank.getCreditCardExpiry());
-		assertEquals(PartnerRule.BLANK, bank.getCreditCardNumber());
+		assertEquals(PartnerFactory.BLANK, bank.getCreditCardNumber());
 		assertNull(bank.getCreditCardSecurityCode());
-		assertEquals(PartnerRule.BLANK, bank.getCreditCardType());
+		assertEquals(PartnerFactory.BLANK, bank.getCreditCardType());
 		assertNull(bank.getCurrencyOfAccount());
 		assertEquals("0", bank.getDatastate());
-		assertEquals(PartnerRule.BLANK, bank.getDistrictBankCode());
+		assertEquals(PartnerFactory.BLANK, bank.getDistrictBankCode());
 		assertEquals(CONTRACT_DATE, bank.getDop());
 		assertNull(bank.getDor());
 		assertEquals(Long.valueOf(1), bank.getHistnr());

@@ -12,15 +12,20 @@ import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
+import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
 public class PartnerContractRuleTest {
+	private final PartnerFactory partnerFactory = new PartnerFactory();
+	private final DefaultConversionService conversionService = new DefaultConversionService();
+	private final PartnerContractRule partnerContractRule = new PartnerContractRule(partnerFactory, conversionService);
 
-	final PartnerContractRule partnerContractRule = new PartnerContractRule();
-
-	final IdMapping idMapping = new IdMapping();
+	private final IdMapping idMapping = new IdMapping();
+	
 
 	private final Date contractDate = date(1642, 12, 25);
 
@@ -30,6 +35,8 @@ public class PartnerContractRuleTest {
 		idMapping.setCollectiveContractNumbers(new Long[] { 1234L });
 		idMapping.setMandator(4711L);
 		idMapping.setProcessNumber(987631L);
+		
+		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 
 	@Test
@@ -38,9 +45,9 @@ public class PartnerContractRuleTest {
 	}
 
 	@Test
-	void assignNewContract() {
+	void assignContract() {
 		final Collection<Object> results = new ArrayList<>();
-		partnerContractRule.assignNewContract(idMapping, contractDate, results);
+		partnerContractRule.assignNewContract(idMapping, new StammImpl(), contractDate, results);
 
 		assertEquals(1, results.size());
 
@@ -70,9 +77,9 @@ public class PartnerContractRuleTest {
 		assertEquals(Long.valueOf(0l), pmContract.getPolicyConfirmationFlag());
 		assertEquals("BB" + idMapping.getContractNumber(), pmContract.getPolicyNumber());
 
-		assertEquals(PartnerRule.BLANK, pmContract.getPostingText1());
-		assertEquals(PartnerRule.BLANK, pmContract.getPostingText2());
-		assertEquals(PartnerRule.BLANK, pmContract.getPostingText2());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText1());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
 		assertEquals(Long.valueOf(800L), pmContract.getPrionr());
 		assertEquals(idMapping.getProcessNumber(), pmContract.getProcessnr());
 

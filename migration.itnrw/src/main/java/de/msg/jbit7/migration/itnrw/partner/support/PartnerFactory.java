@@ -1,9 +1,13 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 
 class PartnerFactory {
+	
+	static final String BLANK = " ";
+	
 	public final PartnerCore newPartnerCore() {
 		final PartnerCore partnerCore = new PartnerCore();
 
@@ -40,29 +44,29 @@ class PartnerFactory {
 		partnerCore.setDefaultCommunication(null);
 		partnerCore.setMaritalStatus(0L);
 		partnerCore.setSocialInsuranceNumber(null);
-		partnerCore.setPlaceOfBirth(PartnerRule.BLANK);
-		partnerCore.setBirthName(PartnerRule.BLANK);
-		partnerCore.setExtCustomerNumber(PartnerRule.BLANK);
+		partnerCore.setPlaceOfBirth(BLANK);
+		partnerCore.setBirthName(BLANK);
+		partnerCore.setExtCustomerNumber(BLANK);
 		partnerCore.setNumberChildren(Long.valueOf(0));
 		partnerCore.setAdvertising(0L);
 		partnerCore.setReasonForChange(null);
-		partnerCore.setEmployer(PartnerRule.BLANK);
+		partnerCore.setEmployer(BLANK);
 		partnerCore.setSalutation(0L);
-		partnerCore.setHealthInsuranceNumber(PartnerRule.BLANK);
-		partnerCore.setCitizenNumber(PartnerRule.BLANK);
+		partnerCore.setHealthInsuranceNumber(BLANK);
+		partnerCore.setCitizenNumber(BLANK);
 		partnerCore.setIdDocumentType(0L);
-		partnerCore.setIdDocumentNr(PartnerRule.BLANK);
+		partnerCore.setIdDocumentNr(BLANK);
 		partnerCore.setIdDocumentIssuedDate(null);
 		partnerCore.setIdDocumentExpiryDate(null);
-		partnerCore.setIdDocumentAuthority(PartnerRule.BLANK);
-		partnerCore.setIdDocumentAuthorityCountry(PartnerRule.BLANK);
+		partnerCore.setIdDocumentAuthority(BLANK);
+		partnerCore.setIdDocumentAuthorityCountry(BLANK);
 		partnerCore.setTenant(0L);
 		partnerCore.setBasicType(0L);
 		partnerCore.setFirstSecondaryType(0L);
 		partnerCore.setCciNumber(null);
 		partnerCore.setSector(null);
 		partnerCore.setDenomination(null);
-		partnerCore.setPersonnelNr(PartnerRule.BLANK);
+		partnerCore.setPersonnelNr(BLANK);
 		partnerCore.setManagement(null);
 		partnerCore.setCancellation(null);
 		partnerCore.setCancellationDate(null);
@@ -73,9 +77,9 @@ class PartnerFactory {
 		partnerCore.setNamePrefix(null);
 		partnerCore.setPepFlag(0L);
 		partnerCore.setEuSanctionFlag(0L);
-		partnerCore.setTitle(PartnerRule.BLANK);
-		partnerCore.setSocialInsuranceNumber(PartnerRule.BLANK);
-		partnerCore.setSocialInsuranceNumberSp(PartnerRule.BLANK);
+		partnerCore.setTitle(BLANK);
+		partnerCore.setSocialInsuranceNumber(BLANK);
+		partnerCore.setSocialInsuranceNumberSp(BLANK);
 		partnerCore.setSecondSecondaryType(0L);
 		return partnerCore;
 	}
@@ -97,6 +101,29 @@ class PartnerFactory {
 		partnersRole.setRoleState(1L);
 		partnersRole.setRiskCarrier(1L);
 		return partnersRole;
+	}
+
+	public final  PMContract newContract() {
+
+		final PMContract contract = new PMContract();
+		contract.setContractType(5L);
+		contract.setDatastate("0");
+		contract.setDor(null);
+		contract.setHistnr(1L);
+		contract.setInternalNumberCollContract(null);
+		contract.setMemberOfStaff(0L);
+		contract.setPolicyConfirmationFlag(0L);
+		contract.setPostingText1(BLANK);
+		contract.setPostingText2(BLANK);
+		contract.setPostingText3(BLANK);
+		contract.setPrionr(800L);
+		contract.setReasonForChange(100L);
+		contract.setRiskCarrier(1L);
+		contract.setRprocessnr(null);
+		contract.setTerminationDate(null);
+		contract.setTerminationflag(0L);
+		return contract;
+
 	}
 
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
+import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 
@@ -44,29 +45,29 @@ public class PartnerFactoryTest {
 		assertNull(partnerCore.getDefaultBank());
 		assertNull(partnerCore.getDefaultCommunication());
 		assertEquals(Long.valueOf(0), partnerCore.getMaritalStatus());
-		assertEquals(PartnerRule.BLANK, partnerCore.getPlaceOfBirth());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getPlaceOfBirth());
 
-		assertEquals(PartnerRule.BLANK, partnerCore.getExtCustomerNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getExtCustomerNumber());
 		assertEquals(Long.valueOf(0L), partnerCore.getNumberChildren());
 		assertEquals(Long.valueOf(0), partnerCore.getAdvertising());
 		assertNull(partnerCore.getReasonForChange());
-		assertEquals(PartnerRule.BLANK, partnerCore.getEmployer());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getEmployer());
 		assertEquals(Long.valueOf(0), partnerCore.getSalutation());
-		assertEquals(PartnerRule.BLANK, partnerCore.getHealthInsuranceNumber());
-		assertEquals(PartnerRule.BLANK, partnerCore.getCitizenNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getHealthInsuranceNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getCitizenNumber());
 		assertEquals(Long.valueOf(0), partnerCore.getIdDocumentType());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentNr());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentNr());
 		assertNull(partnerCore.getIdDocumentIssuedDate());
 		assertNull(partnerCore.getIdDocumentExpiryDate());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentAuthority());
-		assertEquals(PartnerRule.BLANK, partnerCore.getIdDocumentAuthorityCountry());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthority());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthorityCountry());
 		assertEquals(Long.valueOf(0), partnerCore.getTenant());
 		assertEquals(Long.valueOf(0), partnerCore.getBasicType());
 		assertEquals(Long.valueOf(0), partnerCore.getFirstSecondaryType());
 		assertNull(partnerCore.getCciNumber());
 		assertNull(partnerCore.getSector());
 		assertNull(partnerCore.getDenomination());
-		assertEquals(PartnerRule.BLANK, partnerCore.getPersonnelNr());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getPersonnelNr());
 
 		assertNull(partnerCore.getManagement());
 		assertNull(partnerCore.getCancellation());
@@ -79,12 +80,12 @@ public class PartnerFactoryTest {
 		assertEquals(Long.valueOf(0), partnerCore.getPepFlag());
 		assertEquals(Long.valueOf(0L), partnerCore.getEuSanctionFlag());
 
-		assertEquals(PartnerRule.BLANK, partnerCore.getTitle());
-		assertEquals(PartnerRule.BLANK, partnerCore.getSocialInsuranceNumber());
-		assertEquals(PartnerRule.BLANK, partnerCore.getSocialInsuranceNumberSp());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getTitle());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumber());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumberSp());
 		assertEquals(Long.valueOf(0), partnerCore.getSecondSecondaryType());
 
-		assertEquals(PartnerRule.BLANK, partnerCore.getBirthName());
+		assertEquals(PartnerFactory.BLANK, partnerCore.getBirthName());
 
 	}
 
@@ -114,5 +115,26 @@ public class PartnerFactoryTest {
 		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
 		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());
 
+	}
+	
+	@Test
+	void newContract() {
+		final PMContract pmContract =  partnerFactory.newContract();
+		assertEquals(Long.valueOf(5L), pmContract.getContractType());
+		assertEquals("0", pmContract.getDatastate());
+		assertNull(pmContract.getDor());
+		assertEquals(Long.valueOf(1L), pmContract.getHistnr());
+		assertNull(pmContract.getInternalNumberCollContract());
+		assertEquals(Long.valueOf(0L), pmContract.getMemberOfStaff());
+		assertEquals(Long.valueOf(0l), pmContract.getPolicyConfirmationFlag());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText1());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
+		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
+		assertEquals(Long.valueOf(800L), pmContract.getPrionr());
+		assertEquals(Long.valueOf(100L), pmContract.getReasonForChange());
+		assertEquals(Long.valueOf(1L), pmContract.getRiskCarrier());
+		assertNull(pmContract.getRprocessnr());
+		assertNull(pmContract.getTerminationDate());
+		assertEquals(Long.valueOf(0L), pmContract.getTerminationflag());
 	}
 }
