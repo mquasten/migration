@@ -42,7 +42,7 @@ public class PartnerContractRule {
 	}
 
 	@Action(order = 1)
-	public final void assignNewContract(@Fact(PartnerFacts.ID_MAPPING) final IdMapping idMapping,
+	public final void assignContract(@Fact(PartnerFacts.ID_MAPPING) final IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) final StammImpl stamm,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) final Collection<Object> results) {
@@ -62,8 +62,29 @@ public class PartnerContractRule {
 		contract.setMandator(idMapping.getMandator());
 		contract.setPolicyNumber("BB" + idMapping.getContractNumber());
 		contract.setProcessnr(idMapping.getProcessNumber());
-		
 		results.add(contract);
+		
+		if(conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
+			results.add(newTerminatedContract(contract, conversionService.convert(stamm.getSterbedatum(), Date.class),900L));
+			return;
+		}
+		
+		
+	}
+
+
+
+
+
+	private PMContract newTerminatedContract(final PMContract contract, final Date endDate, final long reasonForChange) {
+		final PMContract result = partnerFactory.copy(contract);
+		result.setDop(endDate);
+		result.setInd(endDate);
+		result.setReasonForChange(reasonForChange);
+		result.setPrionr(900L);
+		result.setTerminationDate(endDate);
+		result.setHistnr(Long.valueOf(2));
+		return result;
 	}
 
 }

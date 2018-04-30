@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ public class PartnerContractRuleTest {
 	private final IdMapping idMapping = new IdMapping();
 	
 
-	private final Date contractDate = date(1642, 12, 25);
+	private final Date contractDate = date(1643,1,  4);
 
 	@BeforeEach
 	void setup() {
@@ -47,12 +48,17 @@ public class PartnerContractRuleTest {
 	@Test
 	void assignContract() {
 		final Collection<Object> results = new ArrayList<>();
-		partnerContractRule.assignNewContract(idMapping, new StammImpl(), contractDate, results);
+		partnerContractRule.assignContract(idMapping, new StammImpl(), contractDate, results);
 
 		assertEquals(1, results.size());
 
 		final PMContract pmContract = (PMContract) results.iterator().next();
 
+		assertNewContract(pmContract);
+
+	}
+
+	private void assertNewContract(final PMContract pmContract) {
 		assertEquals(contractDate, pmContract.getBeginOfContract());
 		assertEquals(idMapping.getCollectiveContractNumbers()[0], pmContract.getCollectiveContractNumber());
 		assertEquals(idMapping.getContractNumber(), pmContract.getContractNumber());
@@ -89,8 +95,35 @@ public class PartnerContractRuleTest {
 		assertNull(pmContract.getRprocessnr());
 		assertNull(pmContract.getTerminationDate());
 		assertEquals(Long.valueOf(0L), pmContract.getTerminationflag());
-
 	}
+	
+
+	@Test
+	void assignContractDead() {
+		final StammImpl stamm = new StammImpl();
+		
+		final Date dateOfDeath = date(1727, 3, 31);
+		stamm.setSterbedatum(17270331L);
+		
+		final List<Object> results = new ArrayList<>();
+		partnerContractRule.assignContract(idMapping,stamm, contractDate, results);
+
+		assertEquals(2, results.size());
+		
+		assertNewContract((PMContract) results.get(0));
+		
+		final PMContract terminatedContract = (PMContract) results.get(1);
+		assertEquals(dateOfDeath, terminatedContract.getDop());
+		assertEquals(dateOfDeath, terminatedContract.getInd());
+		assertEquals(dateOfDeath, terminatedContract.getTerminationDate());
+		assertEquals(Long.valueOf(2), terminatedContract.getHistnr());
+		assertEquals(Long.valueOf(900), terminatedContract.getReasonForChange());
+		assertEquals(Long.valueOf(900), terminatedContract.getPrionr());
+		
+		
+	}
+	
+	
 
 	private static Date date(int year, int month, int day) {
 		final Calendar calendar = new GregorianCalendar(year, month - 1, day);
