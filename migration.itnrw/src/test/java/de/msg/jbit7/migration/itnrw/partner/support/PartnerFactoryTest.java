@@ -3,22 +3,13 @@ package de.msg.jbit7.migration.itnrw.partner.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
+import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 public class PartnerFactoryTest {
 
@@ -152,7 +143,7 @@ public class PartnerFactoryTest {
 	@Test
 	void copy() {
 		final PMContract source = new PMContract();
-		assignValuesToBean(source);
+		TestUtil.assignValuesToBean(source);
 		final PMContract target = partnerFactory.copy(source);
 		
 		assertEqualsNotNull(source.getBeginOfContract(), target.getBeginOfContract());
@@ -188,19 +179,5 @@ public class PartnerFactoryTest {
 		assertEquals(expected, actual);
 	}
 
-	private <T> void assignValuesToBean(final T contract) {
-		final Map<Class<?>, Supplier<Object>> suppliers = new HashMap<>();
 	
-	
-		suppliers.put(String.class, () -> new UUID( Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue()),  Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue())).toString());
-		suppliers.put(Long.class, () ->  Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue()));
-		suppliers.put(Date.class, () ->  new Date(Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue())));
-		Arrays.asList(contract.getClass().getDeclaredFields()).stream().filter(field -> ! Modifier.isStatic(field.getModifiers()))
-		.forEach(field -> {
-			assertTrue(suppliers.containsKey(field.getType()));
-			final Object value = suppliers.get(field.getType()).get();
-			ReflectionTestUtils.setField(contract, field.getName(), value);
-			
-		});
-	}
 }

@@ -19,6 +19,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.dao.support.DataAccessUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.Bank;
@@ -33,7 +34,7 @@ class PartnerRuleTest {
 
 	
 
-	private final IdMapping idMapping = new IdMapping();
+	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().withChildren(2).build();
 
 	private final StammImpl stamm = new StammImpl();
 
@@ -46,13 +47,7 @@ class PartnerRuleTest {
 	private final PartnerRule partnerRule = new PartnerRule(partnerFactory,conversionService);
 	@BeforeEach
 	void setup() throws IntrospectionException {
-		idMapping.setBeihilfenr(19680528L);
-		idMapping.setPartnerNr("1001");
-		idMapping.setProcessNumber(4001L);
-		idMapping.setMandator(4711L);
-		idMapping.setMarriagePartnerNr("1234");
-		idMapping.setChildrenNr(new Long[] { 1L, 2L });
-		idMapping.setMigrationUser("Migration");
+	
 
 		stamm.setBeihilfenr(idMapping.getBeihilfenr());
 		stamm.setGeburtsname("Skłodowska");

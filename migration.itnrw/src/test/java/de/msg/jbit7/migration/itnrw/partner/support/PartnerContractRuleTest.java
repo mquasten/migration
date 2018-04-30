@@ -1,6 +1,7 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -25,17 +27,14 @@ public class PartnerContractRuleTest {
 	private final DefaultConversionService conversionService = new DefaultConversionService();
 	private final PartnerContractRule partnerContractRule = new PartnerContractRule(partnerFactory, conversionService);
 
-	private final IdMapping idMapping = new IdMapping();
+	private final IdMapping idMapping = IdMappingBuilder.builder().build();
 	
 
 	private final Date contractDate = date(1643,1,  4);
 
 	@BeforeEach
 	void setup() {
-		idMapping.setContractNumber(19680528L);
-		idMapping.setCollectiveContractNumbers(new Long[] { 1234L });
-		idMapping.setMandator(4711L);
-		idMapping.setProcessNumber(987631L);
+	
 		
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
