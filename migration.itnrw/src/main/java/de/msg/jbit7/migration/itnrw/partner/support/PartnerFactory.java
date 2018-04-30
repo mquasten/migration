@@ -1,5 +1,7 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import org.springframework.beans.BeanUtils;
+
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
@@ -124,6 +126,13 @@ class PartnerFactory {
 		contract.setTerminationflag(0L);
 		return contract;
 
+	}
+	
+	public final <T> T copy(final T source) {
+		@SuppressWarnings("unchecked")
+		final T target = (T) BeanUtils.instantiateClass(source.getClass());
+		BeanUtils.copyProperties(source, target);
+		return target;
 	}
 
 }

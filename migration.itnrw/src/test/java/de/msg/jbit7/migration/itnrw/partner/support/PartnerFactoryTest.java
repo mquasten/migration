@@ -1,9 +1,20 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
@@ -136,5 +147,60 @@ public class PartnerFactoryTest {
 		assertNull(pmContract.getRprocessnr());
 		assertNull(pmContract.getTerminationDate());
 		assertEquals(Long.valueOf(0L), pmContract.getTerminationflag());
+	}
+	
+	@Test
+	void copy() {
+		final PMContract source = new PMContract();
+		assignValuesToBean(source);
+		final PMContract target = partnerFactory.copy(source);
+		
+		assertEqualsNotNull(source.getBeginOfContract(), target.getBeginOfContract());
+		assertEqualsNotNull(source.getCollectiveContractNumber(), target.getCollectiveContractNumber());
+		assertEqualsNotNull(source.getContractNumber(), target.getContractNumber());
+		assertEqualsNotNull(source.getContractType(), target.getContractType());
+		assertEqualsNotNull(source.getDatastate(), target.getDatastate());
+		assertEqualsNotNull(source.getDop(), target.getDop());
+		assertEqualsNotNull(source.getDor(), target.getDor());
+		assertEqualsNotNull(source.getHistnr(), target.getHistnr());
+		assertEqualsNotNull(source.getInd(), target.getInd());
+		assertEqualsNotNull(source.getInternalNumberCollContract(), target.getInternalNumberCollContract());
+		assertEqualsNotNull(source.getMandator(), target.getMandator());
+		assertEqualsNotNull(source.getMemberOfStaff(), target.getMemberOfStaff());
+		assertEqualsNotNull(source.getPolicyConfirmationFlag(), target.getPolicyConfirmationFlag());
+		assertEqualsNotNull(source.getPolicyNumber(), target.getPolicyNumber());
+		assertEqualsNotNull(source.getPostingText1(), target.getPostingText1());
+		assertEqualsNotNull(source.getPostingText2(), target.getPostingText2());
+		assertEqualsNotNull(source.getPostingText3(), target.getPostingText3());
+		assertEqualsNotNull(source.getPrionr(), target.getPrionr());
+		assertEqualsNotNull(source.getProcessnr(), target.getProcessnr());
+		assertEqualsNotNull(source.getReasonForChange(), target.getReasonForChange());
+		assertEqualsNotNull(source.getRiskCarrier(), target.getRiskCarrier());
+		assertEqualsNotNull(source.getRprocessnr(), target.getRprocessnr());
+		assertEqualsNotNull(source.getTerminationDate(), target.getTerminationDate());
+		assertEqualsNotNull(source.getTerminationflag(), target.getTerminationflag());
+	}
+	
+	
+	
+	void assertEqualsNotNull(final Object expected, final Object actual) {
+		assertNotNull(expected);
+		assertEquals(expected, actual);
+	}
+
+	private <T> void assignValuesToBean(final T contract) {
+		final Map<Class<?>, Supplier<Object>> suppliers = new HashMap<>();
+	
+	
+		suppliers.put(String.class, () -> new UUID( Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue()),  Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue())).toString());
+		suppliers.put(Long.class, () ->  Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue()));
+		suppliers.put(Date.class, () ->  new Date(Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue())));
+		Arrays.asList(contract.getClass().getDeclaredFields()).stream().filter(field -> ! Modifier.isStatic(field.getModifiers()))
+		.forEach(field -> {
+			assertTrue(suppliers.containsKey(field.getType()));
+			final Object value = suppliers.get(field.getType()).get();
+			ReflectionTestUtils.setField(contract, field.getName(), value);
+			
+		});
 	}
 }
