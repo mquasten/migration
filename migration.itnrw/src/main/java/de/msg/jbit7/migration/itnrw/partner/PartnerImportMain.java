@@ -22,7 +22,13 @@ public class PartnerImportMain {
 		try (final AbstractRefreshableConfigApplicationContext applicationContext = new ClassPathXmlApplicationContext(XML_APPLICATION_CONFIGURATION)) {
 			final ConversionService conversionService = applicationContext.getBean(ConversionService.class);
 			final PartnerService partnerService = applicationContext.getBean(PartnerService.class);
-			partnerService.importPartners(conversionService.convert(mandatorAsString, Long.class), overwrite);
+			final Long mandator = conversionService.convert(mandatorAsString, Long.class);
+			partnerService.importPartners(mandator, overwrite);
+			
+			final PartnerFamilyService partnerFamilyService = applicationContext.getBean(PartnerFamilyService.class);
+			partnerFamilyService.createPartners(mandator);
+			
+			System.out.println("... finished.");
 			//applicationContext.getBean(IdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite, migUser);
 		}
 		
