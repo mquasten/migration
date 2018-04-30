@@ -54,11 +54,11 @@ public class PartnerContractRuleTest {
 
 		final PMContract pmContract = (PMContract) results.iterator().next();
 
-		assertNewContract(pmContract);
+		assertNewContract(pmContract, false);
 
 	}
 
-	private void assertNewContract(final PMContract pmContract) {
+	private void assertNewContract(final PMContract pmContract, final boolean withoutHist) {
 		assertEquals(contractDate, pmContract.getBeginOfContract());
 		assertEquals(idMapping.getCollectiveContractNumbers()[0], pmContract.getCollectiveContractNumber());
 		assertEquals(idMapping.getContractNumber(), pmContract.getContractNumber());
@@ -66,14 +66,9 @@ public class PartnerContractRuleTest {
 		assertEquals(Long.valueOf(5L), pmContract.getContractType());
 
 		assertEquals("0", pmContract.getDatastate());
-		assertEquals(contractDate, pmContract.getDop());
+		
 
 		assertNull(pmContract.getDor());
-
-		assertEquals(Long.valueOf(1L), pmContract.getHistnr());
-
-		assertEquals(contractDate, pmContract.getInd());
-
 		assertNull(pmContract.getInternalNumberCollContract());
 
 		assertEquals(idMapping.getMandator(), pmContract.getMandator());
@@ -86,13 +81,23 @@ public class PartnerContractRuleTest {
 		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText1());
 		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
 		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
-		assertEquals(Long.valueOf(800L), pmContract.getPrionr());
+		
 		assertEquals(idMapping.getProcessNumber(), pmContract.getProcessnr());
 
-		assertEquals(Long.valueOf(100L), pmContract.getReasonForChange());
+		
 		assertEquals(Long.valueOf(1L), pmContract.getRiskCarrier());
 
 		assertNull(pmContract.getRprocessnr());
+	
+		if( withoutHist) {
+			return;
+		}
+		
+		assertEquals(contractDate, pmContract.getDop());
+		assertEquals(Long.valueOf(1L), pmContract.getHistnr());
+		assertEquals(contractDate, pmContract.getInd());
+		assertEquals(Long.valueOf(800L), pmContract.getPrionr());
+		assertEquals(Long.valueOf(100L), pmContract.getReasonForChange());
 		assertNull(pmContract.getTerminationDate());
 		assertEquals(Long.valueOf(0L), pmContract.getTerminationflag());
 	}
@@ -110,15 +115,18 @@ public class PartnerContractRuleTest {
 
 		assertEquals(2, results.size());
 		
-		assertNewContract((PMContract) results.get(0));
+		assertNewContract((PMContract) results.get(0), false);
 		
 		final PMContract terminatedContract = (PMContract) results.get(1);
+		
+		assertNewContract(terminatedContract, true);
 		assertEquals(dateOfDeath, terminatedContract.getDop());
 		assertEquals(dateOfDeath, terminatedContract.getInd());
 		assertEquals(dateOfDeath, terminatedContract.getTerminationDate());
 		assertEquals(Long.valueOf(2), terminatedContract.getHistnr());
 		assertEquals(Long.valueOf(900), terminatedContract.getReasonForChange());
 		assertEquals(Long.valueOf(900), terminatedContract.getPrionr());
+		assertEquals(Long.valueOf(1), terminatedContract.getTerminationflag());
 		
 		
 	}

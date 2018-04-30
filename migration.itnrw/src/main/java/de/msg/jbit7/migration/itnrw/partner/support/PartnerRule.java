@@ -46,7 +46,7 @@ public class PartnerRule {
 	}
 
 	@Action(order = 1)
-	public final void assignNewPartner(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+	public final void assignPartner(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) StammImpl stamm,
 			@Fact(PartnerFacts.SEPA_BANK) Collection<SepaBankVerbindung> sepaBankVerbindung,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
@@ -57,7 +57,7 @@ public class PartnerRule {
 		partnerCore.setBirthName(notNull(stamm.getGeburtsname()));
 
 		partnerCore.setDateOfBirth(conversionService.convert(stamm.getGebDatum(), Date.class));
-		partnerCore.setDateOfDeath(conversionService.convert(stamm.getSterbedatum(), Date.class));
+	
 		partnerCore.setDefaultAddress("1");
 		partnerCore.setDefaultBank(defaultBank(sepaBankVerbindung));
 		partnerCore.setDefaultCommunication(defaultCommunication(stamm));
@@ -92,6 +92,24 @@ public class PartnerRule {
 		partnerCore.setUserid(idMapping.getMigrationUser());
 
 		results.add(partnerCore);
+		
+		if( conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
+			results.add(mewTerminatedPartnerCore(stamm, partnerCore));
+			return;
+		}
+		
+	}
+
+	private PartnerCore mewTerminatedPartnerCore(StammImpl stamm, final PartnerCore partnerCore) {
+		final PartnerCore terminatedPartnerCore = partnerFactory.copy(partnerCore);
+		final Date terminationdate = conversionService.convert(stamm.getSterbedatum(), Date.class);
+		terminatedPartnerCore.setDateOfDeath(terminationdate);
+		terminatedPartnerCore.setDop(terminationdate);
+		terminatedPartnerCore.setInd(terminationdate);
+		terminatedPartnerCore.setReasonForChange(900L);
+		terminatedPartnerCore.setTerminationflag(1L);
+		terminatedPartnerCore.setHistnr(2L);
+		return terminatedPartnerCore;
 	}
 
 	private String notNull(final String text) {

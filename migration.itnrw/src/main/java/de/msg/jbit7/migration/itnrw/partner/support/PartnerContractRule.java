@@ -84,6 +84,7 @@ public class PartnerContractRule {
 		result.setPrionr(900L);
 		result.setTerminationDate(endDate);
 		result.setHistnr(Long.valueOf(2));
+		result.setTerminationflag(1L);
 		return result;
 	}
 
