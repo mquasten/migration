@@ -317,13 +317,19 @@ class PartnerRuleTest {
 	@Test
 	void  assignNewPartnersRole() {
 		final List<Object> results = new ArrayList<>();
-		partnerRule.assignNewPartnersRole(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
+		partnerRule.assignPartnersRole(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
+		
+		assertEquals(2, results.size());
 		
 		final PartnersRole partnersRolePH = (PartnersRole) results.get(0);
-		assertPartnerRolePH(partnersRolePH);
+		assertPartnersRolePH(partnersRolePH);
 		
 		final PartnersRole partnersRoleIp = (PartnersRole) results.get(1);
 		
+		assertPartnersRoleIp(partnersRoleIp);
+	}
+
+	private void assertPartnersRoleIp(final PartnersRole partnersRoleIp) {
 		assertEquals(idMapping.getMandator(), partnersRoleIp.getMandator());
 		assertEquals("0", partnersRoleIp.getDatastate());
 		assertEquals(idMapping.getProcessNumber(),  partnersRoleIp.getProcessnr());
@@ -347,7 +353,7 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(1), partnersRoleIp.getRiskCarrier());
 	}
 
-	private void assertPartnerRolePH(final PartnersRole partnersRole) {
+	private void assertPartnersRolePH(final PartnersRole partnersRole) {
 		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
 		assertEquals("0", partnersRole.getDatastate());
 		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
@@ -393,5 +399,6 @@ class PartnerRuleTest {
 		
 	}
 
-
+	
+	
 }

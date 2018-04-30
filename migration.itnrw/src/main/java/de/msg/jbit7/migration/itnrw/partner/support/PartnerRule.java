@@ -303,7 +303,7 @@ public class PartnerRule {
 	}
 
 	@Action(order = 5)
-	public final void assignNewPartnersRole(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+	public final void assignPartnersRole(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) StammImpl stamm,
 			@Fact(PartnerFacts.SEPA_BANK) List<SepaBankVerbindung> sepaBankVerbindungen,
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
@@ -324,6 +324,7 @@ public class PartnerRule {
 		partnersRoleIp.setRole("IP");
 		results.add(partnersRolePH);
 		results.add(partnersRoleIp);
+	
 
 	}
 
