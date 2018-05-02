@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import static de.msg.jbit7.migration.itnrw.util.TestUtil.assertEqualsRequired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,6 +24,7 @@ import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
+import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 class ChildrenPartnerRuleTest {
 
@@ -51,10 +53,11 @@ class ChildrenPartnerRuleTest {
 		idMapping.setChildrenPartnerNr(new String[] { "8490" });
 		idMapping.setMigrationUser("MigUser");
 		idMapping.setMarriagePartnerNr("73111");
+		idMapping.setContractNumber(19680528L);
 		kindInfo.setVorname("James Clerk");
 		stamm.setName("Maxwell");
 		kindInfo.setGebDatum(18310613L);
-		kindInfo.setSterbedatum(18791105L);
+		//kindInfo.setSterbedatum(18791105L);
 	}
 
 	@Test
@@ -75,20 +78,22 @@ class ChildrenPartnerRuleTest {
 
 		assertEquals(1, results.size());
 		final PartnerCore partnerCore = (PartnerCore) results.iterator().next();
-		assertEquals(idMapping.getMandator(), partnerCore.getMandator());
+		assertPartnerCore(partnerCore,false);
+		
+	}
+
+	private void assertPartnerCore(final PartnerCore partnerCore, final boolean withoutHist) {
+		
+		assertEqualsRequired(idMapping.getMandator(), partnerCore.getMandator());
 		assertEquals("0", partnerCore.getDatastate());
-		assertEquals(idMapping.getProcessNumber(), partnerCore.getProcessnr());
-		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
+		assertEqualsRequired(idMapping.getProcessNumber(), partnerCore.getProcessnr());
 		assertNull(partnerCore.getRprocessnr());
-		assertEquals(contractDate, partnerCore.getDop());
 		assertNull(partnerCore.getDor());
-		assertEquals(contractDate, partnerCore.getInd());
-		assertEquals(Long.valueOf(0), partnerCore.getTerminationflag());
-		assertEquals(idMapping.getChildrenPartnerNr()[0], partnerCore.getPartnersNr());
+		assertEqualsRequired(idMapping.getChildrenPartnerNr()[0], partnerCore.getPartnersNr());
 		assertEquals(Long.valueOf(1), partnerCore.getLegalPerson());
-		assertEquals(kindInfo.getVorname(), partnerCore.getFirstName());
-		assertEquals(stamm.getName(), partnerCore.getSecondName());
-		assertEquals(contractDate, partnerCore.getDateOfBirth());
+		assertEqualsRequired(kindInfo.getVorname(), partnerCore.getFirstName());
+		assertEqualsRequired(stamm.getName(), partnerCore.getSecondName());
+		assertEqualsRequired(contractDate, partnerCore.getDateOfBirth());
 		assertEquals(Long.valueOf(0L), partnerCore.getSex());
 		assertEquals("DE", partnerCore.getNationality());
 		assertNull(partnerCore.getNationality2());
@@ -113,7 +118,6 @@ class ChildrenPartnerRuleTest {
 		assertEquals(PartnerFactory.BLANK, partnerCore.getExtCustomerNumber());
 		assertEquals(Long.valueOf(0), partnerCore.getNumberChildren());
 		assertEquals(Long.valueOf(0), partnerCore.getAdvertising());
-		assertNull(partnerCore.getReasonForChange());
 		assertEquals(PartnerFactory.BLANK, partnerCore.getEmployer());
 		assertEquals(Long.valueOf(0), partnerCore.getSalutation());
 		assertEquals(PartnerFactory.BLANK, partnerCore.getHealthInsuranceNumber());
@@ -138,12 +142,21 @@ class ChildrenPartnerRuleTest {
 		assertNull(partnerCore.getCancellation());
 		assertNull(partnerCore.getCancellationDate());
 		assertEquals(Long.valueOf(0), partnerCore.getDispatchType());
-		assertEquals(date(1879,11,5), partnerCore.getDateOfDeath()  );
+		assertNull(partnerCore.getDateOfDeath()  );
 		assertNull(partnerCore.getTitleOfNobility());
 		assertNull(partnerCore.getHonoraryTitle());
 		assertNull(partnerCore.getNamePrefix());
 		assertEquals(Long.valueOf(0), partnerCore.getPepFlag());
 		assertEquals(Long.valueOf(0), partnerCore.getEuSanctionFlag());
+		
+		if (withoutHist) {
+			return;
+		}
+		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
+		assertEqualsRequired(contractDate, partnerCore.getDop());
+		assertEqualsRequired(contractDate, partnerCore.getInd());
+		assertEquals(Long.valueOf(0), partnerCore.getTerminationflag());
+		assertNull(partnerCore.getReasonForChange());
 	}
 	
 	@Test
@@ -154,25 +167,52 @@ class ChildrenPartnerRuleTest {
 		assertEquals(1, results.size());
 		final PartnersRole partnersRole = (PartnersRole) results.iterator().next();
 		
-		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
+		assertEqualsRequired(idMapping.getMandator(), partnersRole.getMandator());
 		assertEquals("0", partnersRole.getDatastate());
-		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEqualsRequired(idMapping.getProcessNumber(), partnersRole.getProcessnr());
 		assertEquals(Long.valueOf(1), partnersRole.getHistnr());
 		assertNull(partnersRole.getRprocessnr());
-		assertEquals(contractDate, partnersRole.getDop());
+		assertEqualsRequired(contractDate, partnersRole.getDop());
 		assertNull(partnersRole.getDor());
-		assertEquals(contractDate, partnersRole.getInd());
+		assertEqualsRequired(contractDate, partnersRole.getInd());
 		assertEquals(Long.valueOf(0l), partnersRole.getTerminationflag());
 		assertEquals("IP", partnersRole.getRole());
 		assertEquals(Long.valueOf(1), partnersRole.getOrderNrRole());
-		assertEquals(idMapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEqualsRequired(""+idMapping.getContractNumber(), partnersRole.getLeftSide());
 		assertEquals("3", partnersRole.getOrderNrLeftSide());
-		assertEquals(idMapping.getChildrenPartnerNr()[0], partnersRole.getRightSide());
+		assertEqualsRequired(idMapping.getChildrenPartnerNr()[0], partnersRole.getRightSide());
 		assertNull(partnersRole.getAddressNr());
 		assertNull(partnersRole.getBankNr());
 		assertNull(partnersRole.getCommunicationRoleKey());
-		assertEquals("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEqualsRequired("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
 		assertEquals(Long.valueOf(1L), partnersRole.getRoleState());
 		assertEquals(Long.valueOf(1L), partnersRole.getRiskCarrier());
+	}
+	
+	@Test
+	void assignNewPartnerDead() {
+		
+		kindInfo.setSterbedatum(18791105L);
+		final List<Object> results = new ArrayList<>();
+		childrenPartnerRule.assignNewPartner(idMapping, children, stamm, contractDate, results);
+
+		assertEquals(2, results.size());
+		
+		assertPartnerCore( (PartnerCore) results.get(0), false);
+		
+		final PartnerCore terminatedPartnerCore = (PartnerCore) results.get(1);
+		
+		final Date terminationDate = TestUtil.toDate(kindInfo.getSterbedatum());
+		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDop());
+		assertEqualsRequired(terminationDate, terminatedPartnerCore.getInd());
+		assertEquals(Long.valueOf(900L), terminatedPartnerCore.getReasonForChange());
+		assertEquals(Long.valueOf(1L), terminatedPartnerCore.getTerminationflag());
+		assertEquals(Long.valueOf(2L), terminatedPartnerCore.getHistnr());
+		
+		assertPartnerCore( terminatedPartnerCore, true);
+		
+		
+		
+		
 	}
 }

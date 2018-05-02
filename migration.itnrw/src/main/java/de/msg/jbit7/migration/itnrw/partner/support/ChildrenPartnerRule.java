@@ -47,7 +47,29 @@ public class ChildrenPartnerRule {
 			@Fact(PartnerFamilyFacts.CONTRACT_DATE) Date contractDate ,
 			@Fact(PartnerFamilyFacts.RESULTS) Collection<Object> results) {
 		
-			IntStream.range(0, kindInfos.size()).forEach(i -> results.add(assignChild(idMapping, kindInfos.get(i), stamm, contractDate, i)));
+			IntStream.range(0, kindInfos.size()).forEach(i -> {
+				
+				
+				final KindInfo kindInfo = kindInfos.get(i);
+				final PartnerCore newPartnerCore = assignChild(idMapping, kindInfo, stamm, contractDate, i);
+				
+				
+				results.add(newPartnerCore);
+				
+				
+			if( conversionService.convert(kindInfo.getSterbedatum() , Date.class ) != null) {
+				final PartnerCore terminatedPartnerCore = partnerFactory.copy(newPartnerCore);
+				final Date terminationDate = conversionService.convert(kindInfo.getSterbedatum(), Date.class);
+				terminatedPartnerCore.setDop(terminationDate);
+				terminatedPartnerCore.setInd(terminationDate);
+				terminatedPartnerCore.setReasonForChange(900L);
+				terminatedPartnerCore.setTerminationflag(1L);
+				terminatedPartnerCore.setHistnr(2L);
+				results.add(terminatedPartnerCore);
+			}
+				
+				
+			});
 		
 		
 	}
@@ -95,7 +117,7 @@ public class ChildrenPartnerRule {
 		partnerCore.setSecondName(StringUtils.hasText(kindInfo.getName()) ? kindInfo.getName(): stamm.getName());
 		partnerCore.setDateOfBirth(conversionService.convert(kindInfo.getGebDatum(), Date.class));
 		partnerCore.setUserid(idMapping.getMigrationUser());
-		partnerCore.setDateOfDeath(conversionService.convert(kindInfo.getSterbedatum(), Date.class));
+		
 		return partnerCore;
 	}
 
