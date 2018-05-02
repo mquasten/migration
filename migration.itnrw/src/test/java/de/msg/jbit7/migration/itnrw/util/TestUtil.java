@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,6 +54,11 @@ public interface TestUtil {
 	public static void assertEqualsRequired(final Object expected, final Object actual) {
 		assertNotNull(actual);
 		assertEquals(expected, actual);
+	}
+	
+	public static Date date(int year, int month, int day) {
+		final Calendar calendar = new GregorianCalendar(year, month - 1, day);
+		return calendar.getTime();
 	}
 	
 }
