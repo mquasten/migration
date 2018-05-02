@@ -81,6 +81,7 @@ public class EhegatteBuilder {
 		}
 		
 		Assert.notNull(ehegatte.getBeihilfenr(), "Beihilfenr required.");
+		Assert.notNull(ehegatte.getGebDatumEhe(), "Beihilfenr required.");
 		Assert.hasText(ehegatte.getVornameEhe(), "VornameEhe required.");
 		return ehegatte;
 		
