@@ -20,14 +20,16 @@ import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
+import de.msg.jbit7.migration.itnrw.stamm.EhegatteBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
+import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 
 
 public class MarriagePartnerRuleTest {
 	
 	
-	private final Ehegatte ehegatte = new Ehegatte();
+	
 	private final  Date contractDate = date(1831, 6, 13);
 	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().build();
 	private final StammImpl stamm = new StammImpl();
@@ -36,8 +38,7 @@ public class MarriagePartnerRuleTest {
 	private final MarriagePartnerRule marriagePartnerRule = new MarriagePartnerRule(partnerFactory, conversionService);
 	@BeforeEach
 	void setup() {
-		ehegatte.setVornameEhe("James Clerk");
-		ehegatte.setGebDatumEhe(18310613L);
+		
 		
 		stamm.setName("Maxwell");
 		
@@ -51,6 +52,7 @@ public class MarriagePartnerRuleTest {
 	
 	@Test
 	final void assignNewPartner() {
+		final Ehegatte ehegatte = EhegatteBuilder.builder().build();
 		final List<Object> results = new ArrayList<>();
 		marriagePartnerRule.assignNewPartner(idMapping, stamm, ehegatte, contractDate, results);
 		
@@ -58,7 +60,7 @@ public class MarriagePartnerRuleTest {
 		
 		final PartnerCore partnerCore = (PartnerCore) results.get(0);
 		
-		assertPartnerCore(partnerCore,false);
+		assertPartnerCore(partnerCore,ehegatte, false);
 		
 		final PartnersRole partnersRole = (PartnersRole) results.get(1);
 		
@@ -89,7 +91,7 @@ public class MarriagePartnerRuleTest {
 		assertEqualsRequired(Long.valueOf(1L),  partnersRole.getRiskCarrier());
 	}
 
-	private void assertPartnerCore(final PartnerCore partnerCore, final boolean withoutHist) {
+	private void assertPartnerCore(final PartnerCore partnerCore, final Ehegatte ehegatte, final boolean withoutHist) {
 		assertEqualsRequired(idMapping.getMandator(), partnerCore.getMandator());
 		assertEqualsRequired("0", partnerCore.getDatastate());
 		assertEqualsRequired(idMapping.getProcessNumber(), partnerCore.getProcessnr());
@@ -99,7 +101,7 @@ public class MarriagePartnerRuleTest {
 		assertEqualsRequired(Long.valueOf(1L), partnerCore.getLegalPerson());
 		assertEqualsRequired(ehegatte.getVornameEhe(), partnerCore.getFirstName());
 		assertEqualsRequired(stamm.getName(), partnerCore.getSecondName());
-		assertEqualsRequired(contractDate, partnerCore.getDateOfBirth());
+		assertEqualsRequired(TestUtil.toDate(ehegatte.getGebDatumEhe()), partnerCore.getDateOfBirth());
 		assertEqualsRequired(Long.valueOf(0L), partnerCore.getSex());
 		assertEqualsRequired("DE", partnerCore.getNationality());
 		assertNull(partnerCore.getNationality2());
@@ -177,19 +179,19 @@ public class MarriagePartnerRuleTest {
 
 	@Test
 	final void assignNewPartnerDead() {
+		final Ehegatte ehegatte = EhegatteBuilder.builder().withSterbeDatum().build();
 		
-		ehegatte.setSterbedatum(18791105L);
 		final List<Object> results = new ArrayList<>();
 		marriagePartnerRule.assignNewPartner(idMapping, stamm, ehegatte, contractDate, results);
 		
 		assertEquals(3, results.size());
-		assertPartnerCore((PartnerCore) results.get(0), false);
+		assertPartnerCore((PartnerCore) results.get(0), ehegatte, false);
 		assertPartnersRole( (PartnersRole) results.get(1));
 		final PartnerCore terminatedPartnerCore = (PartnerCore) results.get(2);
 		
-		assertPartnerCore(terminatedPartnerCore, true);
+		assertPartnerCore(terminatedPartnerCore,ehegatte, true);
 		
-		final Date terminationDate = date(1879, 11, 5);
+		final Date terminationDate = TestUtil.toDate(ehegatte.getSterbedatum());
 		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDateOfDeath() );  
 		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDop());
 		assertEqualsRequired(terminationDate, terminatedPartnerCore.getInd());
