@@ -1,5 +1,7 @@
 package de.msg.jbit7.migration.itnrw.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
@@ -44,6 +46,12 @@ public interface TestUtil {
 
 	public static Long randomLong() {
 		return Long.valueOf(Double.valueOf(1e10 * Math.random()).longValue());
+	}
+	
+
+	public static void assertEqualsRequired(final Object expected, final Object actual) {
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 	
 }

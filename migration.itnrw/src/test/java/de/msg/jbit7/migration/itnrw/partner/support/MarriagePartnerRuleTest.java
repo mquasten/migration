@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import static de.msg.jbit7.migration.itnrw.util.TestUtil.assertEqualsRequired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,30 +16,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
+
 public class MarriagePartnerRuleTest {
 	
 	
 	private final Ehegatte ehegatte = new Ehegatte();
 	private final  Date contractDate = date(1831, 6, 13);
-	private final IdMapping idMapping = new IdMapping();
+	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().build();
 	private final StammImpl stamm = new StammImpl();
 	private final DefaultConversionService conversionService = new DefaultConversionService();
 	private final PartnerFactory partnerFactory = new PartnerFactory();
 	private final MarriagePartnerRule marriagePartnerRule = new MarriagePartnerRule(partnerFactory, conversionService);
 	@BeforeEach
 	void setup() {
-		idMapping.setMandator(4711L);
-		idMapping.setMarriagePartnerNr("1234");
-		idMapping.setProcessNumber(4711L);
-		idMapping.setMarriagePartnerNr("7890");
-		idMapping.setMigrationUser("MigUser");
-		
 		ehegatte.setVornameEhe("James Clerk");
 		ehegatte.setGebDatumEhe(18310613L);
 		
@@ -62,29 +59,30 @@ public class MarriagePartnerRuleTest {
 		assertEquals(2, results.size());
 		
 		final PartnerCore partnerCore = (PartnerCore) results.get(0);
-		assertEquals(idMapping.getMandator(), partnerCore.getMandator());
-		assertEquals("0", partnerCore.getDatastate());
-		assertEquals(idMapping.getProcessNumber(), partnerCore.getProcessnr());
-		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
-		assertEquals(contractDate, partnerCore.getDop());
-		assertEquals(contractDate, partnerCore.getInd());
+		
+		assertEqualsRequired(idMapping.getMandator(), partnerCore.getMandator());
+		assertEqualsRequired("0", partnerCore.getDatastate());
+		assertEqualsRequired(idMapping.getProcessNumber(), partnerCore.getProcessnr());
+		assertEqualsRequired(Long.valueOf(1), partnerCore.getHistnr());
+		assertEqualsRequired(contractDate, partnerCore.getDop());
+		assertEqualsRequired(contractDate, partnerCore.getInd());
 		assertNull(partnerCore.getDor());
-		assertEquals(Long.valueOf(0L), partnerCore.getTerminationflag());
-		assertEquals(idMapping.getMarriagePartnerNr(), partnerCore.getPartnersNr());
-		assertEquals(Long.valueOf(1L), partnerCore.getLegalPerson());
-		assertEquals(ehegatte.getVornameEhe(), partnerCore.getFirstName());
-		assertEquals(stamm.getName(), partnerCore.getSecondName());
-		assertEquals(contractDate, partnerCore.getDateOfBirth());
-		assertEquals(Long.valueOf(0L), partnerCore.getSex());
-		assertEquals("DE", partnerCore.getNationality());
+		assertEqualsRequired(Long.valueOf(0L), partnerCore.getTerminationflag());
+		assertEqualsRequired(idMapping.getMarriagePartnerNr(), partnerCore.getPartnersNr());
+		assertEqualsRequired(Long.valueOf(1L), partnerCore.getLegalPerson());
+		assertEqualsRequired(ehegatte.getVornameEhe(), partnerCore.getFirstName());
+		assertEqualsRequired(stamm.getName(), partnerCore.getSecondName());
+		assertEqualsRequired(contractDate, partnerCore.getDateOfBirth());
+		assertEqualsRequired(Long.valueOf(0L), partnerCore.getSex());
+		assertEqualsRequired("DE", partnerCore.getNationality());
 		assertNull(partnerCore.getNationality2());
 		assertNull(partnerCore.getNationality3());
-		assertEquals(Long.valueOf(0), partnerCore.getProfession());
-		assertEquals(PartnerRule.UNDEFINED, partnerCore.getActivityState());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getProfession());
+		assertEqualsRequired(PartnerRule.UNDEFINED, partnerCore.getActivityState());
 	
-		assertEquals("de", partnerCore.getLanguageCorrespondence());
-		assertEquals(Long.valueOf(0), partnerCore.getVipFlag());
-		assertEquals(Long.valueOf(0l), partnerCore.getPartnerState());
+		assertEqualsRequired("de", partnerCore.getLanguageCorrespondence());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getVipFlag());
+		assertEqualsRequired(Long.valueOf(0l), partnerCore.getPartnerState());
 		assertNull(partnerCore.getNotice());
 		assertNull(partnerCore.getNameAddition());
 		assertNull(partnerCore.getNameAddition2());
@@ -92,26 +90,26 @@ public class MarriagePartnerRuleTest {
 		assertNull(partnerCore.getDefaultAddress());
 		assertNull(partnerCore.getDefaultBank());
 		assertNull(partnerCore.getDefaultCommunication());
-		assertEquals(Long.valueOf(2), partnerCore.getMaritalStatus());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getPlaceOfBirth());
+		assertEqualsRequired(Long.valueOf(2), partnerCore.getMaritalStatus());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getPlaceOfBirth());
 	
-		assertEquals(PartnerFactory.BLANK, partnerCore.getExtCustomerNumber());
-		assertEquals(Long.valueOf(0L), partnerCore.getNumberChildren());
-		assertEquals(Long.valueOf(0), partnerCore.getAdvertising());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getExtCustomerNumber());
+		assertEqualsRequired(Long.valueOf(0L), partnerCore.getNumberChildren());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getAdvertising());
 		assertNull(partnerCore.getReasonForChange());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getEmployer());
-		assertEquals(Long.valueOf(0), partnerCore.getSalutation());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getHealthInsuranceNumber());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getCitizenNumber());
-		assertEquals(Long.valueOf(0), partnerCore.getIdDocumentType());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentNr());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getEmployer());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getSalutation());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getHealthInsuranceNumber());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getCitizenNumber());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getIdDocumentType());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getIdDocumentNr());
 		assertNull(partnerCore.getIdDocumentIssuedDate());
 		assertNull(partnerCore.getIdDocumentExpiryDate());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthority());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthorityCountry());
-		assertEquals(Long.valueOf(0), partnerCore.getTenant());
-		assertEquals(Long.valueOf(0), partnerCore.getBasicType());
-		assertEquals(Long.valueOf(0), partnerCore.getFirstSecondaryType());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthority());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getIdDocumentAuthorityCountry());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getTenant());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getBasicType());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getFirstSecondaryType());
 		assertNull(partnerCore.getCciNumber());
 		assertNull(partnerCore.getSector());
 		assertNull(partnerCore.getDenomination());
@@ -122,44 +120,45 @@ public class MarriagePartnerRuleTest {
 		assertNull(partnerCore.getCancellation());	
 		assertNull(partnerCore.getCancellationDate());	
 		assertEquals(Long.valueOf(0), partnerCore.getDispatchType());
-		assertEquals(date(1879, 11, 5), partnerCore.getDateOfDeath());
+		assertNull(partnerCore.getDateOfDeath());
 		assertNull(partnerCore.getTitleOfNobility());
 		assertNull(partnerCore.getHonoraryTitle());
 		assertNull(partnerCore.getNamePrefix());
-		assertEquals(Long.valueOf(0), partnerCore.getPepFlag());
-		assertEquals(Long.valueOf(0L), partnerCore.getEuSanctionFlag());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getPepFlag());
+		assertEqualsRequired(Long.valueOf(0L), partnerCore.getEuSanctionFlag());
 		
 		
 		
-		assertEquals(PartnerFactory.BLANK, partnerCore.getTitle());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumber());
-		assertEquals(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumberSp());
-		assertEquals(Long.valueOf(0), partnerCore.getSecondSecondaryType());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getTitle());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumber());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getSocialInsuranceNumberSp());
+		assertEqualsRequired(Long.valueOf(0), partnerCore.getSecondSecondaryType());
 		
-		assertEquals(PartnerFactory.BLANK, partnerCore.getBirthName());
+		assertEqualsRequired(PartnerFactory.BLANK, partnerCore.getBirthName());
 		
 		final PartnersRole partnersRole = (PartnersRole) results.get(1);
 		
-		assertEquals(idMapping.getMandator(), partnersRole.getMandator());
-		assertEquals("0", partnersRole.getDatastate());
-		assertEquals(idMapping.getProcessNumber(), partnersRole.getProcessnr());
-		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
+		assertEqualsRequired(idMapping.getMandator(), partnersRole.getMandator());
+		assertEqualsRequired("0", partnersRole.getDatastate());
+		assertEqualsRequired(idMapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEqualsRequired(Long.valueOf(1), partnerCore.getHistnr());
 		assertNull(partnersRole.getRprocessnr());
-		assertEquals(contractDate, partnersRole.getDop());
+		assertEqualsRequired(contractDate, partnersRole.getDop());
 		assertNull(partnersRole.getDor());
-		assertEquals(contractDate, partnersRole.getInd());
-		assertEquals(Long.valueOf(0L), partnersRole.getTerminationflag());
-		assertEquals("IP", partnersRole.getRole());
-		assertEquals(Long.valueOf(1), partnersRole.getOrderNrRole());
-		assertEquals(idMapping.getContractNumber(), partnersRole.getLeftSide());
-		assertEquals("2", partnersRole.getOrderNrLeftSide());
-		assertEquals(idMapping.getMarriagePartnerNr(), partnersRole.getRightSide());
+		assertEqualsRequired(contractDate, partnersRole.getInd());
+		assertEqualsRequired(Long.valueOf(0L), partnersRole.getTerminationflag());
+		assertEqualsRequired("IP", partnersRole.getRole());
+		assertEqualsRequired(Long.valueOf(1), partnersRole.getOrderNrRole());
+		
+		assertEqualsRequired(""+idMapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEqualsRequired("2", partnersRole.getOrderNrLeftSide());
+		assertEqualsRequired(idMapping.getMarriagePartnerNr(), partnersRole.getRightSide());
 		assertNull(partnersRole.getAddressNr());
 		assertNull(partnersRole.getBankNr());
 		assertNull(partnersRole.getCommunicationRoleKey());
-		assertEquals("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
-		assertEquals(Long.valueOf(1L), partnersRole.getRoleState());
-		assertEquals(Long.valueOf(1L),  partnersRole.getRiskCarrier());
+		assertEqualsRequired("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEqualsRequired(Long.valueOf(1L), partnersRole.getRoleState());
+		assertEqualsRequired(Long.valueOf(1L),  partnersRole.getRiskCarrier());
 	}
 
 	

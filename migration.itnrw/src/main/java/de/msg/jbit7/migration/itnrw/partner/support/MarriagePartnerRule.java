@@ -40,7 +40,7 @@ public class MarriagePartnerRule {
 			@Fact(PartnerFamilyFacts.CONTRACT_DATE) Date contractDate ,
 			@Fact(PartnerFamilyFacts.RESULTS) Collection<Object> results) {
 	
-		results.add(newPartnerCoreIP(idMapping, stamm, ehegatte, contractDate));
+		results.add(newPartnerCore(idMapping, stamm, ehegatte, contractDate));
 		results.add(newPartnerRole(idMapping, contractDate));
 		
 		
@@ -61,7 +61,7 @@ public class MarriagePartnerRule {
 		return partnersRole;
 	}
 
-	private PartnerCore newPartnerCoreIP(IdMapping idMapping, StammImpl stamm, Ehegatte ehegatte, Date contractDate) {
+	private PartnerCore newPartnerCore(IdMapping idMapping, StammImpl stamm, Ehegatte ehegatte, Date contractDate) {
 		final PartnerCore partnerCore = partnerFactory.newPartnerCore();
 		partnerCore.setMandator(idMapping.getMandator());
 		partnerCore.setProcessnr(idMapping.getProcessNumber());
@@ -73,7 +73,8 @@ public class MarriagePartnerRule {
 		partnerCore.setDateOfBirth(conversionService.convert(ehegatte.getGebDatumEhe(), Date.class));
 		partnerCore.setMaritalStatus(2L);
 		partnerCore.setUserid(idMapping.getMigrationUser());
-		partnerCore.setDateOfDeath(conversionService.convert(ehegatte.getSterbedatum(), Date.class));
+		partnerCore.setDateOfDeath(null);
+		//partnerCore.setDateOfDeath(conversionService.convert(ehegatte.getSterbedatum(), Date.class));
 		return partnerCore;
 	}
 
