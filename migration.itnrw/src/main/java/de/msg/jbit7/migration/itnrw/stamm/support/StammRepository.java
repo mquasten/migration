@@ -95,7 +95,7 @@ public class StammRepository {
 	public final List<SepaBankVerbindung> findSepaBank(final long beihilfeNr) {
 
 		final String sql = String.format(
-				"select * from SEPA_BANKVERBINDUNG sb  where beihilfenr = :%s and  sb.version = ( select  max(version) from SEPA_BANKVERBINDUNG where beihilfenr = sb.beihilfenr and sb.typ = typ) order by sb.typ  ",
+				"select * from SEPA_BANKVERBINDUNG sb  where beihilfenr = :%s and  sb.version = ( select  max(version) from SEPA_BANKVERBINDUNG where beihilfenr = sb.beihilfenr and sb.typ = typ) order by sb.typ  ASC",
 				BEIHILFE_NR_PARAMETER);
 
 		return jdbcOperations.query(sql, parameterMapBeihilfeNr(beihilfeNr),
