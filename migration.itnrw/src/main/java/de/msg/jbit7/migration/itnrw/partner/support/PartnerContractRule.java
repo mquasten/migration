@@ -60,7 +60,7 @@ public class PartnerContractRule {
 		contract.setDop(contractDate);
 		contract.setInd(contractDate);
 		contract.setMandator(idMapping.getMandator());
-		contract.setPolicyNumber("BB" + idMapping.getContractNumber());
+		contract.setPolicyNumber("" + idMapping.getBeihilfenr());
 		contract.setProcessnr(idMapping.getProcessNumber());
 		results.add(contract);
 		

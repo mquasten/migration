@@ -75,7 +75,7 @@ public class PartnerContractRuleTest {
 		assertEquals(Long.valueOf(0L), pmContract.getMemberOfStaff());
 
 		assertEquals(Long.valueOf(0l), pmContract.getPolicyConfirmationFlag());
-		assertEquals("BB" + idMapping.getContractNumber(), pmContract.getPolicyNumber());
+		assertEquals(String.valueOf(idMapping.getBeihilfenr()), pmContract.getPolicyNumber());
 
 		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText1());
 		assertEquals(PartnerFactory.BLANK, pmContract.getPostingText2());
