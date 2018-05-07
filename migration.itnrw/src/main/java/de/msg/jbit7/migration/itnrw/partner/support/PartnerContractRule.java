@@ -9,7 +9,6 @@ import org.jeasy.rules.annotation.Fact;
 import org.jeasy.rules.annotation.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.ConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
@@ -23,12 +22,10 @@ public class PartnerContractRule {
 	final static Logger LOGGER = LoggerFactory.getLogger(PartnerContractRule.class);
 	
 	
-	private final ConversionService conversionService;
 	
 	private final PartnerFactory partnerFactory;
 	
-	public PartnerContractRule( final PartnerFactory partnerFactory, final ConversionService conversionService) {
-		this.conversionService = conversionService;
+	public PartnerContractRule( final PartnerFactory partnerFactory) {
 		this.partnerFactory=partnerFactory;
 	}
 
@@ -64,11 +61,6 @@ public class PartnerContractRule {
 		contract.setProcessnr(idMapping.getProcessNumber());
 		results.add(contract);
 		
-		if(conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
-			results.add(newTerminatedContract(contract, conversionService.convert(stamm.getSterbedatum(), Date.class),900L));
-			return;
-		}
-		
 		
 	}
 
@@ -76,16 +68,6 @@ public class PartnerContractRule {
 
 
 
-	private PMContract newTerminatedContract(final PMContract contract, final Date endDate, final long reasonForChange) {
-		final PMContract result = partnerFactory.copy(contract);
-		result.setDop(endDate);
-		result.setInd(endDate);
-		result.setReasonForChange(reasonForChange);
-		result.setPrionr(900L);
-		result.setTerminationDate(endDate);
-		result.setHistnr(Long.valueOf(2));
-		result.setTerminationflag(1L);
-		return result;
-	}
+	
 
 }

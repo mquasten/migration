@@ -27,7 +27,10 @@ public class IdGenerationMain {
 			applicationContext.getBean(IdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite, migUser);
 		}
 	
+		System.out.println("finished.");
 		System.exit(0);
+		
+		
 	}
 
 	private static CommandLine parse(String[] args) {

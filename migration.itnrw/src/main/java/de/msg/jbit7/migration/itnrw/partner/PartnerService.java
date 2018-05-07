@@ -3,6 +3,7 @@ package de.msg.jbit7.migration.itnrw.partner;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
+import de.msg.jbit7.migration.itnrw.partner.support.FamilyMemberTerminationDatesByPartnerNumberConverter;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -39,12 +41,15 @@ abstract class PartnerService {
 	private final Date defaultDate = Date.from(LocalDate.of(1900, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 	private final StammRepository stammRepository;
+	
+	private final FamilyMemberTerminationDatesByPartnerNumberConverter converter;
 	private final Rules rules;
-	PartnerService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository,final PartnerRepository partnerRepository, @Qualifier("partnerRules") final Rules rules) {
+	PartnerService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository,final PartnerRepository partnerRepository, @Qualifier("partnerRules") final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter) {
 		this.idMappingRepository = idMappingRepository;
 		this.stammRepository=stammRepository;
 		this.partnerRepository=partnerRepository;		
 		this.rules=rules;
+		this.converter=converter;
 	} 
 	
 	public void importPartners(final long mandator, final boolean cleanMandator) {
@@ -69,8 +74,10 @@ abstract class PartnerService {
 		
 		final List<SepaBankVerbindung> sepaBankVerbindung = stammRepository.findSepaBank(mapping.getBeihilfenr());
 		
+		
+		
 		final List<Object> results = new ArrayList<>();
-		final Facts facts = new Facts();
+		final Facts facts = new SpelFacts(Arrays.asList(converter));
 		facts.put(PartnerFacts.ID_MAPPING, mapping);
 		facts.put(PartnerFacts.CONTRACT_DATE, contractDate);
 		facts.put(PartnerFacts.STAMM, stamm);

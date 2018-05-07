@@ -84,12 +84,12 @@ class PartnerRuleTest {
 		partnerRule.assignPartner(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
 
 		final PartnerCore partnerCore = (PartnerCore) DataAccessUtils.requiredSingleResult(results);
-		assertNewPartner(partnerCore, false);
+		assertNewPartner(partnerCore);
 		
 
 	}
 
-	private void assertNewPartner(final PartnerCore partnerCore, boolean withOutHist) {
+	private void assertNewPartner(final PartnerCore partnerCore) {
 		assertEquals(PartnerRule.UNDEFINED, partnerCore.getActivityState());
 		assertEquals(Long.valueOf(0L), partnerCore.getAdvertising());
 		assertEquals(Long.valueOf(0L), partnerCore.getBasicType());
@@ -158,9 +158,7 @@ class PartnerRuleTest {
 		assertEquals(idMapping.getMigrationUser(), partnerCore.getUserid());
 		assertEquals(Long.valueOf(0), partnerCore.getVipFlag());
 		
-		if( withOutHist) {
-			return;
-		}
+		
 		
 		assertNull(partnerCore.getDateOfDeath());
 		assertEquals(CONTRACT_DATE, partnerCore.getDop());
@@ -385,17 +383,8 @@ class PartnerRuleTest {
 		final List<Object> results = new ArrayList<>();
 		partnerRule.assignPartner(idMapping, stamm, Arrays.asList(sepaBankVerbindung), CONTRACT_DATE, results);
 
-		assertNewPartner((PartnerCore)  results.get(0), false);
-		final Date dateOfDead = date(1934, 7, 4);
-		final PartnerCore terminatedPartnerCore = (PartnerCore) results.get(1);
-		assertNewPartner(terminatedPartnerCore, true);
+		assertNewPartner((PartnerCore)  results.get(0));
 		
-		assertEquals(dateOfDead, terminatedPartnerCore.getDateOfDeath());
-		assertEquals(dateOfDead, terminatedPartnerCore.getDop());
-		assertEquals(dateOfDead, terminatedPartnerCore.getInd() );
-		assertEquals(Long.valueOf(900), terminatedPartnerCore.getReasonForChange());
-		assertEquals(Long.valueOf(1L), terminatedPartnerCore.getTerminationflag());
-		assertEquals(Long.valueOf(2L), terminatedPartnerCore.getHistnr());
 		
 	}
 

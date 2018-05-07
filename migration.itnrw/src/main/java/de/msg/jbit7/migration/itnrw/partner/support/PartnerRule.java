@@ -84,33 +84,18 @@ public class PartnerRule {
 		partnerCore.setSecondName(stamm.getName());
 
 		partnerCore.setSex(salutationAndSex(stamm));
-		partnerCore.setSocialInsuranceNumber(PartnerFactory.BLANK);
-		partnerCore.setSocialInsuranceNumberSp(PartnerFactory.BLANK);
-
+		
 		partnerCore.setTitle(notNull(stamm.getTitel()));
 
 		partnerCore.setUserid(idMapping.getMigrationUser());
 
 		results.add(partnerCore);
 		
-		if( conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
-			results.add(mewTerminatedPartnerCore(stamm, partnerCore));
-			return;
-		}
+		
 		
 	}
 
-	private PartnerCore mewTerminatedPartnerCore(StammImpl stamm, final PartnerCore partnerCore) {
-		final PartnerCore terminatedPartnerCore = partnerFactory.copy(partnerCore);
-		final Date terminationdate = conversionService.convert(stamm.getSterbedatum(), Date.class);
-		terminatedPartnerCore.setDateOfDeath(terminationdate);
-		terminatedPartnerCore.setDop(terminationdate);
-		terminatedPartnerCore.setInd(terminationdate);
-		terminatedPartnerCore.setReasonForChange(900L);
-		terminatedPartnerCore.setTerminationflag(1L);
-		terminatedPartnerCore.setHistnr(2L);
-		return terminatedPartnerCore;
-	}
+	
 
 	private String notNull(final String text) {
 		if (text == null) {
@@ -324,11 +309,13 @@ public class PartnerRule {
 		partnersRoleIp.setRole("IP");
 		results.add(partnersRolePH);
 		results.add(partnersRoleIp);
+		
+		
 	
 
 	}
 
-	private PartnersRole newPartnerRole(IdMapping idMapping, final Date contractDate) {
+	private PartnersRole newPartnerRole(final IdMapping idMapping, final Date contractDate) {
 		final PartnersRole partnersRole = partnerFactory.newPartnersRole();
 		partnersRole.setMandator(idMapping.getMandator());
 		partnersRole.setProcessnr(idMapping.getProcessNumber());

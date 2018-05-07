@@ -11,8 +11,9 @@ class PartnerRulesConfiguration {
 	@Bean("partnerRules")
 	Rules partnerRules(final PartnerFactory partnerFactory, final ConversionService conversionService) {
 		final Rules rules = new Rules();
-		rules.register(new PartnerContractRule(partnerFactory, conversionService));
+		rules.register(new PartnerContractRule(partnerFactory));
 		rules.register(new PartnerRule(partnerFactory, conversionService));
+		rules.register(new PartnerTerminatedRule(partnerFactory, conversionService));
 		return rules;
 	}
 	
@@ -27,6 +28,12 @@ class PartnerRulesConfiguration {
 	@Bean
 	PartnerFactory partnerFactory  () {
 		return new PartnerFactory();
+	}
+	
+	@Bean
+	FamilyMemberTerminationDatesByPartnerNumberConverter familyMemberTerminationDatesByPartnerNumberConverter (final ConversionService conversionService) {
+		return new FamilyMemberTerminationDatesByPartnerNumberConverter(conversionService);
+		
 	}
 	
 }
