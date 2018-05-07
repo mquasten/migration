@@ -44,6 +44,10 @@ abstract class PartnerService {
 	
 	private final FamilyMemberTerminationDatesByPartnerNumberConverter converter;
 	private final Rules rules;
+	
+	
+	
+	
 	PartnerService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository,final PartnerRepository partnerRepository, @Qualifier("partnerRules") final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter) {
 		this.idMappingRepository = idMappingRepository;
 		this.stammRepository=stammRepository;

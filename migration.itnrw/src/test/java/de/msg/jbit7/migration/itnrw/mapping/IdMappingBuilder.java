@@ -55,6 +55,11 @@ public class IdMappingBuilder {
 		return this;
 	}
 	
+	public final IdMappingBuilder withMandator(final long mandator) {
+		idMapping.setMandator(mandator);
+		return this;
+	}
+	
 	public final IdMappingBuilder withChildren(final int numberOfChilfren) {
 		Assert.isTrue(numberOfChilfren > 0 , "NumberOfChilfren >= 0");
 		children.clear();
@@ -76,6 +81,8 @@ public class IdMappingBuilder {
 		
 		idMapping.setCollectiveContractNumbers(new Long[collectiveContracts.size()]);
 		
+		
+		
 		idMapping.setChildrenPartnerNr(children.toArray(new String[children.size()]));
 		final List<Long> childrenNumbers =IntStream.range(0, children.size()).mapToLong(i -> Long.valueOf(i)).boxed().collect(Collectors.toList());
 		idMapping.setChildrenNr(childrenNumbers.toArray(new Long[childrenNumbers.size()]));
@@ -84,6 +91,10 @@ public class IdMappingBuilder {
 		}
 		if( StringUtils.isEmpty(idMapping.getPartnerNr() )) {
 			idMapping.setPartnerNr("" + TestUtil.randomLong());
+		}
+		
+		if( StringUtils.isEmpty(idMapping.getMigrationUser())){
+			idMapping.setMigrationUser(TestUtil.randomString().substring(0, 20));
 		}
 		
 		TestUtil.assignValuesToBean(idMapping, field -> {
