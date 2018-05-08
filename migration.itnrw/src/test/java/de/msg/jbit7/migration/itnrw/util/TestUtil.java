@@ -78,6 +78,29 @@ public interface TestUtil {
 			return null;
 		}
 	}
+	
+	public static void assertSameDay(final Date expected, final Date date) {
+		assertEquals(truncate(expected), truncate(date));
+	}
+	
+	public static Date nextDay(final Date date) {
+		final Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, +1);
+		return calendar.getTime();
+		
+	}
+	
+	public static Date truncate(final Date date) {
+		final Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		return calendar.getTime();
+		
+	}
 
 	public static long toLong(final Date date) {
 	

@@ -22,6 +22,8 @@ import de.msg.jbit7.migration.itnrw.util.BeanUtil;
 @Repository
 public class PartnerRepository {
 
+	private static final String CONTRACT_NUMBER_PARAMETER = "ContractNr";
+	private static final String PARTNERS_NUMBER_PARAMETER = "partnersNr";
 	private static final String MANDATOR_NAME = "mandator";
 	private static final String DELETE_CONTRACT_BY_MANDATOR_SQL = String
 			.format("DELETE FROM PM_CONTRACT WHERE MANDATOR = :%s", MANDATOR_NAME);
@@ -114,5 +116,28 @@ public class PartnerRepository {
 		final String sql = String.format("SELECT * from PARTNERS_ROLE where mandator=%s", mandator);
 		return namedParameterJdbcOperations.query(sql, new BeanPropertyRowMapper<>(PartnersRole.class));
 		
+	}
+	
+	public final List<PartnerCore> findPartnerHists(final String partnerId) {
+		final String sql = String.format("SELECT * from PARTNERS_CORE where PARTNERS_NR=:%s order by histnr", PARTNERS_NUMBER_PARAMETER);
+		Map<String,Object> parameter = new HashMap<>();
+		parameter.put(PARTNERS_NUMBER_PARAMETER, partnerId);
+		return namedParameterJdbcOperations.query(sql, parameter, new BeanPropertyRowMapper<>(PartnerCore.class));
+	}
+	
+	public final List<PartnersRole> findPartnersRoleHists(final String partnerId) {
+		final String sql = String.format("SELECT * from PARTNERS_ROLE where RIGHT_SIDE=:%s order by role, histnr", PARTNERS_NUMBER_PARAMETER);
+		Map<String,Object> parameter = new HashMap<>();
+		parameter.put(PARTNERS_NUMBER_PARAMETER, partnerId);
+		return namedParameterJdbcOperations.query(sql, parameter, new BeanPropertyRowMapper<>(PartnersRole.class));
+	}
+	
+	public final List<PMContract> findContractHists(final long contractNr) {
+		
+		
+		final String sql = String.format("SELECT * from PM_CONTRACT where CONTRACT_NUMBER=:%s order by histnr", CONTRACT_NUMBER_PARAMETER);
+		Map<String,Object> parameter = new HashMap<>();
+		parameter.put(CONTRACT_NUMBER_PARAMETER, contractNr);
+		return namedParameterJdbcOperations.query(sql, parameter, new BeanPropertyRowMapper<>(PMContract.class));
 	}
 }
