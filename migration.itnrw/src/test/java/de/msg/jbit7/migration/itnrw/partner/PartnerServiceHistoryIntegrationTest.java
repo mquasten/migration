@@ -111,25 +111,12 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertEquals(2, partners.size());
 		final PartnerCore firstPartnerCore = partners.get(0);
 		
-		assertSameDay(contractDate, firstPartnerCore.getInd());
-		assertSameDay(contractDate, firstPartnerCore.getDop());
-		assertEquals(Long.valueOf(1), firstPartnerCore.getHistnr());
-		assertEqualsRequired(mapping.getProcessNumber(), firstPartnerCore.getProcessnr());
-		assertEqualsRequired(mapping.getPartnerNr(), firstPartnerCore.getPartnersNr());
-		assertEquals(Long.valueOf(0), firstPartnerCore.getTerminationflag());
-		assertNull(firstPartnerCore.getDateOfDeath());
+		assertFirstPartner(firstPartnerCore);
 		
 		final PartnerCore terminatedPartnerCore = partners.get(1);
 		
 		
-		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedPartnerCore.getInd());
-		
-		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedPartnerCore.getDop());
-		assertEquals(Long.valueOf(2), terminatedPartnerCore.getHistnr());
-		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnerCore.getProcessnr());
-		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnerCore.getPartnersNr());
-		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
-		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()),terminatedPartnerCore.getDateOfDeath()); 
+		assertTerminatedPartner(terminatedPartnerCore); 
 		
 		
 		final List<PartnersRole> partnersRoles = partnerRepository.findPartnersRoleHists(mapping.getPartnerNr());
@@ -159,6 +146,24 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertEquals(2, contracts.size());
 		
 		final PMContract firstContract = contracts.get(0);
+		assertFirstContract(firstContract);
+		
+		final PMContract terminatedContract = contracts.get(1);
+		assertTerminatedContract(terminatedContract); 
+		
+	}
+
+	private void assertTerminatedContract(final PMContract terminatedContract) {
+		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedContract.getInd());
+		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedContract.getDop());
+		assertEquals(Long.valueOf(2), terminatedContract.getHistnr());
+		assertEqualsRequired(mapping.getContractNumber(), terminatedContract.getContractNumber());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedContract.getProcessnr());
+		assertEquals(Long.valueOf(1), terminatedContract.getTerminationflag());
+		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())),terminatedContract.getTerminationDate());
+	}
+
+	private void assertFirstContract(final PMContract firstContract) {
 		assertSameDay(contractDate, firstContract.getInd());
 		assertSameDay(contractDate, firstContract.getDop());
 		assertEquals(Long.valueOf(1), firstContract.getHistnr());
@@ -166,16 +171,27 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertEqualsRequired(mapping.getContractNumber(), firstContract.getContractNumber());
 		assertEquals(Long.valueOf(0), firstContract.getTerminationflag());
 		assertNull(firstContract.getTerminationDate());
+	}
+
+	private void assertTerminatedPartner(final PartnerCore terminatedPartnerCore) {
+		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedPartnerCore.getInd());
 		
-		final PMContract terminatedContract = contracts.get(1);
-		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedContract.getInd());
-		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedContract.getDop());
-		assertEquals(Long.valueOf(2), terminatedContract.getHistnr());
-		assertEqualsRequired(mapping.getContractNumber(), terminatedContract.getContractNumber());
-		assertEqualsRequired(mapping.getProcessNumber(), terminatedContract.getProcessnr());
-		assertEquals(Long.valueOf(1), terminatedContract.getTerminationflag());
-		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())),terminatedContract.getTerminationDate()); 
-		
+		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedPartnerCore.getDop());
+		assertEquals(Long.valueOf(2), terminatedPartnerCore.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnerCore.getProcessnr());
+		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnerCore.getPartnersNr());
+		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
+		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()),terminatedPartnerCore.getDateOfDeath());
+	}
+
+	private void assertFirstPartner(final PartnerCore firstPartnerCore) {
+		assertSameDay(contractDate, firstPartnerCore.getInd());
+		assertSameDay(contractDate, firstPartnerCore.getDop());
+		assertEquals(Long.valueOf(1), firstPartnerCore.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), firstPartnerCore.getProcessnr());
+		assertEqualsRequired(mapping.getPartnerNr(), firstPartnerCore.getPartnersNr());
+		assertEquals(Long.valueOf(0), firstPartnerCore.getTerminationflag());
+		assertNull(firstPartnerCore.getDateOfDeath());
 	}
 
 	private void assertTerminatedRole(final PartnersRole terminatedPartnersRoleIP) {
