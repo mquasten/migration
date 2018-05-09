@@ -28,7 +28,9 @@ import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
+import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
+import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 class PartnerRuleTest {
 
@@ -36,7 +38,7 @@ class PartnerRuleTest {
 
 	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().withChildren(2).build();
 
-	private final StammImpl stamm = new StammImpl();
+	private final StammImpl stamm =  StammBuilder.builder().withFemaleGender().withBeihilfenr(idMapping.getBeihilfenr()).build();
 
 
 	private final SepaBankVerbindung sepaBankVerbindung = new SepaBankVerbindung();
@@ -48,25 +50,11 @@ class PartnerRuleTest {
 	@BeforeEach
 	void setup() throws IntrospectionException {
 	
-
-		stamm.setBeihilfenr(idMapping.getBeihilfenr());
-		stamm.setGeburtsname("Skłodowska");
-		stamm.setGebDatum(18671107L);
-		stamm.setVorname("Marie");
-		stamm.setZusatz1Name("Dr. sc. nat. "); //rer nat oder?
-		stamm.setGeschlecht("w");
-		stamm.setEmailPrivat("marie.currie@1234.net");
-		stamm.setEmailDienst("marie.currie@institute-de-radium.net");
 		sepaBankVerbindung.setIban("12345DE12345");
 		sepaBankVerbindung.setNameBank("EineBank");
 		sepaBankVerbindung.setBic("BIC");
 		sepaBankVerbindung.setIban("IBAN");
-		stamm.setBemerkung("Nobellpreise für Physik + Chemie");
-		stamm.setName("Curie");
-		stamm.setTitel("Dr");
-		stamm.setOrt("Paris");
-		stamm.setPlz("75005");
-		stamm.setStrasseNr("1 rue Pierre et Marie Curie" );
+		
 		
 		
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
@@ -98,7 +86,8 @@ class PartnerRuleTest {
 		assertNull(partnerCore.getCciNumber());
 		assertEquals(PartnerFactory.BLANK, partnerCore.getCitizenNumber());
 		assertEquals("0", partnerCore.getDatastate());
-		assertEquals(date(1867, 11, 7), partnerCore.getDateOfBirth());
+		
+		assertEquals(TestUtil.toDate(stamm.getGebDatum()), partnerCore.getDateOfBirth());
 		
 		assertEquals("1", partnerCore.getDefaultAddress());
 		assertEquals("1", partnerCore.getDefaultBank());

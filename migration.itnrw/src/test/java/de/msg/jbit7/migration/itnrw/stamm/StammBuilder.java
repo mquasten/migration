@@ -31,6 +31,11 @@ public class StammBuilder {
 		return this;
 	}
 	
+	public final StammBuilder withFemaleGender() {
+		stamm.setGeschlecht("w");
+		return this;
+	}
+	
 	public final StammImpl build() {
 		if( stamm.getSterbedatum() == null ) {
 			stamm.setSterbedatum(0L);
