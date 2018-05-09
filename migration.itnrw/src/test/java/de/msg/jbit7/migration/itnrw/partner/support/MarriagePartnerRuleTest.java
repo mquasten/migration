@@ -181,20 +181,10 @@ public class MarriagePartnerRuleTest {
 		final List<Object> results = new ArrayList<>();
 		marriagePartnerRule.assignNewPartner(idMapping, stamm, ehegatte, contractDate, results);
 		
-		assertEquals(3, results.size());
+		assertEquals(2, results.size());
 		assertPartnerCore((PartnerCore) results.get(0), ehegatte, false);
 		assertPartnersRole( (PartnersRole) results.get(1));
-		final PartnerCore terminatedPartnerCore = (PartnerCore) results.get(2);
-		
-		assertPartnerCore(terminatedPartnerCore,ehegatte, true);
-		
-		final Date terminationDate = TestUtil.toDate(ehegatte.getSterbedatum());
-		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDateOfDeath() );  
-		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDop());
-		assertEqualsRequired(terminationDate, terminatedPartnerCore.getInd());
-		assertEquals(Long.valueOf(900), terminatedPartnerCore.getReasonForChange());
-		assertEquals(Long.valueOf(1L), terminatedPartnerCore.getTerminationflag());
-		assertEquals(Long.valueOf(2), terminatedPartnerCore.getHistnr());
+	
 		
 	}
 	

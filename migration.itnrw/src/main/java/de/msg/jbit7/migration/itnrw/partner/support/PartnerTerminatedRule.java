@@ -71,15 +71,13 @@ public class PartnerTerminatedRule {
 				partner -> newTerminatedPartner(familyMembers, partner).ifPresent(value -> results.add(value)));
 	}
 
-	private Optional<PartnerCore> newTerminatedPartner(final FamilyMembers familyMembers,
-			final PartnerCore partnerCore) {
+	private Optional<PartnerCore> newTerminatedPartner(final FamilyMembers familyMembers, final PartnerCore partnerCore) {
 		Assert.isTrue(partnerCore.getHistnr() == 1L, "Histnr. 1 expected.");
 		final Optional<Date> dateOfDeath = familyMembers.get(partnerCore.getPartnersNr());
 
 		if (dateOfDeath.isPresent()) {
 
-			final PartnerCore deathPartner = terminatedPartner(partnerCore, nextDay(dateOfDeath.get()),
-					dateOfDeath.get());
+			final PartnerCore deathPartner = terminatedPartner(partnerCore, nextDay(dateOfDeath.get()), dateOfDeath.get());
 			deathPartner.setDateOfDeath(dateOfDeath.get());
 			return Optional.of(deathPartner);
 		}

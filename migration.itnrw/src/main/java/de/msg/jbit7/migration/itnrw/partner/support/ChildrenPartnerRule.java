@@ -57,16 +57,7 @@ public class ChildrenPartnerRule {
 				results.add(newPartnerCore);
 				
 				
-			if( conversionService.convert(kindInfo.getSterbedatum() , Date.class ) != null) {
-				final PartnerCore terminatedPartnerCore = partnerFactory.copy(newPartnerCore);
-				final Date terminationDate = conversionService.convert(kindInfo.getSterbedatum(), Date.class);
-				terminatedPartnerCore.setDop(terminationDate);
-				terminatedPartnerCore.setInd(terminationDate);
-				terminatedPartnerCore.setReasonForChange(900L);
-				terminatedPartnerCore.setTerminationflag(1L);
-				terminatedPartnerCore.setHistnr(2L);
-				results.add(terminatedPartnerCore);
-			}
+			
 				
 				
 			});

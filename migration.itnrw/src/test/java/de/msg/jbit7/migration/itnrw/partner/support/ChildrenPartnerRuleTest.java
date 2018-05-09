@@ -25,7 +25,7 @@ import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
-import de.msg.jbit7.migration.itnrw.util.TestUtil;
+
 
 class ChildrenPartnerRuleTest {
 
@@ -79,11 +79,11 @@ class ChildrenPartnerRuleTest {
 
 		assertEquals(1, results.size());
 		final PartnerCore partnerCore = (PartnerCore) results.iterator().next();
-		assertPartnerCore(partnerCore,false);
+		assertPartnerCore(partnerCore);
 		
 	}
 
-	private void assertPartnerCore(final PartnerCore partnerCore, final boolean withoutHist) {
+	private void assertPartnerCore(final PartnerCore partnerCore) {
 		
 		assertEqualsRequired(idMapping.getMandator(), partnerCore.getMandator());
 		assertEquals("0", partnerCore.getDatastate());
@@ -150,9 +150,7 @@ class ChildrenPartnerRuleTest {
 		assertEquals(Long.valueOf(0), partnerCore.getPepFlag());
 		assertEquals(Long.valueOf(0), partnerCore.getEuSanctionFlag());
 		
-		if (withoutHist) {
-			return;
-		}
+		
 		assertEquals(Long.valueOf(1), partnerCore.getHistnr());
 		assertEqualsRequired(contractDate, partnerCore.getDop());
 		assertEqualsRequired(contractDate, partnerCore.getInd());
@@ -190,30 +188,5 @@ class ChildrenPartnerRuleTest {
 		assertEquals(Long.valueOf(1L), partnersRole.getRiskCarrier());
 	}
 	
-	@Test
-	void assignNewPartnerDead() {
-		
-		kindInfo.setSterbedatum(18791105L);
-		final List<Object> results = new ArrayList<>();
-		childrenPartnerRule.assignNewPartner(idMapping, children, stamm, contractDate, results);
-
-		assertEquals(2, results.size());
-		
-		assertPartnerCore( (PartnerCore) results.get(0), false);
-		
-		final PartnerCore terminatedPartnerCore = (PartnerCore) results.get(1);
-		
-		final Date terminationDate = TestUtil.toDate(kindInfo.getSterbedatum());
-		assertEqualsRequired(terminationDate, terminatedPartnerCore.getDop());
-		assertEqualsRequired(terminationDate, terminatedPartnerCore.getInd());
-		assertEquals(Long.valueOf(900L), terminatedPartnerCore.getReasonForChange());
-		assertEquals(Long.valueOf(1L), terminatedPartnerCore.getTerminationflag());
-		assertEquals(Long.valueOf(2L), terminatedPartnerCore.getHistnr());
-		
-		assertPartnerCore( terminatedPartnerCore, true);
-		
-		
-		
-		
-	}
+	
 }

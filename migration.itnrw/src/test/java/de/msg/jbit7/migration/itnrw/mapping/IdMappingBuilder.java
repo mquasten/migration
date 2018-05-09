@@ -60,10 +60,10 @@ public class IdMappingBuilder {
 		return this;
 	}
 	
-	public final IdMappingBuilder withChildren(final int numberOfChilfren) {
-		Assert.isTrue(numberOfChilfren > 0 , "NumberOfChilfren >= 0");
+	public final IdMappingBuilder withChildren(final int numberOfChildren) {
+		Assert.isTrue(numberOfChildren > 0 , "NumberOfChildren >= 0");
 		children.clear();
-		children.addAll(IntStream.range(0, numberOfChilfren).mapToObj(i -> ""+TestUtil.randomLong()).collect(Collectors.toList()));
+		children.addAll(IntStream.range(0, numberOfChildren).mapToObj(i -> ""+TestUtil.randomLong()).collect(Collectors.toList()));
 		return this;
 	}
 	

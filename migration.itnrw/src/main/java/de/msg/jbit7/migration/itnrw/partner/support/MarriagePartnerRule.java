@@ -40,23 +40,11 @@ public class MarriagePartnerRule {
 			@Fact(PartnerFamilyFacts.CONTRACT_DATE) Date contractDate ,
 			@Fact(PartnerFamilyFacts.RESULTS) Collection<Object> results) {
 	
-		final PartnerCore newPartnerCore = newPartnerCore(idMapping, stamm, ehegatte, contractDate);
-		results.add(newPartnerCore);
+		results.add(newPartnerCore(idMapping, stamm, ehegatte, contractDate));
 		results.add(newPartnerRole(idMapping, contractDate));
 		
 		
-		if( conversionService.convert(ehegatte.getSterbedatum(), Date.class) != null) {
-			
-			final PartnerCore terminatedPartnersCore = partnerFactory.copy(newPartnerCore);
-			final Date terminationDate = conversionService.convert(ehegatte.getSterbedatum(), Date.class);
-			terminatedPartnersCore.setDateOfDeath(terminationDate);
-			terminatedPartnersCore.setDop(terminationDate);
-			terminatedPartnersCore.setInd(terminationDate);
-			terminatedPartnersCore.setReasonForChange(900L);
-			terminatedPartnersCore.setTerminationflag(1L);
-			terminatedPartnersCore.setHistnr(2L);
-			results.add(terminatedPartnersCore);
-		}
+		
 		
 	}
 
@@ -88,7 +76,7 @@ public class MarriagePartnerRule {
 		partnerCore.setMaritalStatus(2L);
 		partnerCore.setUserid(idMapping.getMigrationUser());
 		partnerCore.setDateOfDeath(null);
-		//partnerCore.setDateOfDeath(conversionService.convert(ehegatte.getSterbedatum(), Date.class));
+	
 		return partnerCore;
 	}
 
