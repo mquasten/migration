@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import static de.msg.jbit7.migration.itnrw.util.TestUtil.assertEqualsRequired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +29,7 @@ import de.msg.jbit7.migration.itnrw.partner.CommunicationRole;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
+import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindungBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
@@ -41,7 +43,7 @@ class PartnerRuleTest {
 	private final StammImpl stamm =  StammBuilder.builder().withFemaleGender().withBeihilfenr(idMapping.getBeihilfenr()).build();
 
 
-	private final SepaBankVerbindung sepaBankVerbindung = new SepaBankVerbindung();
+	private final SepaBankVerbindung sepaBankVerbindung = SepaBankVerbindungBuilder.builder().build();
 	private final static Date CONTRACT_DATE = date(1898, 12, 26);
 	
 	private final DefaultConversionService conversionService =  new DefaultConversionService();
@@ -50,10 +52,10 @@ class PartnerRuleTest {
 	@BeforeEach
 	void setup() throws IntrospectionException {
 	
-		sepaBankVerbindung.setIban("12345DE12345");
-		sepaBankVerbindung.setNameBank("EineBank");
-		sepaBankVerbindung.setBic("BIC");
-		sepaBankVerbindung.setIban("IBAN");
+	//	sepaBankVerbindung.setIban("12345DE12345");
+	//	sepaBankVerbindung.setNameBank("EineBank");
+	//	sepaBankVerbindung.setBic("BIC");
+	//	sepaBankVerbindung.setIban("IBAN");
 		
 		
 		
@@ -215,10 +217,12 @@ class PartnerRuleTest {
 		assertEquals(Long.valueOf(0), bank.getAccountType());
 		assertEquals(PartnerFactory.BLANK, bank.getBankCode());
 		assertEquals(PartnerFactory.BLANK, bank.getBankDistrict());
-		assertEquals(sepaBankVerbindung.getNameBank(), bank.getBankName());
+		
+		
+		assertEqualsRequired(sepaBankVerbindung.getNameBank(), bank.getBankName());
 		assertEquals("1", bank.getBankNr());
 		assertEquals(Long.valueOf(1L), bank.getBankState());
-		assertEquals(sepaBankVerbindung.getBic(), bank.getBic());
+		assertEqualsRequired(sepaBankVerbindung.getBic(), bank.getBic());
 		assertEquals(PartnerFactory.BLANK, bank.getCountry());
 		
 		assertEquals(PartnerFactory.BLANK, bank.getCreditCardCompany());
@@ -232,7 +236,7 @@ class PartnerRuleTest {
 		assertEquals(CONTRACT_DATE, bank.getDop());
 		assertNull(bank.getDor());
 		assertEquals(Long.valueOf(1), bank.getHistnr());
-		assertEquals(sepaBankVerbindung.getIban(), bank.getIban());
+		assertEqualsRequired(sepaBankVerbindung.getIban(), bank.getIban());
 		assertEquals(CONTRACT_DATE, bank.getInd());
 		assertEquals(idMapping.getMandator(), bank.getMandator());
 		assertEquals(Long.valueOf(0), bank.getOutdated());
