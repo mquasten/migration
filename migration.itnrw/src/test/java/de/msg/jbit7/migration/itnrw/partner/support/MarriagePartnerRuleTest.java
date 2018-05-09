@@ -21,6 +21,7 @@ import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.EhegatteBuilder;
+import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
@@ -32,16 +33,12 @@ public class MarriagePartnerRuleTest {
 	
 	private final  Date contractDate = date(1831, 6, 13);
 	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().build();
-	private final StammImpl stamm = new StammImpl();
+	private final StammImpl stamm = StammBuilder.builder().build();
 	private final DefaultConversionService conversionService = new DefaultConversionService();
 	private final PartnerFactory partnerFactory = new PartnerFactory();
 	private final MarriagePartnerRule marriagePartnerRule = new MarriagePartnerRule(partnerFactory, conversionService);
 	@BeforeEach
-	void setup() {
-		
-		
-		stamm.setName("Maxwell");
-		
+	void setup() {	
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 	

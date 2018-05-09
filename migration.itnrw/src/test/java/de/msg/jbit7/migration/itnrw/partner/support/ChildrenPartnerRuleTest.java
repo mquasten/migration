@@ -23,13 +23,14 @@ import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
+import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 class ChildrenPartnerRuleTest {
 
 	private final KindInfo kindInfo = new KindInfo();
-	private final StammImpl stamm = new StammImpl();
+	private final StammImpl stamm = StammBuilder.builder().build();
 	private final List<KindInfo> children = Arrays.asList(kindInfo);
 	private final Date contractDate = date(1831, 6, 13);
 	private final IdMapping idMapping = new IdMapping();
@@ -55,7 +56,7 @@ class ChildrenPartnerRuleTest {
 		idMapping.setMarriagePartnerNr("73111");
 		idMapping.setContractNumber(19680528L);
 		kindInfo.setVorname("James Clerk");
-		stamm.setName("Maxwell");
+		//stamm.setName("Maxwell");
 		kindInfo.setGebDatum(18310613L);
 		//kindInfo.setSterbedatum(18791105L);
 	}
