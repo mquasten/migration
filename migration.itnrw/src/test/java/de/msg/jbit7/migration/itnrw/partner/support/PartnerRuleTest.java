@@ -51,14 +51,6 @@ class PartnerRuleTest {
 	private final PartnerRule partnerRule = new PartnerRule(partnerFactory,conversionService);
 	@BeforeEach
 	void setup() throws IntrospectionException {
-	
-	//	sepaBankVerbindung.setIban("12345DE12345");
-	//	sepaBankVerbindung.setNameBank("EineBank");
-	//	sepaBankVerbindung.setBic("BIC");
-	//	sepaBankVerbindung.setIban("IBAN");
-		
-		
-		
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 
