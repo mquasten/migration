@@ -19,21 +19,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
+import de.msg.jbit7.migration.itnrw.stamm.KindInfoBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
+import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 
 class ChildrenPartnerRuleTest {
 
-	private final KindInfo kindInfo = new KindInfo();
+	private final KindInfo kindInfo = KindInfoBuilder.builder().build();
 	private final StammImpl stamm = StammBuilder.builder().build();
 	private final List<KindInfo> children = Arrays.asList(kindInfo);
 	private final Date contractDate = date(1831, 6, 13);
-	private final IdMapping idMapping = new IdMapping();
+	private final IdMapping idMapping = IdMappingBuilder.builder().withMarriagePartner().withChildren(1).build();
 
 	private final DefaultConversionService conversionService = new DefaultConversionService();
 	private final PartnerFactory partnerFactory = new PartnerFactory();
@@ -48,17 +51,6 @@ class ChildrenPartnerRuleTest {
 	@BeforeEach
 	void setup() {
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
-		idMapping.setChildrenNr(new Long[] { 1L });
-		idMapping.setMandator(4711L);
-		idMapping.setProcessNumber(67890L);
-		idMapping.setChildrenPartnerNr(new String[] { "8490" });
-		idMapping.setMigrationUser("MigUser");
-		idMapping.setMarriagePartnerNr("73111");
-		idMapping.setContractNumber(19680528L);
-		kindInfo.setVorname("James Clerk");
-		//stamm.setName("Maxwell");
-		kindInfo.setGebDatum(18310613L);
-		//kindInfo.setSterbedatum(18791105L);
 	}
 
 	@Test
@@ -94,7 +86,7 @@ class ChildrenPartnerRuleTest {
 		assertEquals(Long.valueOf(1), partnerCore.getLegalPerson());
 		assertEqualsRequired(kindInfo.getVorname(), partnerCore.getFirstName());
 		assertEqualsRequired(stamm.getName(), partnerCore.getSecondName());
-		assertEqualsRequired(contractDate, partnerCore.getDateOfBirth());
+		assertEqualsRequired(TestUtil.toDate(kindInfo.getGebDatum()), partnerCore.getDateOfBirth());
 		assertEquals(Long.valueOf(0L), partnerCore.getSex());
 		assertEquals("DE", partnerCore.getNationality());
 		assertNull(partnerCore.getNationality2());

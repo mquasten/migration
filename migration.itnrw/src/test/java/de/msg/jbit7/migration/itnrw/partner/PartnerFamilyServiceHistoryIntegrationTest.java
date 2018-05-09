@@ -31,6 +31,7 @@ import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.EhegatteBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
+import de.msg.jbit7.migration.itnrw.stamm.KindInfoBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
@@ -154,12 +155,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 	void createPartnersChildDeath() {
 		IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withChildren(1).build();
 		final StammImpl stamm = StammBuilder.builder().build();
-		final KindInfo kindInfo = new KindInfo();
-		kindInfo.setVorname("Kylie");
-		kindInfo.setName("Minogue");
-		kindInfo.setLfdKind(mapping.getChildrenNr()[0]);
-		kindInfo.setBeihilfenr(mapping.getBeihilfenr());
-		kindInfo.setSterbedatum(19991111L);
+		final KindInfo kindInfo = KindInfoBuilder.builder().withLfdKind(mapping.getChildrenNr()[0]).withSterbeDatum().withBeihilfenr(mapping.getBeihilfenr()).build();
 		
 		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
 		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());
