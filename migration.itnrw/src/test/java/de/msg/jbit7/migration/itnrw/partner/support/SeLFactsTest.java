@@ -24,6 +24,7 @@ import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.partner.SpelFacts;
+import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
@@ -31,7 +32,7 @@ public class SeLFactsTest {
 	
 	
 
-	private final StammImpl stamm = new StammImpl();
+	private final StammImpl stamm =  StammBuilder.builder().withSterbeDatum().build();
 
 	private DefaultRulesEngine rulesEngine = new DefaultRulesEngine();
 	
@@ -54,7 +55,6 @@ public class SeLFactsTest {
 	@BeforeEach
 	final void setup() {
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
-		stamm.setSterbedatum(18791105L);
 	
 		firstPartnerCore.setPartnersNr(mapping.getPartnerNr());
 		firstPartnersRole.setRightSide(mapping.getPartnerNr());
