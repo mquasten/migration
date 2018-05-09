@@ -33,7 +33,7 @@ public class PartnerTerminatedRule {
 	}
 
 	@Condition
-	public final boolean evaluate(@Fact(PartnerFacts.STAMM) StammImpl stamm) {
+	public final boolean evaluate() {
 		return true;
 	}
 
@@ -47,6 +47,7 @@ public class PartnerTerminatedRule {
 
 	private Optional<PMContract> newTerminatedContract(final StammImpl stamm, final PMContract pmContract) {
 		Assert.isTrue(pmContract.getHistnr() == 1L, "Histnr. 1 expected.");
+		
 		if (conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
 			final Date endDate = conversionService.convert(stamm.getSterbedatum(), Date.class);
 			final PMContract result = partnerFactory.copy(pmContract);
