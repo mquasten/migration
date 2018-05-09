@@ -115,7 +115,6 @@ public class PartnerServiceHistoryIntegrationTest {
 		
 		final PartnerCore terminatedPartnerCore = partners.get(1);
 		
-		
 		assertTerminatedPartner(terminatedPartnerCore); 
 		
 		
