@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 public interface TestUtil {
@@ -64,7 +65,10 @@ public interface TestUtil {
 		return calendar.getTime();
 	}
 
-	public static Date toDate(final long dateAsLong) {
+	public static Date toDate(final Long dateAsLong) {
+		if( dateAsLong == null) {
+			return null;
+		}
 		final String date = "" + dateAsLong;
 		if (date.length() != 8) {
 			return null;
@@ -87,6 +91,15 @@ public interface TestUtil {
 		final Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, +1);
+		return calendar.getTime();
+		
+	}
+	
+	public static Date daysBack(final Date date, final int daysBack) {
+		Assert.isTrue(daysBack > 0 , "Positive Number required");
+		final Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, (-1) * daysBack);
 		return calendar.getTime();
 		
 	}

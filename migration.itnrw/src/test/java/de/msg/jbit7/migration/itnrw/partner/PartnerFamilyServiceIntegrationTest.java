@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,9 @@ import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 @ContextConfiguration({"/beans.xml"})
 public class PartnerFamilyServiceIntegrationTest {
 	
+	
 	private final long MANDATOR = 4711L;
-
+	private final String USER = "Migration";
 	
 	@Autowired
 	private PartnerFamilyService partnerFamilyService;
@@ -40,6 +42,15 @@ public class PartnerFamilyServiceIntegrationTest {
 	private PartnerRepository partnerRepository;
 	@Autowired
 	private StammRepository stammRepository;
+	
+	
+	@BeforeEach
+	final void setup() {
+		idGenerationService.createIds(MANDATOR, true, USER);
+		
+		
+
+	}
 	
 	@Test
 	final void createPartners() {

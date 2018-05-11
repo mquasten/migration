@@ -13,7 +13,7 @@ public class StammBuilder {
 	
 	
 	public final StammBuilder withSterbeDatum(final Date date) {
-		TestUtil.toLong(date);
+		stamm.setSterbedatum(TestUtil.toLong(date));
 		return this;
 	}
 	
@@ -25,6 +25,8 @@ public class StammBuilder {
 		stamm.setSterbedatum(date);
 		return this;
 	}
+	
+	
 	
 	public final StammBuilder withBeihilfenr(final long beihilfenr) {
 		stamm.setBeihilfenr(beihilfenr);
