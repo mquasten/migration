@@ -16,7 +16,8 @@ public class KindInfoBuilder {
 		kindInfo.setBeihilfenr(beihilfenr);
 		return this;
 	}
-
+	
+	
 	public KindInfoBuilder withSterbedatum(final long sterbeDatum) {
 		kindInfo.setSterbedatum(sterbeDatum);
 		return this;

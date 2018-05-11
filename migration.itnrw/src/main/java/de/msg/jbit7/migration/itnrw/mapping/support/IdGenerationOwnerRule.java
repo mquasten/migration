@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdGenerationFacts;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
-import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
 @Rule(name = "BeihilfeEmpfaenger", priority = Integer.MAX_VALUE)
@@ -36,7 +36,7 @@ public class IdGenerationOwnerRule {
 	}
 
 	@Condition
-	public boolean migrationRequired(@Fact(IdGenerationFacts.OWNER) final StammImpl owner, @Fact(IdGenerationFacts.LAST_STATUS) Optional<HiAntragssteller> hiAntragsteller) {
+	public boolean migrationRequired(@Fact(IdGenerationFacts.OWNER) final StammImpl owner, @Fact(IdGenerationFacts.LAST_STATUS) Optional<HiAntragsteller> hiAntragsteller) {
 		final Optional<Date> dateOfDeath = Optional.ofNullable(conversionService.convert(owner.getSterbedatum(), Date.class));
 		 LocalDate now = LocalDate.now();
 		if( dateOfDeath.isPresent()) {
@@ -64,7 +64,7 @@ public class IdGenerationOwnerRule {
 	
 
 	@Action(order = 0)
-	public void assignValues(@Fact(IdGenerationFacts.OWNER) final StammImpl owner,@Fact(IdGenerationFacts.LAST_STATUS) final Optional<HiAntragssteller> hiAntragsteller, @Fact(IdGenerationFacts.ID_MAPPING) final IdMapping idMapping, @Fact(IdGenerationFacts.COUNTERS) final Counters counters) {
+	public void assignValues(@Fact(IdGenerationFacts.OWNER) final StammImpl owner,@Fact(IdGenerationFacts.LAST_STATUS) final Optional<HiAntragsteller> hiAntragsteller, @Fact(IdGenerationFacts.ID_MAPPING) final IdMapping idMapping, @Fact(IdGenerationFacts.COUNTERS) final Counters counters) {
 		idMapping.setLastState(lastState(hiAntragsteller));
 		idMapping.setLastStateDate(lastDate(hiAntragsteller, 19000101L));
 		idMapping.setMandator(counters.mandator());
@@ -89,7 +89,7 @@ public class IdGenerationOwnerRule {
 
 	}
 
-	private Date lastDate(final Optional<HiAntragssteller> hiAntragsteller, final long nvlBeginDate) {
+	private Date lastDate(final Optional<HiAntragsteller> hiAntragsteller, final long nvlBeginDate) {
 		final Date defaultBeginDate = conversionService.convert(nvlBeginDate, Date.class);
 		if ( ! hiAntragsteller.isPresent() ) {
 		    return defaultBeginDate;	
@@ -98,7 +98,7 @@ public class IdGenerationOwnerRule {
 		return date == null ? defaultBeginDate: date;
 	}
 	
-	private String lastState(final Optional<HiAntragssteller> hiAntragsteller) {
+	private String lastState(final Optional<HiAntragsteller> hiAntragsteller) {
 		if ( ! hiAntragsteller.isPresent() ) {
 		    return UNKOWN_STATE;	
 		}

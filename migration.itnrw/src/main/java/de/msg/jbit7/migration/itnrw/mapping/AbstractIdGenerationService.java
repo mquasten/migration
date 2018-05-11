@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
-import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
@@ -60,10 +60,10 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 		final Map<Long, Ehegatte> marriagePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(Ehegatte::getBeihilfenr, ehegatte -> ehegatte));
 		final  Map<Long,List<KindInfo>> children = findAllChildren();
 			
-		final Map<Long, HiAntragssteller> lastStates = stammRepository.findLastStatus().stream().collect(Collectors.toMap(hia -> hia.getBeihilfenr(), hia -> hia));
+		final Map<Long, HiAntragsteller> lastStates = stammRepository.findLastStatus().stream().collect(Collectors.toMap(hia -> hia.getBeihilfenr(), hia -> hia));
 		
 		stammRepository.findAll().forEach(stamm -> {
-			final Optional<HiAntragssteller> lastStatus = Optional.ofNullable(lastStates.get(stamm.getBeihilfenr()));
+			final Optional<HiAntragsteller> lastStatus = Optional.ofNullable(lastStates.get(stamm.getBeihilfenr()));
 			if( !lastStatus.isPresent()) {
 				LOGGER.warn("Kein Eintrag in HI_ANTRAGSTELLER gefunden fuer Zahlfallstatus (Wert_id=18), Beihilfenr :" + stamm.getBeihilfenr());
 			}

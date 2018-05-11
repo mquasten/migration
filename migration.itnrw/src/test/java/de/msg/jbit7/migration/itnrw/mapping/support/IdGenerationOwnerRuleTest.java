@@ -14,7 +14,8 @@ import org.mockito.Mockito;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
-import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragstellerBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammBuilder;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
@@ -40,7 +41,9 @@ class IdGenerationOwnerRuleTest {
 	
 	private Counters counters = Mockito.mock(Counters.class);
 	
-	private HiAntragssteller hiAntragssteller = new HiAntragssteller();
+	private HiAntragsteller hiAntragssteller = HiAntragstellerBuilder.builder().withBeihilfenr(stamm.getBeihilfenr()).withBeginn(new Date()).withWertId(18L).withWert("AUS").build();
+			
+			
 	
 	@BeforeEach
 	void setup() {
@@ -50,10 +53,6 @@ class IdGenerationOwnerRuleTest {
 		Mockito.when(counters.nextContactNumber()).thenReturn(CONTRACT_NUMBER);
 		Mockito.when(counters.nextCollectiveContractNumberSchool(stamm.getSchulnummer())).thenReturn(COLLECTIVE_CONTRACT_SCHOOL);
 		Mockito.when(counters.nextCollectiveContractNumberOffice(stamm.getDienststelle())).thenReturn(COLLECTIVE_CONTRACT_OFFICE);
-		hiAntragssteller.setBeihilfenr(stamm.getBeihilfenr());
-		hiAntragssteller.setBeginnDatum(TestUtil.toLong(new Date()));
-		hiAntragssteller.setWertId(18L);
-		hiAntragssteller.setWertChar("AUS");
 		conversionService.addConverter( Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 	
@@ -61,8 +60,6 @@ class IdGenerationOwnerRuleTest {
 	void assignValues() {
 		IdMapping mapping = new IdMapping();
 		idGenerationOwnerRule.assignValues(stamm, Optional.of(hiAntragssteller), mapping, counters);
-		
-		
 		
 		assertEqualsRequired(TestUtil.toDate(hiAntragssteller.getBeginnDatum()), mapping.getLastStateDate());
 		assertEqualsRequired(hiAntragssteller.getWertChar(), mapping.getLastState());
@@ -74,7 +71,6 @@ class IdGenerationOwnerRuleTest {
 		assertEquals(2,  mapping.getCollectiveContractNumbers().length);
 		assertEquals(COLLECTIVE_CONTRACT_SCHOOL, mapping.getCollectiveContractNumbers()[0]);
 		assertEquals(COLLECTIVE_CONTRACT_OFFICE, mapping.getCollectiveContractNumbers()[1]);
-		
 		assertEqualsRequired(stamm.getDienststelle(), mapping.getDienststelle());
 		assertEqualsRequired(stamm.getSchulnummer(), mapping.getSchulnummer());
 	}
@@ -99,10 +95,7 @@ class IdGenerationOwnerRuleTest {
 	
 	@Test
 	void migrationRequiredEndBefore13Months() {
-		HiAntragssteller hiAntragssteller = new HiAntragssteller();
-		hiAntragssteller.setWertChar("END");
-		hiAntragssteller.setBeginnDatum(TestUtil.toLong(TestUtil.daysBack(new Date(), 400)));
-		
+		final HiAntragsteller hiAntragssteller = HiAntragstellerBuilder.builder().withBeginn(TestUtil.daysBack(new Date(), 400)).withWert("END").build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		assertFalse(idGenerationOwnerRule.migrationRequired(stamm,  Optional.of(hiAntragssteller)));
 		
@@ -110,10 +103,7 @@ class IdGenerationOwnerRuleTest {
 	
 	@Test
 	void migrationRequiredAusBefore13Months() {
-		HiAntragssteller hiAntragssteller = new HiAntragssteller();
-		hiAntragssteller.setWertChar("AUS");
-		hiAntragssteller.setBeginnDatum(TestUtil.toLong(TestUtil.daysBack(new Date(), 400)));
-		
+		final HiAntragsteller hiAntragssteller = HiAntragstellerBuilder.builder().withBeginn(TestUtil.daysBack(new Date(), 400)).withWert("AUS").build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		assertFalse(idGenerationOwnerRule.migrationRequired(stamm,  Optional.of(hiAntragssteller)));
 		
@@ -121,24 +111,16 @@ class IdGenerationOwnerRuleTest {
 	
 	@Test
 	void migrationRequiredLfdBefore13Months() {
-		HiAntragssteller hiAntragssteller = new HiAntragssteller();
-		hiAntragssteller.setWertChar("LFD");
-		hiAntragssteller.setBeginnDatum(TestUtil.toLong(TestUtil.daysBack(new Date(), 400)));
-		
+		final HiAntragsteller hiAntragssteller = HiAntragstellerBuilder.builder().withBeginn(TestUtil.daysBack(new Date(), 400)).withWert("LFD").build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		assertTrue(idGenerationOwnerRule.migrationRequired(stamm,  Optional.of(hiAntragssteller)));
-		
 	}
 	
 	@Test
 	void migrationRequiredWrongDate() {
-		HiAntragssteller hiAntragssteller = new HiAntragssteller();
-		hiAntragssteller.setWertChar("END");
-		hiAntragssteller.setBeginnDatum(4711L);
-		
+		final HiAntragsteller hiAntragssteller =  HiAntragstellerBuilder.builder().withBeginn(4711L).withWert("END").build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		assertTrue(idGenerationOwnerRule.migrationRequired(stamm,  Optional.of(hiAntragssteller)));
-		
 	}
 
 }

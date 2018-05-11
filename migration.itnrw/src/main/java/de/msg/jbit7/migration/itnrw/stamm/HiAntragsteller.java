@@ -1,6 +1,6 @@
 package de.msg.jbit7.migration.itnrw.stamm;
 
-public class HiAntragssteller {
+public class HiAntragsteller {
 
 	private Long beihilfenr;
 	private Long context;

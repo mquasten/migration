@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
-import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -137,9 +137,9 @@ public class StammRepositoryImpl implements StammRepository {
 	 * @see de.msg.jbit7.migration.itnrw.stamm.support.StammRepository#findLastStatus()
 	 */
 	@Override
-	public List<HiAntragssteller> findLastStatus() {
+	public List<HiAntragsteller> findLastStatus() {
 		final String sql ="SELECT HIA.* FROM HI_ANTRAGSTELLER HIA  WHERE HIA.WERT_ID = 18 AND HIA.BEGINN_DATUM = ( SELECT MAX(BEGINN_DATUM) from HI_ANTRAGSTELLER  where HIA.BEIHILFENR = BEIHILFENR and HIA.WERT_ID = WERT_ID)";
-		return jdbcOperations.query(sql,new BeanPropertyRowMapper<>(HiAntragssteller.class));
+		return jdbcOperations.query(sql,new BeanPropertyRowMapper<>(HiAntragsteller.class));
 	}
 
 }
