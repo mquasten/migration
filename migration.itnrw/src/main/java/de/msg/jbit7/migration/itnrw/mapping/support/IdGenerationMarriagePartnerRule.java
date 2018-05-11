@@ -1,6 +1,7 @@
 package de.msg.jbit7.migration.itnrw.mapping.support;
 
-import java.util.Map;
+
+import java.util.Optional;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
@@ -15,8 +16,8 @@ import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 public class IdGenerationMarriagePartnerRule {
 	
 	@Condition
-	 public boolean alive(@Fact(IdGenerationFacts.OWNER) StammImpl owner ,  @Fact(IdGenerationFacts.MARRIAGE_PARTNERS) final Map<Long,Ehegatte> marriagePartners) {
-		return marriagePartners.containsKey(owner.getBeihilfenr()) ;
+	 public boolean alive(@Fact(IdGenerationFacts.OWNER) StammImpl owner ,  @Fact(IdGenerationFacts.MARRIAGE_PARTNER) final Optional<Ehegatte> marriagePartners) {
+		return marriagePartners.isPresent() ;
 	 }
 	
 	@Action(order=0)

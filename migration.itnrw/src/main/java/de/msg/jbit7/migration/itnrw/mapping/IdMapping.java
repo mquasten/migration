@@ -1,5 +1,7 @@
 package de.msg.jbit7.migration.itnrw.mapping;
 
+import java.util.Date;
+
 public class IdMapping {
 	private Long beihilfenr;
 	private String partnerNr;
@@ -8,16 +10,19 @@ public class IdMapping {
 	private String marriagePartnerNr;
 	private String[] childrenPartnerNr;
 	private Long[] childrenNr;
-	
 
 	private Long[] collectiveContractNumbers;
 
 	private String schulnummer;
 	private String dienststelle;
-	
-	private Long mandator; 
-	
+
+	private Long mandator;
+
 	private String migrationUser;
+
+	private String lastState;
+
+	private Date lastStateDate;
 
 	public Long getBeihilfenr() {
 		return beihilfenr;
@@ -67,8 +72,6 @@ public class IdMapping {
 		this.childrenPartnerNr = childrenPartnerNr;
 	}
 
-	
-
 	public String getSchulnummer() {
 		return schulnummer;
 	}
@@ -84,7 +87,7 @@ public class IdMapping {
 	public void setDienststelle(String dienststelle) {
 		this.dienststelle = dienststelle;
 	}
-	
+
 	public Long[] getCollectiveContractNumbers() {
 		return collectiveContractNumbers;
 	}
@@ -92,7 +95,7 @@ public class IdMapping {
 	public void setCollectiveContractNumbers(Long[] collectiveContractNumbers) {
 		this.collectiveContractNumbers = collectiveContractNumbers;
 	}
-	
+
 	public Long[] getChildrenNr() {
 		return childrenNr;
 	}
@@ -108,7 +111,7 @@ public class IdMapping {
 	public void setMandator(Long mandator) {
 		this.mandator = mandator;
 	}
-	
+
 	public String getMigrationUser() {
 		return migrationUser;
 	}
@@ -117,5 +120,20 @@ public class IdMapping {
 		this.migrationUser = migrationUser;
 	}
 
-	
+	public String getLastState() {
+		return lastState;
+	}
+
+	public void setLastState(String lastState) {
+		this.lastState = lastState;
+	}
+
+	public Date getLastStateDate() {
+		return lastStateDate;
+	}
+
+	public void setLastStateDate(Date lastStateDate) {
+		this.lastStateDate = lastStateDate;
+	}
+
 }

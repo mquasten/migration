@@ -172,4 +172,11 @@ class MetaDataRepositoryTest {
 	
 	}
 	
+	@Test
+	@Disabled
+	final void hiAntragsSteller() throws Exception {
+		System.out.println(metaDataRepositoryBeihilfe.generateAnemicObject("HI_ANTRAGSTELLER"));
+	
+	}
+	
 }

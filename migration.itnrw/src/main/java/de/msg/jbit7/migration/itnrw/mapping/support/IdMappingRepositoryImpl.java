@@ -2,6 +2,7 @@ package de.msg.jbit7.migration.itnrw.mapping.support;
 
 import java.beans.PropertyDescriptor;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 */
 	@Override
 	public final void persist(final IdMapping idMapping) {
-		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR, MIGRATION_USER) VALUES ( ?,?,?,?,?,?,?,?,?,?,?, ?)";
+		final String insert = "INSERT INTO ID_MAPPING (BEIHILFENR, PARTNER_NR, CONTRACT_NUMBER, PROCESS_NUMBER,MARRIAGE_PARTNER_NR, CHILDREN_PARTNER_NR,CHILDREN_NR, COLLECTIVE_CONTRACT_NUMBERS,SCHULNUMMER, DIENSTSTELLE, MANDATOR, MIGRATION_USER, LAST_STATE, LAST_STATE_DATE) VALUES ( ?,?,?,?,?,?,?,?,?,?,?, ?, ?,?)";
 	
 		
 		jdbcOperations.getJdbcOperations().update(new PreparedStatementCreator() {
@@ -59,6 +60,8 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 				statement.setString(10,idMapping.getDienststelle());
 				statement.setLong(11,idMapping.getMandator());
 				statement.setString(12, idMapping.getMigrationUser());
+				statement.setString(13, idMapping.getLastState());
+				statement.setDate(14, new Date(idMapping.getLastStateDate().getTime()));
 				return statement;
 			}
 		});

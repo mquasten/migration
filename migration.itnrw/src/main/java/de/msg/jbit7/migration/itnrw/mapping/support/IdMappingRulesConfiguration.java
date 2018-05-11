@@ -17,10 +17,10 @@ import org.springframework.core.convert.support.DefaultConversionService;
 class IdMappingRulesConfiguration {
 
 	@Bean("idMappingRules")
-	Rules rulesIdGeneration() {
+	Rules rulesIdGeneration(final ConversionService conversionService) {
 
 		final ConditionalRuleGroup group = new ConditionalRuleGroup("ConditionalRuleIdGeneration");
-		group.addRule(new IdGenerationOwnerRule());
+		group.addRule(new IdGenerationOwnerRule(conversionService));
 		group.addRule(new IdGenerationMarriagePartnerRule());
 		group.addRule(new IdGenerationChildrenRule());
 

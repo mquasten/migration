@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StringUtils;
 
-import de.msg.jbit7.migration.itnrw.mapping.support.IdGenerationOwnerRule;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
@@ -41,7 +38,7 @@ class IdGenerationServiceIntegrationTest {
 	
 	private StartValues startValues; 
 	
-	IdGenerationOwnerRule idGenerationOwnerRule = new IdGenerationOwnerRule();
+	
 	
 	@BeforeEach
 	void setup() {
@@ -55,7 +52,7 @@ class IdGenerationServiceIntegrationTest {
 		idGenerationService.createIds(MANDATOR, true, USER);
 		final  Map<Long, IdMapping> idMappingMap =idGenerationService.findAll();
 		
-		final List<StammImpl> owners = stammRepository.findAll().stream().filter(owner -> idGenerationOwnerRule.alive(owner) ).collect(Collectors.toList()) ; 
+		final List<StammImpl> owners = stammRepository.findAll() ; 
 		assertTrue(owners.size() > 0 );
 		
 		final long married = idMappingMap.values().stream().filter(ipMapping -> ipMapping.getMarriagePartnerNr() != null).count();

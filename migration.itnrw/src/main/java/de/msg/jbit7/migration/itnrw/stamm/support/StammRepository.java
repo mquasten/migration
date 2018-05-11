@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
@@ -24,5 +25,7 @@ public interface StammRepository {
 	StammImpl findStamm(long beihilfeNr);
 
 	List<SepaBankVerbindung> findSepaBank(long beihilfeNr);
+	
+	List<HiAntragssteller> findLastStatus();
 
 }

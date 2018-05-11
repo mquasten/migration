@@ -1,9 +1,11 @@
 package de.msg.jbit7.migration.itnrw.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jeasy.rules.api.Facts;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
+import de.msg.jbit7.migration.itnrw.stamm.HiAntragssteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
 
@@ -57,20 +60,27 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 		final Map<Long, Ehegatte> marriagePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(Ehegatte::getBeihilfenr, ehegatte -> ehegatte));
 		final  Map<Long,List<KindInfo>> children = findAllChildren();
 			
-			
-		
+		final Map<Long, HiAntragssteller> lastStates = stammRepository.findLastStatus().stream().collect(Collectors.toMap(hia -> hia.getBeihilfenr(), hia -> hia));
 		
 		stammRepository.findAll().forEach(stamm -> {
+			final Optional<HiAntragssteller> lastStatus = Optional.ofNullable(lastStates.get(stamm.getBeihilfenr()));
+			if( !lastStatus.isPresent()) {
+				LOGGER.warn("Kein Eintrag in HI_ANTRAGSTELLER gefunden fuer Zahlfallstatus (Wert_id=18), Beihilfenr :" + stamm.getBeihilfenr());
+			}
 			
 			final IdMapping idMapping = new IdMapping();
 			idMapping.setMigrationUser(migrationUser);
 			final Facts  facts = new Facts();
 			facts.put(IdGenerationFacts.OWNER, stamm);
+			
+			facts.put(IdGenerationFacts.LAST_STATUS, lastStatus);
 			facts.put(IdGenerationFacts.COUNTERS,  counters);
 			facts.put(IdGenerationFacts.ID_MAPPING,  idMapping);
 		
-			facts.put(IdGenerationFacts.MARRIAGE_PARTNERS,  marriagePartners);
-			facts.put(IdGenerationFacts.CHILDREN,  children);
+			facts.put(IdGenerationFacts.MARRIAGE_PARTNER, 	Optional.ofNullable(marriagePartners.get(stamm.getBeihilfenr())));
+			
+			
+			facts.put(IdGenerationFacts.CHILDREN,  children.containsKey(stamm.getBeihilfenr())? children.get(stamm.getBeihilfenr()): Collections.emptyList());
 			final DefaultRulesEngine rulesEngine = rulesEngine();
 			final CatchExceptionRuleListener ruleListener = ruleListener();
 			rulesEngine.registerRuleListener(ruleListener);
