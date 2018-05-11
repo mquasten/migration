@@ -13,19 +13,18 @@ import org.jeasy.rules.annotation.Rule;
 import de.msg.jbit7.migration.itnrw.mapping.IdGenerationFacts;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
-import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 
 @Rule(name="KindInfo")
 public class IdGenerationChildrenRule {
 	
 	@Condition
-	 public boolean existing(@Fact(IdGenerationFacts.OWNER) StammImpl owner,  @Fact(IdGenerationFacts.CHILDREN) final Collection<KindInfo> children)  {
+	 public boolean existing(@Fact(IdGenerationFacts.CHILDREN) final Collection<KindInfo> children)  {
 		
 		return children.size() > 0 ; 
 	}
 	
 	@Action(order=0)
-	 public void assignValues(@Fact(IdGenerationFacts.OWNER) StammImpl owner, @Fact(IdGenerationFacts.ID_MAPPING) IdMapping idMapping,  @Fact(IdGenerationFacts.COUNTERS) final Counters counters,   @Fact(IdGenerationFacts.CHILDREN) final Collection<KindInfo> children) {
+	 public void assignValues(@Fact(IdGenerationFacts.ID_MAPPING) IdMapping idMapping,  @Fact(IdGenerationFacts.COUNTERS) final Counters counters,   @Fact(IdGenerationFacts.CHILDREN) final Collection<KindInfo> children) {
 		final List<KindInfo> activeChildren = children.stream().sorted((c1, c2 ) -> (int) Math.signum(c1.getLfdKind().intValue() -c2.getLfdKind().intValue())).collect(Collectors.toList());
 		final Long[] activeChildNumbers = new Long[activeChildren.size()];
 		final String[] partnerNumbers = new String[activeChildren.size()];
