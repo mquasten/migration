@@ -93,8 +93,11 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 				LOGGER.info("Regeln erfolgreich verarbeitet Beihilfenr: " + stamm.getBeihilfenr());
 			}
 			
-			
-			idMappingRepository.persist(idMapping);
+			if( idMapping.getBeihilfenr() != null ) {
+				idMappingRepository.persist(idMapping);
+			} else {
+				LOGGER.info("Keine Migration erforderlich (Tod/Austritt) Beihilfenr: " + stamm.getBeihilfenr());
+			}
 			
 			
 			
