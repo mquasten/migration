@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -73,6 +74,20 @@ public class IdMappingBuilder {
 	    return this;
 	}
 	
+	public final IdMappingBuilder withLastState(final String lastState, final Date date) {
+		idMapping.setLastState(lastState);
+		idMapping.setLastStateDate(date);
+	    return this;
+	}
+	
+	public final IdMappingBuilder withLastState(final String lastState) {
+		idMapping.setLastState(lastState);
+		idMapping.setLastStateDate(TestUtil.randomDate());
+	    return this;
+	}
+	
+	
+	
 	public final IdMapping build() {
 		
 		if( collectiveContracts.size() == 0) {
@@ -97,11 +112,16 @@ public class IdMappingBuilder {
 			idMapping.setMigrationUser(TestUtil.randomString().substring(0, 20));
 		}
 		
+		if( idMapping.getLastState()==null) {
+			idMapping.setLastState("LFD");
+			idMapping.setLastStateDate(TestUtil.randomDate());
+		}
+		
 		TestUtil.assignValuesToBean(idMapping, field -> {
 			if(Modifier.isStatic(field.getModifiers())) {
 				return false;
 			}
-			if( field.getType().isArray() ) {
+			if( field.getType().isArray()) {
 				return false;
 			}
 			

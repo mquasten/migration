@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
+import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.mapping.support.SimpleLongToDateConverter;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
@@ -29,14 +31,14 @@ public class PartnerTerminatedRuleTest {
 	
 	private final PartnerTerminatedRule partnerTerminatedRule = new PartnerTerminatedRule(partnerFactory, conversionService);
 	
-	private final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
+	
 	
 	private final Collection<Object> results = new ArrayList<>();
 	
 	private final PMContract contract = partnerFactory.newContract();
 	
 	private final PartnerCore partnerCore = partnerFactory.newPartnerCore();
-	private final FamilyMembers familyMembers = new FamilyMembers();
+	
 	
 	
 	private final PartnersRole partnersRole = partnerFactory.newPartnersRole();
@@ -47,7 +49,7 @@ public class PartnerTerminatedRuleTest {
 		partnerCore.setPartnersNr(TestUtil.randomString());
 		partnersRole.setRightSide(partnerCore.getPartnersNr());
 		partnersRole.setLeftSide("" + contract.getContractNumber());
-		familyMembers.put(partnerCore.getPartnersNr(), TestUtil.toDate(stamm.getSterbedatum()));
+		
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 	
@@ -58,23 +60,66 @@ public class PartnerTerminatedRuleTest {
 	
 	
 	@Test
-	public final void  terminateContract() {
-		partnerTerminatedRule.terminateContract(stamm,Arrays.asList(contract), results);
+	public final void  terminateContractDeath() {
+		final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
+		final IdMapping mapping = IdMappingBuilder.builder().withBeihilfeNr(stamm.getBeihilfenr()).build();
+		partnerTerminatedRule.terminateContract(stamm, mapping, Arrays.asList(contract), results);
 		
 		assertEquals(1, results.size());
 		
 		final PMContract result = (PMContract) results.stream().findAny().get();
 		
-		assertTerminatedContract(result);
+		assertTerminatedContract(result, TestUtil.toDate(stamm.getSterbedatum()));
+		
+	}
+	
+	@Test
+	public final void  terminateContractEnd() {
+		
+		final StammImpl stamm  =  new StammBuilder().build();
+		final IdMapping mapping = IdMappingBuilder.builder().withBeihilfeNr(stamm.getBeihilfenr()).withLastState("END").build();
+		partnerTerminatedRule.terminateContract(stamm, mapping, Arrays.asList(contract), results);
+		
+		assertEquals(1, results.size());
+		
+		final PMContract result = (PMContract) results.stream().findAny().get();
+		
+		assertTerminatedContract(result, mapping.getLastStateDate());
+	}
+	
+	@Test
+	public final void  terminateContractAus() {
+		
+		final StammImpl stamm  =  new StammBuilder().build();
+		final IdMapping mapping = IdMappingBuilder.builder().withBeihilfeNr(stamm.getBeihilfenr()).withLastState("AUS").build();
+		partnerTerminatedRule.terminateContract(stamm, mapping, Arrays.asList(contract), results);
+		
+		assertEquals(1, results.size());
+		
+		final PMContract result = (PMContract) results.stream().findAny().get();
+		
+		assertTerminatedContract(result, mapping.getLastStateDate());
+	}
+	
+	@Test
+	public final void  terminateContractLfd() {
+		
+		final StammImpl stamm  =  new StammBuilder().build();
+		final IdMapping mapping = IdMappingBuilder.builder().withBeihilfeNr(stamm.getBeihilfenr()).withLastState("LFD").build();
+		partnerTerminatedRule.terminateContract(stamm, mapping, Arrays.asList(contract), results);
+		
+		assertEquals(0, results.size());
+		
 		
 	}
 
-	private void assertTerminatedContract(final PMContract result) {
+
+	private void assertTerminatedContract(final PMContract result, final Date end) {
 		assertEquals(contract.getContractNumber(), result.getContractNumber());
-		assertEquals(TestUtil.toDate(stamm.getSterbedatum()), result.getDop());
-		assertEquals(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), result.getInd());
+		assertEquals(end, result.getDop());
+		assertEquals(TestUtil.nextDay(end), result.getInd());
 		assertEquals(Long.valueOf(900), result.getReasonForChange());
-		assertEquals(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), result.getTerminationDate());
+		assertEquals(TestUtil.nextDay(end), result.getTerminationDate());
 		assertEquals(Long.valueOf(1), result.getTerminationflag());
 		assertEquals(Long.valueOf(2L), result.getHistnr());
 	}
@@ -82,39 +127,45 @@ public class PartnerTerminatedRuleTest {
 
 	@Test
 	public final void terminatePartner() {
+		final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
+		final FamilyMembers familyMembers = new FamilyMembers();
+		familyMembers.put(partnerCore.getPartnersNr(), TestUtil.toDate(stamm.getSterbedatum()));
 		partnerTerminatedRule.terminatePartner(familyMembers, Arrays.asList(partnerCore), results);
 		assertEquals(1, results.size());
 		final PartnerCore result = (PartnerCore) results.stream().findAny().get();
 		
-		assertTerminatedPartner(result);
+		assertTerminatedPartner(result, TestUtil.toDate(stamm.getSterbedatum()));
 	}
 
-	private void assertTerminatedPartner(final PartnerCore result) {
+	private void assertTerminatedPartner(final PartnerCore result, final Date end) {
 		assertEquals(partnerCore.getPartnersNr(), result.getPartnersNr());
-		assertEquals(TestUtil.toDate(stamm.getSterbedatum()), result.getDop());
-		assertEquals(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), result.getInd());
+		assertEquals(end, result.getDop());
+		assertEquals(TestUtil.nextDay(end), result.getInd());
 		assertEquals(Long.valueOf(900), result.getReasonForChange());
-		assertEquals(TestUtil.toDate(stamm.getSterbedatum()), result.getDateOfDeath());
+		assertEquals(end, result.getDateOfDeath());
 		assertEquals(Long.valueOf(1), result.getTerminationflag());
 		assertEquals(Long.valueOf(2L), result.getHistnr());
 	}
 	
 	@Test
 	public final void terminatePartnersRole() {
+		final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
+		final FamilyMembers familyMembers = new FamilyMembers();
+		familyMembers.put(partnerCore.getPartnersNr(), TestUtil.toDate(stamm.getSterbedatum()));
 		partnerTerminatedRule.terminatePartnersRole(familyMembers, Arrays.asList(partnersRole), results);
 		
 		assertEquals(1, results.size());
 		final PartnersRole result =  (PartnersRole) results.stream().findAny().get();
 		
-		assertTerminedRole(result);
+		assertTerminedRole(result, TestUtil.toDate(stamm.getSterbedatum()));
 		
 	}
 
-	private void assertTerminedRole(final PartnersRole result) {
+	private void assertTerminedRole(final PartnersRole result, final Date end) {
 		assertEquals(partnersRole.getRightSide(), result.getRightSide());
 		assertEquals(partnersRole.getLeftSide(), result.getLeftSide());
-		assertEquals(TestUtil.toDate(stamm.getSterbedatum()), result.getDop());
-		assertEquals(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), result.getInd());
+		assertEquals(end, result.getDop());
+		assertEquals(TestUtil.nextDay(end), result.getInd());
 		assertEquals(Long.valueOf(1), result.getTerminationflag());
 		assertEquals(Long.valueOf(2L), result.getHistnr());
 	}

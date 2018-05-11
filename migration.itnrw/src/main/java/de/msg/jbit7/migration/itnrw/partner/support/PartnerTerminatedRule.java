@@ -13,6 +13,7 @@ import org.jeasy.rules.annotation.Rule;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.util.Assert;
 
+import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
@@ -38,15 +39,16 @@ public class PartnerTerminatedRule {
 	}
 
 	@Action(order = 1)
-	public final void terminateContract(@Fact(PartnerFacts.STAMM) StammImpl stamm,
+	public final void terminateContract(@Fact(PartnerFacts.STAMM) StammImpl stamm,@Fact(PartnerFacts.ID_MAPPING) final IdMapping mapping,
 			@Fact(PartnerFacts.RESULTS_CONTRACT_SPEL) Collection<PMContract> contracts,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 		Assert.isTrue(contracts.size() <= 1, "Max. 1 contract can exist.");
-		contracts.forEach(contract -> newTerminatedContract(stamm, contract).ifPresent(value -> results.add(value)));
+		contracts.forEach(contract -> newTerminatedContract(stamm, mapping, contract).ifPresent(value -> results.add(value)));
 	}
 
-	private Optional<PMContract> newTerminatedContract(final StammImpl stamm, final PMContract pmContract) {
+	private Optional<PMContract> newTerminatedContract(final StammImpl stamm,final IdMapping mapping, final PMContract pmContract) {
 		Assert.isTrue(pmContract.getHistnr() == 1L, "Histnr. 1 expected.");
+		
 		
 		if (conversionService.convert(stamm.getSterbedatum(), Date.class) != null) {
 			final Date endDate = conversionService.convert(stamm.getSterbedatum(), Date.class);
@@ -60,7 +62,26 @@ public class PartnerTerminatedRule {
 			result.setTerminationflag(1L);
 			return Optional.of(result);
 		}
+		
+		if( isEx(mapping) ) {
+			final PMContract result = partnerFactory.copy(pmContract);
+			final Date endDate = mapping.getLastStateDate();
+			result.setDop(endDate);
+			result.setInd(nextDay(endDate));
+			result.setReasonForChange(900L);
+			result.setPrionr(900L);
+			result.setTerminationDate(nextDay(endDate));
+			result.setHistnr(Long.valueOf(2));
+			result.setTerminationflag(1L);
+			return Optional.of(result);
+		}
+		
+				
 		return Optional.empty();
+	}
+
+	private boolean isEx(final IdMapping mapping) {
+		return mapping.getLastState().equalsIgnoreCase("END")|| mapping.getLastState().equalsIgnoreCase("AUS");
 	}
 
 	@Action(order = 2)
