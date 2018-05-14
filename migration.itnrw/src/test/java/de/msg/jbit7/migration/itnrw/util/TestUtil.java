@@ -105,6 +105,9 @@ public interface TestUtil {
 	}
 	
 	public static Date truncate(final Date date) {
+		if( date == null) {
+			return date;
+		}
 		final Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.set(Calendar.HOUR, 0);

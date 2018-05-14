@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -84,7 +85,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 	
 	@Test
 	void createPartnersMarriagePartnerDeath() {
-		IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withMarriagePartner().build();
+		final IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withMarriagePartner().build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		final Ehegatte ehegatte = EhegatteBuilder.builder().withBeihilfenr(mapping.getBeihilfenr()).withSterbeDatum().build();
 		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
@@ -110,11 +111,53 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		
 		assertTerminatedRole(mapping, mapping.getMarriagePartnerNr(), ehegatte.getSterbedatum(), roles.get(1));
 	}
+	
+	@Test
+	void createPartnersChildPHTerminated() {
+		Date terminationDate = new Date();
+		
+		
+		
+		final IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withLastState("AUS", terminationDate).withChildren(1).build();
+		final StammImpl stamm = StammBuilder.builder().build();
+		final KindInfo kindInfo = KindInfoBuilder.builder().withLfdKind(mapping.getChildrenNr()[0]).withBeihilfenr(mapping.getBeihilfenr()).build();
+		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
+		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());
+		final Map<Long, Date> beginDates = new HashMap<>();
+		beginDates.put(mapping.getBeihilfenr(), contractDate);
+		
+		Mockito.doReturn(Arrays.asList(kindInfo)).when(stammRepository).findChildren(mapping.getBeihilfenr(), mapping.getChildrenNr());
+		Mockito.doReturn(beginDates).when(stammRepository).beginDates();
+		
+		partnerFamilyService.createPartners(MANDATOR);
+		
+		
+		final List<PartnerCore> partners = partnerRepository.findPartnerHists(mapping.getChildrenPartnerNr()[0]);
+		assertEquals(2, partners.size());
+		assertFirstPartner(mapping, mapping.getChildrenPartnerNr()[0],  partners.get(0));
+		assertTerminatedPartner(mapping, mapping.getChildrenPartnerNr()[0], terminationDate, partners.get(1));
+		
+		final List<PartnersRole> partnersRoles = partnerRepository.findPartnersRoleHists(mapping.getChildrenPartnerNr()[0]);
+		assertEquals(2, partnersRoles.size());
+		assertFirstRole(mapping, mapping.getChildrenPartnerNr()[0], partnersRoles.get(0));
+		assertTerminatedRole(mapping, mapping.getChildrenPartnerNr()[0], terminationDate, partnersRoles.get(1));
+	}
 
 	private void assertTerminatedRole(IdMapping mapping,final String partnerNr, final long dateOfDeath, final PartnersRole terminatedRole) {
 		assertSameDay(TestUtil.nextDay(TestUtil.toDate(dateOfDeath)), terminatedRole.getInd());
 		assertEquals("IP", terminatedRole.getRole());
 		assertSameDay(TestUtil.toDate(dateOfDeath), terminatedRole.getDop());
+		assertEquals(Long.valueOf(2), terminatedRole.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedRole.getProcessnr());
+		assertEqualsRequired(partnerNr, terminatedRole.getRightSide());
+		assertEquals(Long.valueOf(1), terminatedRole.getTerminationflag());
+	}
+	
+	
+	private void assertTerminatedRole(IdMapping mapping,final String partnerNr, final Date terminationdate, final PartnersRole terminatedRole) {
+		assertSameDay(TestUtil.nextDay(terminationdate), terminatedRole.getInd());
+		assertEquals("IP", terminatedRole.getRole());
+		assertSameDay(terminationdate, terminatedRole.getDop());
 		assertEquals(Long.valueOf(2), terminatedRole.getHistnr());
 		assertEqualsRequired(mapping.getProcessNumber(), terminatedRole.getProcessnr());
 		assertEqualsRequired(partnerNr, terminatedRole.getRightSide());
@@ -139,6 +182,15 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		assertEqualsRequired(partnersNumber, terminatedPartnerCore.getPartnersNr());
 		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
 		assertSameDay(TestUtil.toDate(dateOfDeath),terminatedPartnerCore.getDateOfDeath());
+	}
+	
+	private void assertTerminatedPartner(IdMapping mapping,final String partnersNumber, final Date dateOfDeath, final PartnerCore terminatedPartnerCore) {
+		assertSameDay(TestUtil.nextDay(dateOfDeath), terminatedPartnerCore.getInd());
+		assertSameDay(dateOfDeath, terminatedPartnerCore.getDop());
+		assertEquals(Long.valueOf(2), terminatedPartnerCore.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnerCore.getProcessnr());
+		assertEqualsRequired(partnersNumber, terminatedPartnerCore.getPartnersNr());
+		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
 	}
 
 	private void assertFirstPartner(IdMapping mapping, final String partnerNumber,final PartnerCore firstPartnerCore) {

@@ -70,7 +70,7 @@ abstract class PartnerFamilyService {
 			}
 			final StammImpl stamm = stammRepository.findStamm(mapping.getBeihilfenr());
 			final Collection<KindInfo> children = stammRepository.findChildren(mapping.getBeihilfenr(), mapping.getChildrenNr());
-
+			
 			final List<Object> results = new ArrayList<>();
 			final Facts facts = new SpelFacts(Arrays.asList(converter));
 			facts.put(PartnerFamilyFacts.ID_MAPPING, mapping);
