@@ -126,7 +126,7 @@ public class PartnerTerminatedRuleTest {
 	
 
 	@Test
-	public final void terminatePartner() {
+	public final void terminateVNDeath() {
 		final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
 		final FamilyMembers familyMembers = new FamilyMembers();
 		familyMembers.put(partnerCore.getPartnersNr(), TestUtil.toDate(stamm.getSterbedatum()));
@@ -134,21 +134,38 @@ public class PartnerTerminatedRuleTest {
 		assertEquals(1, results.size());
 		final PartnerCore result = (PartnerCore) results.stream().findAny().get();
 		
-		assertTerminatedPartner(result, TestUtil.toDate(stamm.getSterbedatum()));
+		assertTerminatedPartner(result, TestUtil.toDate(stamm.getSterbedatum()), true);
 	}
 
-	private void assertTerminatedPartner(final PartnerCore result, final Date end) {
+	@Test
+	public final void terminateEndAus() {
+		final Date terminationdate = new Date();
+		
+		final FamilyMembers familyMembers = new FamilyMembers();
+		familyMembers.assignTerminationdateIfNotExists(terminationdate);
+		
+		partnerTerminatedRule.terminatePartner(familyMembers, Arrays.asList(partnerCore), results);
+		assertEquals(1, results.size());
+		
+		final PartnerCore result = (PartnerCore) results.stream().findAny().get();
+		assertTerminatedPartner(result, terminationdate, false);
+	}
+	
+	private void assertTerminatedPartner(final PartnerCore result, final Date end, final boolean isDeath) {
 		assertEquals(partnerCore.getPartnersNr(), result.getPartnersNr());
 		assertEquals(end, result.getDop());
 		assertEquals(TestUtil.nextDay(end), result.getInd());
 		assertEquals(Long.valueOf(900), result.getReasonForChange());
-		assertEquals(end, result.getDateOfDeath());
 		assertEquals(Long.valueOf(1), result.getTerminationflag());
 		assertEquals(Long.valueOf(2L), result.getHistnr());
+		
+		if( isDeath) {
+			assertEquals(end, result.getDateOfDeath());
+		}
 	}
 	
 	@Test
-	public final void terminatePartnersRole() {
+	public final void terminatePartnersRoleDeath() {
 		final StammImpl stamm  =  new StammBuilder().withSterbeDatum().build();
 		final FamilyMembers familyMembers = new FamilyMembers();
 		familyMembers.put(partnerCore.getPartnersNr(), TestUtil.toDate(stamm.getSterbedatum()));
@@ -159,6 +176,18 @@ public class PartnerTerminatedRuleTest {
 		
 		assertTerminedRole(result, TestUtil.toDate(stamm.getSterbedatum()));
 		
+	}
+	
+	@Test
+	public final void terminatePartnersRoleEndAus() {
+		final FamilyMembers familyMembers = new FamilyMembers();
+		final Date terminationdate = new Date();
+		familyMembers.assignTerminationdateIfNotExists(terminationdate);
+		partnerTerminatedRule.terminatePartnersRole(familyMembers, Arrays.asList(partnersRole), results);
+		
+		assertEquals(1, results.size());
+		final PartnersRole result =  (PartnersRole) results.stream().findAny().get();
+		assertTerminedRole(result, terminationdate);
 	}
 
 	private void assertTerminedRole(final PartnersRole result, final Date end) {

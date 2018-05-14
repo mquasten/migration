@@ -102,6 +102,13 @@ public class PartnerTerminatedRule {
 			deathPartner.setDateOfDeath(dateOfDeath.get());
 			return Optional.of(deathPartner);
 		}
+		
+		if( familyMembers.terminationdate().isPresent() ) {
+			final PartnerCore terminatedPartner = terminatedPartner(partnerCore, nextDay(familyMembers.terminationdate().get()), familyMembers.terminationdate().get());
+			return Optional.of(terminatedPartner);
+		
+		}
+		
 		return Optional.empty();
 	}
 
@@ -128,6 +135,10 @@ public class PartnerTerminatedRule {
 		final Optional<Date> dateOfDeath = familyMembers.get(role.getRightSide());
 		if (dateOfDeath.isPresent()) {
 			return Optional.of(newTerminatedPartnersRole(role, nextDay(dateOfDeath.get()), dateOfDeath.get(), 2));
+		}
+		
+		if( familyMembers.terminationdate().isPresent()) {
+			return Optional.of(newTerminatedPartnersRole(role, nextDay(familyMembers.terminationdate().get()), familyMembers.terminationdate().get(), 2));
 		}
 		return Optional.empty();
 	}

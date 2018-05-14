@@ -18,6 +18,14 @@ public interface  PartnerFamilyFacts {
 		public class FamilyMembers {
 			private final Map<String, Date> members = new HashMap<>();
 			
+			private Date terminationdate = null;
+			
+			public void assignTerminationdateIfNotExists(final Date terminationdate) {
+				if(this.terminationdate != null) {
+					return;
+				}
+				this.terminationdate=terminationdate;
+			}
 			
 			public void put(final String partnerNumber, final Date dateOfDeath) {
 				members.put(partnerNumber, dateOfDeath);
@@ -26,6 +34,11 @@ public interface  PartnerFamilyFacts {
 			public Optional<Date> get(final String partnerNumber) {
 				return (Optional<Date>) Optional.ofNullable(members.get(partnerNumber));
 			}
+			
+			public Optional<Date> terminationdate() {
+				return Optional.ofNullable(terminationdate);
+			}
+			
 		}
 
 

@@ -33,9 +33,14 @@ public class FamilyMemberTerminationDatesByPartnerNumberConverter implements Con
 		final IdMapping mapping = (IdMapping) facts.get(PartnerFamilyFacts.ID_MAPPING);
 		Assert.notNull(mapping, "Mapping must be aware.");
 		
+		if( mapping.getLastState().equals("END") || mapping.getLastState().equals("AUS")) {
+			members.assignTerminationdateIfNotExists(mapping.getLastStateDate());
+		}
+		
 		final StammImpl stamm = (StammImpl) facts.get(PartnerFamilyFacts.STAMM);
 		if(( stamm != null))  {	
 			addDateOfDeathIfExists(members, mapping.getPartnerNr(), stamm.getSterbedatum());
+			assignTerminationdateDeath(members, mapping, stamm);
 		}
 		final Ehegatte ehegatte = (Ehegatte) facts.get(PartnerFamilyFacts.MARRIAGE_PARTNER);
 		if(( ehegatte != null)&&(mapping.getMarriagePartnerNr()!=null))  {
@@ -56,6 +61,15 @@ public class FamilyMemberTerminationDatesByPartnerNumberConverter implements Con
 		
 		
 		return members;
+	}
+
+	private void assignTerminationdateDeath(final PartnerFamilyFacts.FamilyMembers members, final IdMapping mapping, final StammImpl stamm) {
+		final Date dateOfDeath = conversionService.convert(stamm.getSterbedatum(), Date.class);
+		if( dateOfDeath == null) {
+			return;
+			
+		}
+		members.assignTerminationdateIfNotExists(mapping.getLastStateDate());
 	}
 
 	private void addDateOfDeathIfExists(final PartnerFamilyFacts.FamilyMembers members, final String partnerNumber, final Long  dateOfDeathAsLong) {
