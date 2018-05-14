@@ -115,7 +115,7 @@ public class PartnerServiceHistoryIntegrationTest {
 		
 		final PartnerCore terminatedPartnerCore = partners.get(1);
 		
-		assertTerminatedPartner(terminatedPartnerCore); 
+		assertTerminatedPartnerDeath(terminatedPartnerCore); 
 		
 		
 		final List<PartnersRole> partnersRoles = partnerRepository.findPartnersRoleHists(mapping.getPartnerNr());
@@ -129,7 +129,7 @@ public class PartnerServiceHistoryIntegrationTest {
 		
 		final PartnersRole terminatedPartnersRoleIP =  partnersRoles.get(1);
 		assertEquals("IP", firstPartnersRoleIP.getRole());
-		assertTerminatedRole(terminatedPartnersRoleIP);
+		assertTerminatedRoleDeath(terminatedPartnersRoleIP);
 		
 		
 		final PartnersRole firstPartnersRolePH =  partnersRoles.get(2);
@@ -138,7 +138,7 @@ public class PartnerServiceHistoryIntegrationTest {
 		
 		final PartnersRole terminatedPartnersRolePH =  partnersRoles.get(3);
 		assertEquals("PH", terminatedPartnersRolePH.getRole());
-		assertTerminatedRole(terminatedPartnersRolePH);
+		assertTerminatedRoleDeath(terminatedPartnersRolePH);
 		
 		final List<PMContract> contracts = partnerRepository.findContractHists(mapping.getContractNumber());
 		
@@ -150,6 +150,49 @@ public class PartnerServiceHistoryIntegrationTest {
 		final PMContract terminatedContract = contracts.get(1);
 		assertTerminatedContract(terminatedContract); 
 		
+	}
+	
+	@Test
+	void importAusEndPartner() {
+		stamm.setSterbedatum(null);
+		mapping.setLastState("END");
+		Date terminationdate = new Date();
+		mapping.setLastStateDate(terminationdate);
+		partnerService.importPartners(MANDATOR, true);
+		
+		final List<PartnerCore> partners = partnerRepository.findPartnerHists(mapping.getPartnerNr());
+		
+		assertEquals(2, partners.size());
+		
+		final PartnerCore firstPartnerCore = partners.get(0);
+		
+		assertFirstPartner(firstPartnerCore);
+		
+		final PartnerCore terminatedPartnerCore = partners.get(1);
+		
+		assertTerminatedPartnerEnd(terminatedPartnerCore); 
+		
+		
+		final List<PartnersRole> partnersRoles = partnerRepository.findPartnersRoleHists(mapping.getPartnerNr());
+		
+		assertEquals(4, partnersRoles.size());
+		
+		final PartnersRole firstPartnersRoleIP =  partnersRoles.get(0);
+		assertEquals("IP", firstPartnersRoleIP.getRole());
+		assertFirstRole(firstPartnersRoleIP);
+		
+		final PartnersRole terminatedPartnersRoleIP =  partnersRoles.get(1);
+		assertEquals("IP", terminatedPartnersRoleIP.getRole());
+		assertTerminatedRoleEnd(terminatedPartnersRoleIP);
+		
+		
+		final PartnersRole firstPartnersRolePH =  partnersRoles.get(2);
+		assertEquals("PH", firstPartnersRolePH.getRole());
+		assertFirstRole(firstPartnersRolePH);
+		
+		final PartnersRole terminatedPartnersRolePH =  partnersRoles.get(3);
+		assertEquals("PH", terminatedPartnersRolePH.getRole());
+		assertTerminatedRoleEnd(terminatedPartnersRolePH);
 	}
 
 	private void assertTerminatedContract(final PMContract terminatedContract) {
@@ -172,7 +215,7 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertNull(firstContract.getTerminationDate());
 	}
 
-	private void assertTerminatedPartner(final PartnerCore terminatedPartnerCore) {
+	private void assertTerminatedPartnerDeath(final PartnerCore terminatedPartnerCore) {
 		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedPartnerCore.getInd());
 		
 		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedPartnerCore.getDop());
@@ -181,6 +224,18 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnerCore.getPartnersNr());
 		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
 		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()),terminatedPartnerCore.getDateOfDeath());
+	}
+	
+	
+	private void assertTerminatedPartnerEnd(final PartnerCore terminatedPartnerCore) {
+		assertSameDay(TestUtil.nextDay(mapping.getLastStateDate()), terminatedPartnerCore.getInd());
+		
+		assertSameDay(mapping.getLastStateDate(), terminatedPartnerCore.getDop());
+		assertEquals(Long.valueOf(2), terminatedPartnerCore.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnerCore.getProcessnr());
+		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnerCore.getPartnersNr());
+		assertEquals(Long.valueOf(1), terminatedPartnerCore.getTerminationflag());
+		
 	}
 
 	private void assertFirstPartner(final PartnerCore firstPartnerCore) {
@@ -193,10 +248,20 @@ public class PartnerServiceHistoryIntegrationTest {
 		assertNull(firstPartnerCore.getDateOfDeath());
 	}
 
-	private void assertTerminatedRole(final PartnersRole terminatedPartnersRoleIP) {
+	private void assertTerminatedRoleDeath(final PartnersRole terminatedPartnersRoleIP) {
 		assertSameDay(TestUtil.nextDay(TestUtil.toDate(stamm.getSterbedatum())), terminatedPartnersRoleIP.getInd());
 		
 		assertSameDay(TestUtil.toDate(stamm.getSterbedatum()), terminatedPartnersRoleIP.getDop());
+		assertEquals(Long.valueOf(2), terminatedPartnersRoleIP.getHistnr());
+		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnersRoleIP.getProcessnr());
+		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnersRoleIP.getRightSide());
+		assertEquals(Long.valueOf(1), terminatedPartnersRoleIP.getTerminationflag());
+	}
+	
+	private void assertTerminatedRoleEnd(final PartnersRole terminatedPartnersRoleIP) {
+		assertSameDay(TestUtil.nextDay(mapping.getLastStateDate()), terminatedPartnersRoleIP.getInd());
+		
+		assertSameDay(mapping.getLastStateDate(), terminatedPartnersRoleIP.getDop());
 		assertEquals(Long.valueOf(2), terminatedPartnersRoleIP.getHistnr());
 		assertEqualsRequired(mapping.getProcessNumber(), terminatedPartnersRoleIP.getProcessnr());
 		assertEqualsRequired(mapping.getPartnerNr(), terminatedPartnersRoleIP.getRightSide());
