@@ -59,7 +59,7 @@ public class MarriagePartnerRule {
 		partnersRole.setLeftSide(conversionService.convert(idMapping.getContractNumber(), String.class));
 		partnersRole.setOrderNrLeftSide("2");
 		partnersRole.setRightSide(idMapping.getMarriagePartnerNr());
-		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
+		partnersRole.setExternKey("" + idMapping.getBeihilfenr());
 		return partnersRole;
 	}
 

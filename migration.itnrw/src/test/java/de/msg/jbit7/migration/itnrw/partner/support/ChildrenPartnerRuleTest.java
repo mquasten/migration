@@ -175,7 +175,7 @@ class ChildrenPartnerRuleTest {
 		assertNull(partnersRole.getAddressNr());
 		assertNull(partnersRole.getBankNr());
 		assertNull(partnersRole.getCommunicationRoleKey());
-		assertEqualsRequired("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEqualsRequired("" + idMapping.getBeihilfenr(), partnersRole.getExternKey());
 		assertEquals(Long.valueOf(1L), partnersRole.getRoleState());
 		assertEquals(Long.valueOf(1L), partnersRole.getRiskCarrier());
 	}

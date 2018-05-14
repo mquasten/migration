@@ -323,7 +323,7 @@ public class PartnerRule {
 		partnersRole.setInd(contractDate);
 		partnersRole.setLeftSide("" + idMapping.getContractNumber());
 		partnersRole.setRightSide(idMapping.getPartnerNr());
-		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
+		partnersRole.setExternKey( "" + idMapping.getBeihilfenr());
 
 		return partnersRole;
 	}

@@ -331,7 +331,7 @@ class PartnerRuleTest {
 		assertNull(partnersRoleIp.getBankNr());
 		
 		assertNull(partnersRoleIp.getCommunicationRoleKey());
-		assertEquals("BB" + idMapping.getContractNumber() , partnersRoleIp.getExternKey());
+		assertEqualsRequired(""+ idMapping.getBeihilfenr() , partnersRoleIp.getExternKey());
 		assertEquals(Long.valueOf(1), partnersRoleIp.getRoleState());
 		assertEquals(Long.valueOf(1), partnersRoleIp.getRiskCarrier());
 	}
@@ -355,7 +355,7 @@ class PartnerRuleTest {
 		assertEquals("1", partnersRole.getBankNr());
 		assertEquals(idMapping.getPartnerNr(), "" +partnersRole.getCommunicationRoleKey());
 		
-		assertEquals("BB" + idMapping.getContractNumber() , partnersRole.getExternKey());
+		assertEquals("" + idMapping.getBeihilfenr(), partnersRole.getExternKey());
 		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
 		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());
 	}

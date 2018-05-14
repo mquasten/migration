@@ -83,7 +83,7 @@ public class MarriagePartnerRuleTest {
 		assertNull(partnersRole.getAddressNr());
 		assertNull(partnersRole.getBankNr());
 		assertNull(partnersRole.getCommunicationRoleKey());
-		assertEqualsRequired("BB" + idMapping.getContractNumber(), partnersRole.getExternKey());
+		assertEqualsRequired("" + idMapping.getBeihilfenr(), partnersRole.getExternKey());
 		assertEqualsRequired(Long.valueOf(1L), partnersRole.getRoleState());
 		assertEqualsRequired(Long.valueOf(1L),  partnersRole.getRiskCarrier());
 	}

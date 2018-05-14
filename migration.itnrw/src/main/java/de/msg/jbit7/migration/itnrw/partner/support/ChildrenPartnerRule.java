@@ -90,7 +90,7 @@ public class ChildrenPartnerRule {
 		partnersRole.setOrderNrLeftSide(conversionService.convert(StringUtils.hasText(idMapping.getMarriagePartnerNr()) ? 3+i: 2+i, String.class));
 		Assert.isTrue(idMapping.getChildrenNr().length > i,String.format("Child %s with index doesn't exist.", i));
 		partnersRole.setRightSide(idMapping.getChildrenPartnerNr()[i]);
-		partnersRole.setExternKey("BB" + idMapping.getContractNumber());
+		partnersRole.setExternKey("" + idMapping.getBeihilfenr());
 		return partnersRole;
 	}
 
