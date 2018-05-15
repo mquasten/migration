@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
@@ -19,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
+import de.msg.jbit7.migration.itnrw.mapping.PageableCollection;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.partner.support.FamilyMemberTerminationDatesByPartnerNumberConverter;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
@@ -54,10 +58,15 @@ abstract class PartnerFamilyService {
 	private final PartnerRepository partnerRepository;
 	
 	private final Rules rules; 
-	public void createPartners(final Long mandator) {
+	public void createPartners(final Long mandator, final boolean cleanup) {
 		
 		
 		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
+		
+		if( cleanup) {
+			delete(idMappings,10);
+		}
+		
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
 		
 		final Map<Long, Ehegatte> marrigePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(mp -> mp.getBeihilfenr(), mp -> mp));
@@ -103,6 +112,24 @@ abstract class PartnerFamilyService {
 		} catch (final Exception exception) {
 			LOGGER.error("Error saving entity: " + beihilfeNr, exception);
 		}
+	}
+	
+	private void delete(final Collection<IdMapping> mappings, final int pageSize) {
+	
+		final PageableCollection<String> partners = new PageableCollection<String>(marriagePartnerAndChildrenPartnerNumbers(mappings), pageSize);
+		
+		IntStream.range(0, partners.maxPages()).forEach(page -> partnerRepository.cleanPartners(partners.page(page)));
+		
+	}
+
+	private Collection<String> marriagePartnerAndChildrenPartnerNumbers(final Collection<IdMapping> mappings) {
+		return Stream.concat(
+		mappings.stream().filter(mapping -> StringUtils.hasText(mapping.getMarriagePartnerNr())).map(mapping -> mapping.getMarriagePartnerNr()),	
+		mappings.stream().filter(mapping -> mapping.getChildrenPartnerNr().length > 0).map(mapping -> Arrays.asList(mapping.getChildrenPartnerNr())).reduce(new ArrayList<>()
+				, (a, b) -> {
+				    a.addAll(b);
+				    return a;
+				}).stream() ).collect(Collectors.toList());
 	}
 	
 	@Lookup

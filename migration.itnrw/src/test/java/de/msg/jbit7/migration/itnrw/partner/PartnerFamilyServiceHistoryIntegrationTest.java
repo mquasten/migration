@@ -96,7 +96,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		
 		Mockito.doReturn(beginDates).when(stammRepository).beginDates();
 		
-		partnerFamilyService.createPartners(MANDATOR);
+		partnerFamilyService.createPartners(MANDATOR, false);
 		
 		final List<PartnerCore> partners = partnerRepository.findPartnerHists(mapping.getMarriagePartnerNr());
 		assertEquals(2, partners.size());
@@ -129,7 +129,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		Mockito.doReturn(Arrays.asList(kindInfo)).when(stammRepository).findChildren(mapping.getBeihilfenr(), mapping.getChildrenNr());
 		Mockito.doReturn(beginDates).when(stammRepository).beginDates();
 		
-		partnerFamilyService.createPartners(MANDATOR);
+		partnerFamilyService.createPartners(MANDATOR, false);
 		
 		
 		final List<PartnerCore> partners = partnerRepository.findPartnerHists(mapping.getChildrenPartnerNr()[0]);
@@ -216,7 +216,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		beginDates.put(mapping.getBeihilfenr(), contractDate);
 		Mockito.doReturn(beginDates).when(stammRepository).beginDates();
 		
-		partnerFamilyService.createPartners(MANDATOR);
+		partnerFamilyService.createPartners(MANDATOR, false);
 		
 		final List<PartnerCore> partners = partnerRepository.findPartnerHists(mapping.getChildrenPartnerNr()[0]);
 		assertEquals(2, partners.size());

@@ -8,7 +8,7 @@ public interface IdMappingRepository {
 
 	void persist(IdMapping idMapping);
 
-	void delete();
+	void delete(final long mandator);
 
 	List<IdMapping> findAll(final long mandator);
 

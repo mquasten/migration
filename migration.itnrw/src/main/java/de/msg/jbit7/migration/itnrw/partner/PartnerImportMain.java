@@ -26,7 +26,7 @@ public class PartnerImportMain {
 			partnerService.importPartners(mandator, overwrite);
 			
 			final PartnerFamilyService partnerFamilyService = applicationContext.getBean(PartnerFamilyService.class);
-			partnerFamilyService.createPartners(mandator); 
+			partnerFamilyService.createPartners(mandator, overwrite); 
 			
 			System.out.println("... finished.");
 			//applicationContext.getBean(IdGenerationService.class).createIds(conversionService.convert(mandatorAsString, Long.class), overwrite, migUser);

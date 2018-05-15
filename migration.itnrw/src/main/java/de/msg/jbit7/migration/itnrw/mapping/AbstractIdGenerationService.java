@@ -1,12 +1,16 @@
 package de.msg.jbit7.migration.itnrw.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
@@ -17,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
+import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
@@ -33,14 +39,19 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	private final StammRepository stammRepository;
 	
 	private final IdMappingRepository idMappingRepository;
+	
+	final PartnerRepository partnerRepository;
 	final static Logger LOGGER = LoggerFactory.getLogger(AbstractIdGenerationService.class);
+	
+	
 	
 	private final Rules rules;
 
 	@Autowired
-	AbstractIdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository,   @Qualifier("idMappingRules") final Rules  rules) {
+	AbstractIdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository, final PartnerRepository partnerRepository,    @Qualifier("idMappingRules") final Rules  rules) {
 		this.stammRepository = stammRepository;
 		this.idMappingRepository=idMappingRepository;
+		this.partnerRepository=partnerRepository;
 		this.rules=rules;
 	}
 	
@@ -51,11 +62,14 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	@Override
 	public  void createIds(final long mandator, final boolean deleteFirst, final String migrationUser) {
 		
+		final Counters counters = idMappingRepository.findCounters(mandator);
 		if( deleteFirst) {
-			idMappingRepository.delete();
+			
+			delete(mandator,10);
+			
 		}
 	
-		final Counters counters = idMappingRepository.findCounters(mandator);
+	
 		
 		final Map<Long, Ehegatte> marriagePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(Ehegatte::getBeihilfenr, ehegatte -> ehegatte));
 		final  Map<Long,List<KindInfo>> children = findAllChildren();
@@ -104,6 +118,33 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 			
 		});
 	}
+
+
+	private void delete(final long mandator, final int pageSize) {
+		final Collection<IdMapping> idMappings = idMappingRepository.findAll(mandator);
+	    final PageableCollection<Long> contracts = new PageableCollection<>(idMappings.stream().map(mapping -> mapping.getContractNumber()).collect(Collectors.toList()), pageSize);
+	   
+	    IntStream.range(0, contracts.maxPages()).forEach(page -> partnerRepository.cleanContracts(contracts.page(page)));
+	   
+		final PageableCollection<String>  partners = new PageableCollection<>(allPartnerNumbers(idMappings),pageSize);
+		
+		IntStream.range(0, partners.maxPages()).forEach(page -> partnerRepository.cleanPartners(partners.page(page)));
+		
+		idMappingRepository.delete(mandator);
+		
+	}
+		private Collection<String> allPartnerNumbers(final Collection<IdMapping> mappings) {
+			return Stream.concat(mappings.stream().map(mapping -> mapping.getPartnerNr()),
+			Stream.concat(
+			
+			mappings.stream().filter(mapping -> StringUtils.hasText(mapping.getMarriagePartnerNr())).map(mapping -> mapping.getMarriagePartnerNr()),	
+			mappings.stream().filter(mapping -> mapping.getChildrenPartnerNr().length > 0).map(mapping -> Arrays.asList(mapping.getChildrenPartnerNr())).reduce(new ArrayList<>()
+					, (a, b) -> {
+					    a.addAll(b);
+					    return a;
+					}).stream() )).collect(Collectors.toList());
+		}
+		
 
 
 	private Map<Long,List<KindInfo>>  findAllChildren() {

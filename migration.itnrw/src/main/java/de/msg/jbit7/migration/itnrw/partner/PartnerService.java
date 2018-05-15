@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
+import de.msg.jbit7.migration.itnrw.mapping.PageableCollection;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.partner.support.FamilyMemberTerminationDatesByPartnerNumberConverter;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
@@ -63,7 +64,7 @@ abstract class PartnerService {
 		
 		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 		if( cleanMandator) {
-			delete(idMappings);
+			delete(idMappings,10);
 		}
 	//	final List<IdMapping> idMappings = idMappingRepository.findAll();
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
@@ -121,23 +122,15 @@ abstract class PartnerService {
 	}
 	
 	
-	private void delete(final Collection<IdMapping> idMappings) {
-		final List<String> partnerNumbers = idMappings.stream().map(mapping -> mapping.getPartnerNr()).collect(Collectors.toList());
+	private void delete(final Collection<IdMapping> idMappings, final int pageSize) {
+		final PageableCollection<String> partners  = new PageableCollection<>(idMappings.stream().map(mapping -> mapping.getPartnerNr()).collect(Collectors.toList()), pageSize); 
+
+		IntStream.range(0, partners.maxPages()).forEach(page -> partnerRepository.cleanPartners(partners.page(page)));
 		
-		final int pageSize = 10;
-		final int maxPages = (int) Math.ceil((double) idMappings.size() / pageSize); 
-		
-		
-		IntStream.range(0, maxPages).forEach(page -> partnerRepository.cleanPartners(nextPage(partnerNumbers, page, pageSize)));
-		
-		final List<Long> contractNumbers = idMappings.stream().map(mapping -> mapping.getContractNumber()).collect(Collectors.toList());
-		
-		IntStream.range(0, maxPages).forEach(page -> partnerRepository.cleanContracts(nextPage(contractNumbers, page,pageSize)));
+		final PageableCollection<Long> contacts  = new PageableCollection<>(idMappings.stream().map(mapping -> mapping.getContractNumber()).collect(Collectors.toList()), pageSize); 
+		IntStream.range(0, contacts.maxPages()).forEach(page -> partnerRepository.cleanContracts(contacts.page(page)));
 	}
 
-	private  <T> List<T> nextPage(final List<T> list, int page, final int pageSize) {
-		return list.stream().skip( (page *pageSize )).limit(pageSize).collect(Collectors.toList());
-	}
 	
 	@Lookup
 	abstract DefaultRulesEngine rulesEngine();

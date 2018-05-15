@@ -79,8 +79,10 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#delete()
 	 */
 	@Override
-	public final void delete() {
-		jdbcOperations.getJdbcOperations().execute("DELETE FROM ID_MAPPING");
+	public final void delete(final long mandator) {
+		Map<String,Long> parameters = new HashMap<>();
+		parameters.put(MANDATOR_NAME_PARAMETER, mandator);
+		jdbcOperations.update(String.format("DELETE FROM ID_MAPPING where MANDATOR = %s", MANDATOR_NAME_PARAMETER), parameters);
 	}
 	
 	

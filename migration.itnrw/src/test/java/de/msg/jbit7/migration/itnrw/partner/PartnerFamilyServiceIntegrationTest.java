@@ -47,15 +47,12 @@ public class PartnerFamilyServiceIntegrationTest {
 	@BeforeEach
 	final void setup() {
 		idGenerationService.createIds(MANDATOR, true, USER);
-		
-		
-
 	}
 	
 	@Test
 	final void createPartners() {
 		partnerRepository.cleanMandator(MANDATOR);
-		partnerFamilyService.createPartners(MANDATOR);
+		partnerFamilyService.createPartners(MANDATOR, true);
 		
 		final Map<String,PartnerCore> partners = partnerRepository.findPartners(MANDATOR).stream().collect(Collectors.toMap(p -> p.getPartnersNr(), p -> p));
 		final Collection<IdMapping> idMappings = idGenerationService.findAll(MANDATOR).values();
