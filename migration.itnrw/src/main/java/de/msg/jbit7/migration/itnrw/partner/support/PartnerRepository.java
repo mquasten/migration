@@ -1,5 +1,6 @@
 package de.msg.jbit7.migration.itnrw.partner.support;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public class PartnerRepository {
 
 	private static final String CONTRACT_NUMBER_PARAMETER = "ContractNr";
 	private static final String PARTNERS_NUMBER_PARAMETER = "partnersNr";
+	
+	
 	private static final String MANDATOR_NAME = "mandator";
 	private static final String DELETE_CONTRACT_BY_MANDATOR_SQL = String
 			.format("DELETE FROM PM_CONTRACT WHERE MANDATOR = :%s", MANDATOR_NAME);
@@ -79,6 +82,36 @@ public class PartnerRepository {
 		
 	}
 
+	public final void cleanContracts(final Collection<Long> contractNumbers) {
+		final Map<String, Collection<Long>> parameters = new HashMap<>();
+		parameters.put(CONTRACT_NUMBER_PARAMETER, contractNumbers);
+		final String sql = String.format("DELETE FROM PM_CONTRACT WHERE CONTRACT_NUMBER in (:%s) ", CONTRACT_NUMBER_PARAMETER);
+		namedParameterJdbcOperations.update(sql, parameters);
+	}
+	
+	public final void cleanPartners(final Collection<String> partnerNumbers) {
+		final Map<String, Collection<String>> parameters = new HashMap<>();
+		parameters.put(PARTNERS_NUMBER_PARAMETER, partnerNumbers);
+		 final String deletePartnersRoleSql = String.format("DELETE FROM PARTNERS_ROLE WHERE RIGHT_SIDE in( :%s )", PARTNERS_NUMBER_PARAMETER);
+		 namedParameterJdbcOperations.update(deletePartnersRoleSql, parameters);
+		 
+		 final String deleteCommunicationRoleSql = String.format("DELETE FROM COMMUNICATION_ROLE WHERE COMMUNICATION_KEY in( :%s )", PARTNERS_NUMBER_PARAMETER);
+	
+		 namedParameterJdbcOperations.update(deleteCommunicationRoleSql, parameters);
+		 
+		 final String deleteCommunicationSql = String.format("DELETE FROM COMMUNICATION WHERE PARTNERS_NR in( :%s )", PARTNERS_NUMBER_PARAMETER);
+		 namedParameterJdbcOperations.update(deleteCommunicationSql, parameters);
+		 
+		 
+		 final String deleteBankSql = String.format("DELETE FROM BANK WHERE PARTNERS_NR in( :%s )", PARTNERS_NUMBER_PARAMETER);
+		 namedParameterJdbcOperations.update(deleteBankSql, parameters);
+		 
+		 final String deleteAddressSql = String.format("DELETE FROM ADDRESS WHERE PARTNERS_NR in( :%s )", PARTNERS_NUMBER_PARAMETER);
+		 namedParameterJdbcOperations.update(deleteAddressSql, parameters);
+		 
+		 final String deletePartnersSql = String.format("DELETE FROM PARTNERS_CORE WHERE PARTNERS_NR in( :%s )", PARTNERS_NUMBER_PARAMETER);
+		 namedParameterJdbcOperations.update(deletePartnersSql, parameters);
+	}
 	
 
 	public final List<PartnerCore> findPartners(final long mandator) {

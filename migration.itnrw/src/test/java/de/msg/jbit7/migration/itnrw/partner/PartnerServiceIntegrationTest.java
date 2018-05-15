@@ -39,9 +39,13 @@ class PartnerServiceIntegrationTest {
 	
 	@Test
 	final void createPartnersContract() {
+		partnerRepository.cleanMandator(MANDATOR);
+		
 		idGenerationService.createIds(MANDATOR, true, USER);
 		partnerService.importPartners(MANDATOR, true);
-		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll().stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
+		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll(MANDATOR).stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
+		
+		
 		
 		final List<PMContract>  contracts = partnerRepository.findContracts(MANDATOR);
 		assertContracts(idMapping, contracts);
@@ -165,7 +169,7 @@ class PartnerServiceIntegrationTest {
 
 	private void assertContracts(final Map<Long, IdMapping> idMapping, final List<PMContract> contracts) {
 		assertTrue(contracts.size() > 0 );
-		contracts.forEach(contract -> {
+		contracts.forEach(contract -> {	
 			assertTrue(idMapping.containsKey(contract.getContractNumber()));
 			final IdMapping mapping = idMapping.get(contract.getContractNumber());
 			assertEquals(mapping.getContractNumber(), contract.getContractNumber());

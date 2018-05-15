@@ -50,7 +50,7 @@ class IdGenerationServiceIntegrationTest {
 		
 		
 		idGenerationService.createIds(MANDATOR, true, USER);
-		final  Map<Long, IdMapping> idMappingMap =idGenerationService.findAll();
+		final  Map<Long, IdMapping> idMappingMap =idGenerationService.findAll(MANDATOR);
 		
 		final List<StammImpl> owners = stammRepository.findAll() ; 
 		assertTrue(owners.size() > 0 );

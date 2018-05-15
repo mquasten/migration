@@ -119,8 +119,8 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 
 	
 	
-	public Map<Long, IdMapping> findAll() {
-		return idMappingRepository.findAll().stream().collect(Collectors.toMap(idMapping -> idMapping.getBeihilfenr(), idMapping -> idMapping));
+	public Map<Long, IdMapping> findAll(final long mandator) {
+		return idMappingRepository.findAll(mandator).stream().collect(Collectors.toMap(idMapping -> idMapping.getBeihilfenr(), idMapping -> idMapping));
 	}
 	
 

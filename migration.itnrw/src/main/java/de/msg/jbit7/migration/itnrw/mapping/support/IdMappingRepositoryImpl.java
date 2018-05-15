@@ -6,7 +6,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +29,8 @@ import oracle.jdbc.internal.OracleResultSet;
 public class IdMappingRepositoryImpl implements IdMappingRepository {
 	
 	private final NamedParameterJdbcOperations jdbcOperations;
+	
+	private static final String MANDATOR_NAME_PARAMETER = "mandator";
 	
 	@Autowired
 	IdMappingRepositoryImpl(@Qualifier("itnrwJDBCTemplate") NamedParameterJdbcOperations jdbcOperations) {
@@ -84,7 +88,7 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 	 * @see de.msg.jbit7.migration.itnrw.mapping.support.IdMappingRepository#findAll()
 	 */
 	@Override
-	public final List<IdMapping> findAll() {
+	public final List<IdMapping> findAll(final long mandator) {
 		final BeanPropertyRowMapper<IdMapping> rowMapper = new BeanPropertyRowMapper<IdMapping>( IdMapping.class) {
 			  protected Object getColumnValue(ResultSet rs, int index,PropertyDescriptor pd) throws SQLException {
 				 
@@ -114,8 +118,9 @@ public class IdMappingRepositoryImpl implements IdMappingRepository {
 			  }
 			  
 		};
-			 
-		return jdbcOperations.query("Select * from ID_MAPPING", rowMapper);
+		final Map<String,Long> parameters = new HashMap<>();	 
+		parameters.put(MANDATOR_NAME_PARAMETER, mandator);
+		return jdbcOperations.query(String.format("SELECT * FROM ID_MAPPING WHERE MANDATOR =:%s", MANDATOR_NAME_PARAMETER), parameters, rowMapper);
 	}
 
 	

@@ -57,7 +57,7 @@ abstract class PartnerFamilyService {
 	public void createPartners(final Long mandator) {
 		
 		
-		final List<IdMapping> idMappings = idMappingRepository.findAll();
+		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
 		
 		final Map<Long, Ehegatte> marrigePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(mp -> mp.getBeihilfenr(), mp -> mp));

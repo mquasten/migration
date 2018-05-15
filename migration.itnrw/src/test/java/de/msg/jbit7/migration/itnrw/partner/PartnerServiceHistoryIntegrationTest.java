@@ -88,7 +88,7 @@ public class PartnerServiceHistoryIntegrationTest {
 		};
 
 		
-		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
+		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll(MANDATOR);
 		
 
 		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());

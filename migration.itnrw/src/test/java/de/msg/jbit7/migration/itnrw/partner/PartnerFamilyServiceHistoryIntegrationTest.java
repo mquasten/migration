@@ -88,7 +88,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		final IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withMarriagePartner().build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		final Ehegatte ehegatte = EhegatteBuilder.builder().withBeihilfenr(mapping.getBeihilfenr()).withSterbeDatum().build();
-		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
+		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll(MANDATOR);
 		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());
 		final Map<Long, Date> beginDates = new HashMap<>();
 		beginDates.put(mapping.getBeihilfenr(), contractDate);
@@ -121,7 +121,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		final IdMapping mapping = IdMappingBuilder.builder().withMandator(MANDATOR).withLastState("AUS", terminationDate).withChildren(1).build();
 		final StammImpl stamm = StammBuilder.builder().build();
 		final KindInfo kindInfo = KindInfoBuilder.builder().withLfdKind(mapping.getChildrenNr()[0]).withBeihilfenr(mapping.getBeihilfenr()).build();
-		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
+		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll(MANDATOR);
 		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());
 		final Map<Long, Date> beginDates = new HashMap<>();
 		beginDates.put(mapping.getBeihilfenr(), contractDate);
@@ -209,7 +209,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 		final StammImpl stamm = StammBuilder.builder().build();
 		final KindInfo kindInfo = KindInfoBuilder.builder().withLfdKind(mapping.getChildrenNr()[0]).withSterbeDatum().withBeihilfenr(mapping.getBeihilfenr()).build();
 		
-		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll();
+		Mockito.doReturn(Arrays.asList(mapping)).when(idMappingRepository).findAll(MANDATOR);
 		Mockito.doReturn(stamm).when(stammRepository).findStamm(mapping.getBeihilfenr());
 		Mockito.doReturn(Arrays.asList(kindInfo)).when(stammRepository).findChildren(mapping.getBeihilfenr(), mapping.getChildrenNr());
 		final Map<Long, Date> beginDates = new HashMap<>();

@@ -6,6 +6,6 @@ public interface IdGenerationService {
 
 	void createIds(final long mandator, final boolean deleteFirst, final String migUser);
 	
-	Map<Long, IdMapping> findAll();
+	Map<Long, IdMapping> findAll(final long mandator);
 
 }

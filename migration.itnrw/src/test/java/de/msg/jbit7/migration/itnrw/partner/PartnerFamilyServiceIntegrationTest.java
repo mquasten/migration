@@ -58,7 +58,7 @@ public class PartnerFamilyServiceIntegrationTest {
 		partnerFamilyService.createPartners(MANDATOR);
 		
 		final Map<String,PartnerCore> partners = partnerRepository.findPartners(MANDATOR).stream().collect(Collectors.toMap(p -> p.getPartnersNr(), p -> p));
-		final Collection<IdMapping> idMappings = idGenerationService.findAll().values();
+		final Collection<IdMapping> idMappings = idGenerationService.findAll(MANDATOR).values();
 		final Collection<IdMapping> idMappingMarriageWithPartner=idMappings.stream().filter(mapping -> StringUtils.hasText(mapping.getMarriagePartnerNr())).collect(Collectors.toList());
 		assertEhegatten(partners, idMappingMarriageWithPartner);
 		

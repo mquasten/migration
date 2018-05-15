@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
@@ -21,7 +24,6 @@ import org.springframework.util.Assert;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingRepository;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
-import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
 import de.msg.jbit7.migration.itnrw.partner.support.FamilyMemberTerminationDatesByPartnerNumberConverter;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
@@ -57,14 +59,20 @@ abstract class PartnerService {
 	} 
 	
 	public void importPartners(final long mandator, final boolean cleanMandator) {
-		final Counters counters = idMappingRepository.findCounters(mandator);
+		countersExistsGuard(mandator);
+		
+		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 		if( cleanMandator) {
-			partnerRepository.cleanMandator(counters.mandator());
+			delete(idMappings);
 		}
-		final List<IdMapping> idMappings = idMappingRepository.findAll();
+	//	final List<IdMapping> idMappings = idMappingRepository.findAll();
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
 				
 			idMappings.forEach(mapping -> processPartner(mandator, contractDates, mapping));
+	}
+
+	private void countersExistsGuard(final long mandator) {
+		idMappingRepository.findCounters(mandator);
 	}
 
 	private void processPartner(final long mandator, final Map<Long, Date> contractDates, IdMapping mapping) {
@@ -110,6 +118,25 @@ abstract class PartnerService {
 		} catch (final Exception exception) {
 			LOGGER.error("Error saving entity: " + beihilfeNr, exception);
 		}
+	}
+	
+	
+	private void delete(final Collection<IdMapping> idMappings) {
+		final List<String> partnerNumbers = idMappings.stream().map(mapping -> mapping.getPartnerNr()).collect(Collectors.toList());
+		
+		final int pageSize = 10;
+		final int maxPages = (int) Math.ceil((double) idMappings.size() / pageSize); 
+		
+		
+		IntStream.range(0, maxPages).forEach(page -> partnerRepository.cleanPartners(nextPage(partnerNumbers, page, pageSize)));
+		
+		final List<Long> contractNumbers = idMappings.stream().map(mapping -> mapping.getContractNumber()).collect(Collectors.toList());
+		
+		IntStream.range(0, maxPages).forEach(page -> partnerRepository.cleanContracts(nextPage(contractNumbers, page,pageSize)));
+	}
+
+	private  <T> List<T> nextPage(final List<T> list, int page, final int pageSize) {
+		return list.stream().skip( (page *pageSize )).limit(pageSize).collect(Collectors.toList());
 	}
 	
 	@Lookup

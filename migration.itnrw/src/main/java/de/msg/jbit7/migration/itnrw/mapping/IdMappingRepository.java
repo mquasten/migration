@@ -10,7 +10,7 @@ public interface IdMappingRepository {
 
 	void delete();
 
-	List<IdMapping> findAll();
+	List<IdMapping> findAll(final long mandator);
 
 	Counters findCounters(long mandator);
 
