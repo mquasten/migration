@@ -10,11 +10,11 @@ import org.mockito.Mockito;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 
-class IdGenerationMarriagePartnerRuleTest {
+class IdGenerationRecipientPartnerRuleTest {
 
 	private static final String PARTNER_NUMBER = "1001";
 
-	private final IdGenerationMarriagePartnerRule idGenerationMarriagePartnerRule = new IdGenerationMarriagePartnerRule();
+	private final IdGenerationRecipientPartnerRule idGenerationMarriagePartnerRule = new IdGenerationRecipientPartnerRule();
 	
 	
 	private final Counters counters = Mockito.mock(Counters.class);
@@ -26,12 +26,12 @@ class IdGenerationMarriagePartnerRuleTest {
 	
 	@Test
 	void married() {
-		assertTrue(idGenerationMarriagePartnerRule.married(true));
+		assertTrue(idGenerationMarriagePartnerRule.hasRecipient(true));
 	}
 	
 	@Test
 	void notMarried() {
-		assertFalse(idGenerationMarriagePartnerRule.married(false));
+		assertFalse(idGenerationMarriagePartnerRule.hasRecipient(false));
 	}
 	
 	@Test
@@ -39,7 +39,7 @@ class IdGenerationMarriagePartnerRuleTest {
 		final IdMapping idMapping = new IdMapping();
 		idGenerationMarriagePartnerRule.assignValues(idMapping, counters);
 		
-		assertEquals(PARTNER_NUMBER, idMapping.getMarriagePartnerNr());
+		assertEquals(PARTNER_NUMBER, idMapping.getRecipient());
 	}
 	
 }

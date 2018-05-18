@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
+import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
@@ -50,6 +51,13 @@ public class StammRepositoryImpl implements StammRepository {
 	public final List<Ehegatte> findAllEhegatte() {
 		final String sql = "SELECT * FROM EHEGATTE";
 		final BeanPropertyRowMapper<Ehegatte> rowMapper = new BeanPropertyRowMapper<>(Ehegatte.class);
+		return jdbcOperations.query(sql, rowMapper);
+	}
+	
+	@Override
+	public final List<Drittempfaenger> findAllDrittempfaenger() {
+		final String sql = "SELECT * FROM DRITTEMPFAENGER";
+		final BeanPropertyRowMapper<Drittempfaenger> rowMapper = new BeanPropertyRowMapper<>(Drittempfaenger.class);
 		return jdbcOperations.query(sql, rowMapper);
 	}
 

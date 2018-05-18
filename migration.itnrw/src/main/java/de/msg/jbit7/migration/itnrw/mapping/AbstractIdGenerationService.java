@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -27,7 +28,6 @@ import org.springframework.util.StringUtils;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.mapping.support.Counters;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
-import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
@@ -74,10 +74,12 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	
 	
 		
-		final Map<Long, Ehegatte> marriagePartners = stammRepository.findAllEhegatte().stream().collect(Collectors.toMap(Ehegatte::getBeihilfenr, ehegatte -> ehegatte));
+		final Set<Long> marriagePartners = stammRepository.findAllEhegatte().stream().map(ehegatte -> ehegatte.getBeihilfenr()).collect(Collectors.toSet());
 		final  Map<Long,List<KindInfo>> children = findAllChildren();
 			
 		final Map<Long, HiAntragsteller> lastStates = stammRepository.findLastStatus().stream().collect(Collectors.toMap(hia -> hia.getBeihilfenr(), hia -> hia));
+		
+		final Set<Long> drittEmpfaenger = stammRepository.findAllDrittempfaenger().stream().map(de -> de.getBeihilfenr()).collect(Collectors.toSet());
 		
 		stammRepository.findAll().forEach(stamm -> {
 			final Optional<HiAntragsteller> lastStatus = Optional.ofNullable(lastStates.get(stamm.getBeihilfenr()));
@@ -94,8 +96,8 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 			facts.put(IdGenerationFacts.COUNTERS,  counters);
 			facts.put(IdGenerationFacts.ID_MAPPING,  idMapping);
 		
-			facts.put(IdGenerationFacts.MARRIAGE_PARTNER, 	Optional.ofNullable(marriagePartners.get(stamm.getBeihilfenr())));
-			
+			facts.put(IdGenerationFacts.MARRIAGE_PARTNER, 	marriagePartners.contains(stamm.getBeihilfenr()));
+			facts.put(IdGenerationFacts.RECIEPIENT, drittEmpfaenger.contains(stamm.getBeihilfenr()));
 			
 			facts.put(IdGenerationFacts.CHILDREN,  children.containsKey(stamm.getBeihilfenr())? children.get(stamm.getBeihilfenr()): Collections.emptyList());
 			final DefaultRulesEngine rulesEngine = rulesEngine();

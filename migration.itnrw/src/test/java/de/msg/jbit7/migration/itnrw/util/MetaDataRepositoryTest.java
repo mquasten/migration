@@ -179,4 +179,11 @@ class MetaDataRepositoryTest {
 	
 	}
 	
+	@Test
+	@Disabled
+	final void drittEmpfaenger() throws Exception {
+		System.out.println(metaDataRepositoryBeihilfe.generateAnemicObject("DRITTEMPFAENGER"));
+	
+	}
+	
 }

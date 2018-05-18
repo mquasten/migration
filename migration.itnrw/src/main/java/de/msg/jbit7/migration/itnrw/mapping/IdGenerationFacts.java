@@ -7,4 +7,5 @@ public interface IdGenerationFacts {
 	String ID_MAPPING = "idMapping";
 	String MARRIAGE_PARTNER = "marriagePartner";
 	String CHILDREN = "children";
+	String RECIEPIENT = "recipient";
 }

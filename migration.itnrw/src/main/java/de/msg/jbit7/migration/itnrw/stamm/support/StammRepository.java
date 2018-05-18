@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 import de.msg.jbit7.migration.itnrw.stamm.Ehegatte;
 import de.msg.jbit7.migration.itnrw.stamm.HiAntragsteller;
 import de.msg.jbit7.migration.itnrw.stamm.KindInfo;
@@ -27,5 +28,7 @@ public interface StammRepository {
 	List<SepaBankVerbindung> findSepaBank(long beihilfeNr);
 	
 	List<HiAntragsteller> findLastStatus();
+
+	List<Drittempfaenger> findAllDrittempfaenger();
 
 }

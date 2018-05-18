@@ -23,6 +23,7 @@ class IdMappingRulesConfiguration {
 		group.addRule(new IdGenerationOwnerRule(conversionService));
 		group.addRule(new IdGenerationMarriagePartnerRule());
 		group.addRule(new IdGenerationChildrenRule());
+		group.addRule(new IdGenerationRecipientPartnerRule());
 
 		return new Rules(group);
 

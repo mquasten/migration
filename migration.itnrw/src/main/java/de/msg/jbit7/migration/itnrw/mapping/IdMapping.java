@@ -8,6 +8,7 @@ public class IdMapping {
 	private Long contractNumber;
 	private Long processNumber;
 	private String marriagePartnerNr;
+	
 	private String[] childrenPartnerNr;
 	private Long[] childrenNr;
 
@@ -23,7 +24,10 @@ public class IdMapping {
 	private String lastState;
 
 	private Date lastStateDate;
+	
+	private String recipient;
 
+	
 	public Long getBeihilfenr() {
 		return beihilfenr;
 	}
@@ -135,5 +139,14 @@ public class IdMapping {
 	public void setLastStateDate(Date lastStateDate) {
 		this.lastStateDate = lastStateDate;
 	}
+	
+	public String getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
+	}
+
 
 }

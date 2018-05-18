@@ -58,6 +58,10 @@ class IdGenerationServiceIntegrationTest {
 		final long married = idMappingMap.values().stream().filter(ipMapping -> ipMapping.getMarriagePartnerNr() != null).count();
 		final long childs = idMappingMap.values().stream().mapToLong(ipMapping -> ipMapping.getChildrenNr().length).sum();
 	
+		final long recipients = idMappingMap.values().stream().filter(ipMapping -> ipMapping.getRecipient() != null).count();
+		
+		assertTrue(recipients> 0 );
+		
 		final long offices = owners.stream().filter(owner -> owner.getDienststelle()!=null).map(owner -> owner.getDienststelle()).distinct().count();
 		final long schools = owners.stream().filter(owner -> owner.getSchulnummer()!=null).map(owner -> owner.getSchulnummer()).distinct().count();
 		
@@ -77,16 +81,16 @@ class IdGenerationServiceIntegrationTest {
 			
 			assertTrue(Long.valueOf(idMapping.getPartnerNr()) > startValues.getPartnerNumber());
 			
-			assertTrue(Long.valueOf(idMapping.getPartnerNr()) < owners.size() +  married + childs + startValues.getPartnerNumber()+1);
+			assertTrue(Long.valueOf(idMapping.getPartnerNr()) < owners.size() +  married + childs + recipients + startValues.getPartnerNumber()+1);
 			
 			if ( idMapping.getMarriagePartnerNr() != null) {
 				assertTrue(Long.valueOf(idMapping.getMarriagePartnerNr()) > startValues.getPartnerNumber());
-				assertTrue(Long.valueOf(idMapping.getMarriagePartnerNr()) < owners.size() +  married + childs + startValues.getPartnerNumber()+1);
+				assertTrue(Long.valueOf(idMapping.getMarriagePartnerNr()) < owners.size() +  married + childs + recipients+ startValues.getPartnerNumber()+1 );
 			} 
 			
 			Arrays.asList(idMapping.getChildrenPartnerNr()) .forEach( partnerNr -> {
 				assertTrue(Long.valueOf(partnerNr) > startValues.getPartnerNumber());
-				assertTrue(Long.valueOf(partnerNr) < owners.size() +  married + childs + startValues.getPartnerNumber()+1);
+				assertTrue(Long.valueOf(partnerNr) < owners.size() +  married + childs + recipients+ startValues.getPartnerNumber()+1);
 				
 			} );
 			
