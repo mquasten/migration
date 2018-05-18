@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,7 +49,7 @@ class PartnerRuleTest {
 	private final PartnerFactory partnerFactory = new PartnerFactory();
 	private final PartnerRule partnerRule = new PartnerRule(partnerFactory,conversionService);
 	@BeforeEach
-	void setup() throws IntrospectionException {
+	void setup() {
 		conversionService.addConverter(Long.class, Date.class, new SimpleLongToDateConverter());
 	}
 

@@ -8,6 +8,7 @@ public interface PartnerFacts {
 
 	final static String SEPA_BANK = "sepaBankVerbindung";
 	
+	final static String RECIPIENT = "recipient";
 	
 	final static String RESULTS = "results";
 	

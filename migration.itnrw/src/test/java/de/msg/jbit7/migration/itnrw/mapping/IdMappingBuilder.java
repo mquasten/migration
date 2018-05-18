@@ -74,6 +74,16 @@ public class IdMappingBuilder {
 	    return this;
 	}
 	
+	public final IdMappingBuilder withRecipient() {
+	   idMapping.setRecipient("" + TestUtil.randomLong());
+	    return this;
+	}
+	
+	public final IdMappingBuilder withRecipient(final String recipientPartnerNr) {
+		   idMapping.setRecipient(recipientPartnerNr);
+		    return this;
+		}
+	
 	public final IdMappingBuilder withLastState(final String lastState, final Date date) {
 		idMapping.setLastState(lastState);
 		idMapping.setLastStateDate(date);
@@ -104,6 +114,10 @@ public class IdMappingBuilder {
 		if( StringUtils.isEmpty(idMapping.getMarriagePartnerNr())){
 			idMapping.setMarriagePartnerNr("");
 		}
+		
+		if( StringUtils.isEmpty(idMapping.getRecipient())){
+			idMapping.setRecipient("");
+		}
 		if( StringUtils.isEmpty(idMapping.getPartnerNr() )) {
 			idMapping.setPartnerNr("" + TestUtil.randomLong());
 		}
@@ -133,6 +147,10 @@ public class IdMappingBuilder {
 		
 		if( StringUtils.isEmpty(idMapping.getMarriagePartnerNr())){
 			idMapping.setMarriagePartnerNr(null);
+		}
+		
+		if( StringUtils.isEmpty(idMapping.getRecipient())){
+			idMapping.setRecipient(null);
 		}
 		
 		Assert.notNull(idMapping.getContractNumber(), "ContractNumber is required.");

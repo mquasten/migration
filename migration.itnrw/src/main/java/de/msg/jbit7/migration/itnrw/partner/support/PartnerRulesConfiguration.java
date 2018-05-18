@@ -15,6 +15,7 @@ class PartnerRulesConfiguration {
 		final Rules rules = new Rules();
 		rules.register(new PartnerContractRule(partnerFactory));
 		rules.register(new PartnerRule(partnerFactory, conversionService));
+		rules.register(new RecipientPartnerRule(partnerFactory));
 		rules.register(new PartnerTerminatedRule(partnerFactory, conversionService));
 		return rules;
 	}

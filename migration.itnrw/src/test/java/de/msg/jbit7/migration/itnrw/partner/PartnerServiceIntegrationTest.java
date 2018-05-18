@@ -45,6 +45,7 @@ class PartnerServiceIntegrationTest {
 		partnerService.importPartners(MANDATOR, true);
 		final Map<Long, IdMapping> idMapping = idMappingRepository.findAll(MANDATOR).stream().collect(Collectors.toMap( mapping -> mapping.getContractNumber(), mapping -> mapping));
 		
+		Map<String, IdMapping> recipients = idMapping.values().stream().filter(mapping -> mapping.getRecipient()!=null ).collect(Collectors.toMap(mapping -> mapping.getRecipient(), mapping -> mapping));
 		
 		
 		final List<PMContract>  contracts = partnerRepository.findContracts(MANDATOR);
@@ -55,8 +56,8 @@ class PartnerServiceIntegrationTest {
 		
 		final Map<String, IdMapping> mappingByPartnerNr = idMapping.values().stream().collect(Collectors.toMap( mapping -> mapping.getPartnerNr(), mapping -> mapping));
 		
-		assertPartner(partners, mappingByPartnerNr);
-		assertEquals(idMapping.size(), partners.size());
+		assertPartner(partners, mappingByPartnerNr, recipients);
+		assertEquals(idMapping.size() + recipients.size(), partners.size());
 		
 		final List<Address>  addresses = partnerRepository.findAddresses(MANDATOR);
 		
@@ -154,14 +155,24 @@ class PartnerServiceIntegrationTest {
 	}
 
 
-	private void assertPartner(final List<PartnerCore> partners, final Map<String, IdMapping> mappingByPartnerNr) {
+	private void assertPartner(final List<PartnerCore> partners, final Map<String, IdMapping> mappingByPartnerNr, final Map<String, IdMapping> recipients) {
 		partners.forEach(partner -> {
+			
+			if(  ! recipients.containsKey(partner.getPartnersNr())) {
 			final IdMapping mapping = mappingByPartnerNr.get(partner.getPartnersNr());
 			assertNotNull(mapping);
 			assertEquals(mapping.getPartnerNr(), partner.getPartnersNr());
 			assertEquals(mapping.getProcessNumber() , partner.getProcessnr());
 			assertEquals(Long.valueOf(mapping.getChildrenNr().length), partner.getNumberChildren());
 			assertEquals(USER, partner.getUserid());
+			} else {
+				final IdMapping mapping = recipients.get(partner.getPartnersNr());
+				assertNotNull(mapping);
+				assertEquals(mapping.getRecipient(), partner.getPartnersNr());
+				assertEquals(mapping.getProcessNumber() , partner.getProcessnr());
+				assertEquals(Long.valueOf(0), partner.getNumberChildren());
+				assertEquals(USER, partner.getUserid());
+			}
 			
 		});
 	}

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,6 +29,7 @@ import de.msg.jbit7.migration.itnrw.mapping.PageableCollection;
 import de.msg.jbit7.migration.itnrw.mapping.support.CatchExceptionRuleListener;
 import de.msg.jbit7.migration.itnrw.partner.support.FamilyMemberTerminationDatesByPartnerNumberConverter;
 import de.msg.jbit7.migration.itnrw.partner.support.PartnerRepository;
+import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 import de.msg.jbit7.migration.itnrw.stamm.SepaBankVerbindung;
 import de.msg.jbit7.migration.itnrw.stamm.StammImpl;
 import de.msg.jbit7.migration.itnrw.stamm.support.StammRepository;
@@ -70,15 +72,15 @@ abstract class PartnerService {
 		}
 	//	final List<IdMapping> idMappings = idMappingRepository.findAll();
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
-				
-			idMappings.forEach(mapping -> processPartner(mandator, contractDates, mapping));
+		final Map<Long,Drittempfaenger> recipients = stammRepository.findAllDrittempfaenger().stream().collect(Collectors.toMap(de -> de.getBeihilfenr(), de -> de));		
+		idMappings.forEach(mapping -> processPartner(mandator, contractDates, mapping, recipients));
 	}
 
 	private void countersExistsGuard(final long mandator) {
 		idMappingRepository.findCounters(mandator);
 	}
 
-	private void processPartner(final long mandator, final Map<Long, Date> contractDates, IdMapping mapping) {
+	private void processPartner(final long mandator, final Map<Long, Date> contractDates, IdMapping mapping,  Map<Long,Drittempfaenger> recipients) {
 		Assert.isTrue(mandator == mapping.getMandator(), "Mandator should be the same.");	
 		Date contractDate = contractDates.get(mapping.getBeihilfenr());
 		if( contractDate == null) {
@@ -96,7 +98,7 @@ abstract class PartnerService {
 		facts.put(PartnerFacts.ID_MAPPING, mapping);
 		facts.put(PartnerFacts.CONTRACT_DATE, contractDate);
 		facts.put(PartnerFacts.STAMM, stamm);
-	
+		facts.put(PartnerFacts.RECIPIENT, Optional.ofNullable(recipients.get(mapping.getBeihilfenr())));
 		facts.put(PartnerFacts.SEPA_BANK, sepaBankVerbindung);
 		facts.put(PartnerFacts.RESULTS, results );
 		final DefaultRulesEngine rulesEngine = rulesEngine();
