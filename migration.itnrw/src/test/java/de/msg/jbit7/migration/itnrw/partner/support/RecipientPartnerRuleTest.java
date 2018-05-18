@@ -18,6 +18,7 @@ import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
+import de.msg.jbit7.migration.itnrw.stamm.DrittempfaengerBuilder;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
 public class RecipientPartnerRuleTest {
@@ -28,19 +29,14 @@ public class RecipientPartnerRuleTest {
 	
 	private final IdMapping mapping = IdMappingBuilder.builder().withRecipient().build();
 	
-	private final Drittempfaenger drittempfaenger = new Drittempfaenger();
+	private final Drittempfaenger drittempfaenger = new DrittempfaengerBuilder().withVollmacht().withFemale().build();
 	
 	private final static Date contractDate = TestUtil.randomDate();
 	
 	@BeforeEach
 	void setup() {
 		
-		drittempfaenger.setGeschlecht("w");
-		drittempfaenger.setVorname(TestUtil.randomString());
-		drittempfaenger.setZusatzname1(TestUtil.randomString());
-		drittempfaenger.setZusatzname2(TestUtil.randomString());
-		drittempfaenger.setName(TestUtil.randomString());
-		drittempfaenger.setTitel(TestUtil.randomString());
+		
 	}
 	
 	@Test
@@ -120,8 +116,7 @@ public class RecipientPartnerRuleTest {
 		assertEquals(PartnerFactory.BLANK, partnerCore.getPersonnelNr());
 		assertEquals(PartnerFactory.BLANK, partnerCore.getPlaceOfBirth());
 		assertEqualsRequired(mapping.getProcessNumber(), partnerCore.getProcessnr());
-		assertEquals(Long.valueOf(0L), partnerCore.getProfession());
-		
+		assertEquals(Long.valueOf(0L), partnerCore.getProfession());	
 		assertEquals(Long.valueOf(2L), partnerCore.getSalutation());
 	
 		assertEquals(Long.valueOf(0L), partnerCore.getSecondSecondaryType());
