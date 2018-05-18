@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -48,15 +49,16 @@ abstract class PartnerService {
 	private final FamilyMemberTerminationDatesByPartnerNumberConverter converter;
 	private final Rules rules;
 	
+	private final Integer pageSize;
 	
 	
-	
-	PartnerService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository,final PartnerRepository partnerRepository, @Qualifier("partnerRules") final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter) {
+	PartnerService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository,final PartnerRepository partnerRepository, @Qualifier("partnerRules") final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter, @Value("${cleanup.page.size:10}") final Integer pageSize) {
 		this.idMappingRepository = idMappingRepository;
 		this.stammRepository=stammRepository;
 		this.partnerRepository=partnerRepository;		
 		this.rules=rules;
 		this.converter=converter;
+		this.pageSize=pageSize;
 	} 
 	
 	public void importPartners(final long mandator, final boolean cleanMandator) {
@@ -64,7 +66,7 @@ abstract class PartnerService {
 		
 		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 		if( cleanMandator) {
-			delete(idMappings,10);
+			delete(idMappings);
 		}
 	//	final List<IdMapping> idMappings = idMappingRepository.findAll();
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
@@ -122,7 +124,7 @@ abstract class PartnerService {
 	}
 	
 	
-	private void delete(final Collection<IdMapping> idMappings, final int pageSize) {
+	private void delete(final Collection<IdMapping> idMappings) {
 		final PageableCollection<String> partners  = new PageableCollection<>(idMappings.stream().map(mapping -> mapping.getPartnerNr()).collect(Collectors.toList()), pageSize); 
 
 		IntStream.range(0, partners.maxPages()).forEach(page -> partnerRepository.cleanPartners(partners.page(page)));

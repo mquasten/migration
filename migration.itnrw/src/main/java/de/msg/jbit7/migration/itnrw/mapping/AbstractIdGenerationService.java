@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -43,16 +44,18 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	final PartnerRepository partnerRepository;
 	final static Logger LOGGER = LoggerFactory.getLogger(AbstractIdGenerationService.class);
 	
+	private final Integer pageSize;
 	
 	
 	private final Rules rules;
 
 	@Autowired
-	AbstractIdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository, final PartnerRepository partnerRepository,    @Qualifier("idMappingRules") final Rules  rules) {
+	AbstractIdGenerationService(final StammRepository stammRepository, final IdMappingRepository idMappingRepository, final PartnerRepository partnerRepository,    @Qualifier("idMappingRules") final Rules  rules, @Value("${cleanup.page.size:10}") final Integer pageSize) {
 		this.stammRepository = stammRepository;
 		this.idMappingRepository=idMappingRepository;
 		this.partnerRepository=partnerRepository;
 		this.rules=rules;
+		this.pageSize=pageSize;
 	}
 	
 	
@@ -65,7 +68,7 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 		final Counters counters = idMappingRepository.findCounters(mandator);
 		if( deleteFirst) {
 			
-			delete(mandator,10);
+			delete(mandator);
 			
 		}
 	
@@ -120,7 +123,7 @@ abstract class AbstractIdGenerationService implements IdGenerationService {
 	}
 
 
-	private void delete(final long mandator, final int pageSize) {
+	private void delete(final long mandator) {
 		final Collection<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 	    final PageableCollection<Long> contracts = new PageableCollection<>(idMappings.stream().map(mapping -> mapping.getContractNumber()).collect(Collectors.toList()), pageSize);
 	   

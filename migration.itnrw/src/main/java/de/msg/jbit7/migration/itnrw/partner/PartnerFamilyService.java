@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -43,13 +44,16 @@ abstract class PartnerFamilyService {
 	
 	private final FamilyMemberTerminationDatesByPartnerNumberConverter converter;
 	
+	private final Integer pageSize;
+	
 	@Autowired
-	PartnerFamilyService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository, final PartnerRepository partnerRepository, @Qualifier("partnerFamilyRules")final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter) {
+	PartnerFamilyService(final IdMappingRepository idMappingRepository, final StammRepository stammRepository, final PartnerRepository partnerRepository, @Qualifier("partnerFamilyRules")final Rules rules, final FamilyMemberTerminationDatesByPartnerNumberConverter converter,  @Value("${cleanup.page.size:10}") final Integer pageSize ) {
 		this.idMappingRepository = idMappingRepository;
 		this.stammRepository = stammRepository;
 		this.partnerRepository=partnerRepository;
 		this.rules=rules;
 		this.converter=converter;
+		this.pageSize = pageSize;
 	}
 
 	private final IdMappingRepository idMappingRepository;
@@ -64,7 +68,7 @@ abstract class PartnerFamilyService {
 		final List<IdMapping> idMappings = idMappingRepository.findAll(mandator);
 		
 		if( cleanup) {
-			delete(idMappings,10);
+			delete(idMappings);
 		}
 		
 		final Map<Long,Date> contractDates =  stammRepository.beginDates();
@@ -114,7 +118,7 @@ abstract class PartnerFamilyService {
 		}
 	}
 	
-	private void delete(final Collection<IdMapping> mappings, final int pageSize) {
+	private void delete(final Collection<IdMapping> mappings) {
 	
 		final PageableCollection<String> partners = new PageableCollection<String>(marriagePartnerAndChildrenPartnerNumbers(mappings), pageSize);
 		

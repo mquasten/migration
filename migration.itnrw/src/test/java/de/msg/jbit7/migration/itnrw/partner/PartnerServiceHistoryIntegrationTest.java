@@ -40,6 +40,8 @@ import de.msg.jbit7.migration.itnrw.util.TestUtil;
 @ContextConfiguration({ "/beans.xml" })
 public class PartnerServiceHistoryIntegrationTest {
 
+	private static final int PAGESIZE = 10;
+
 	@Autowired
 	private PartnerRepository partnerRepository;
 
@@ -74,7 +76,7 @@ public class PartnerServiceHistoryIntegrationTest {
 	@BeforeEach
 	void setup() {
 		partnerService = new PartnerService(idMappingRepository, stammRepository,
-				partnerRepository, rules, converter) {
+				partnerRepository, rules, converter, PAGESIZE) {
 
 			@Override
 			DefaultRulesEngine rulesEngine() {

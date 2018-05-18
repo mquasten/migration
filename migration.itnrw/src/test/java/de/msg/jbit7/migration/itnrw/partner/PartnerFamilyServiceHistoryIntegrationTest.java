@@ -40,6 +40,8 @@ import de.msg.jbit7.migration.itnrw.util.TestUtil;
 @ExtendWith(value = { SpringExtension.class })
 @ContextConfiguration({"/beans.xml"})
 public class PartnerFamilyServiceHistoryIntegrationTest {
+	private static final int PAGESIZE = 10;
+
 	@Autowired
 	private PartnerRepository partnerRepository;
 
@@ -71,7 +73,7 @@ public class PartnerFamilyServiceHistoryIntegrationTest {
 	void setup() {
 		partnerRepository.cleanMandator(MANDATOR);
 		
-		partnerFamilyService = new PartnerFamilyService(idMappingRepository, stammRepository ,partnerRepository, rules, converter  ) {
+		partnerFamilyService = new PartnerFamilyService(idMappingRepository, stammRepository ,partnerRepository, rules, converter,PAGESIZE ) {
 			@Override
 			DefaultRulesEngine rulesEngine() {
 				return rulesEngine;

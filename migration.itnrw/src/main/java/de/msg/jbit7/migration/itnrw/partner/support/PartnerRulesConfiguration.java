@@ -3,9 +3,11 @@ package de.msg.jbit7.migration.itnrw.partner.support;
 import org.jeasy.rules.api.Rules;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.convert.ConversionService;
 
 @Configuration
+@PropertySource("classpath:migration.properties")
 class PartnerRulesConfiguration {
 
 	@Bean("partnerRules")
