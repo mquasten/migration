@@ -142,40 +142,17 @@ public class PartnerRule {
 	public final void assignNewAddress(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
 			@Fact(PartnerFacts.STAMM) StammImpl stamm, @Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
-		final Address address = new Address();
-		address.setAddressAddition1(PartnerFactory.BLANK);
-		address.setAddressAddition2(PartnerFactory.BLANK);
-		address.setAddressNr("1");
-		address.setAddressState(0L);
-		address.setAddressType(null);
+		final Address address = partnerFactory.newAddress();
 		address.setCity1(stamm.getOrt());
-		address.setCity2(PartnerFactory.BLANK);
-		address.setCityCan("?");
-		address.setCityPhon("?");
-		address.setCoInformation(PartnerFactory.BLANK);
-		address.setContact(PartnerFactory.BLANK);
 		address.setCountry(stamm.getLaenderKennz());
-		address.setDatastate("0");
 		address.setDop(contractDate);
-		address.setHistnr(1L);
-		address.setHouseNumber(PartnerFactory.BLANK);
-		address.setHouseNumberAddition(null);
 		address.setInd(contractDate);
-		address.setLatitude(null);
-		address.setLongitude(null);
 		address.setMandator(idMapping.getMandator());
-		address.setOutdated(0L);
 		address.setPartnersNr(idMapping.getPartnerNr());
-		address.setPoBox(PartnerFactory.BLANK);
 		address.setPostcode(stamm.getPlz());
 		address.setProcessnr(idMapping.getProcessNumber());
-		address.setProximateTown(null);
-		address.setReasonForChange(0L);
-		address.setRprocessnr(null);
 		address.setStreet(stamm.getStrasseNr());
-		address.setTerminationflag(0L);
 		address.setUserid(idMapping.getMigrationUser());
-		address.setValidationState(1L);
 		results.add(address);
 	}
 

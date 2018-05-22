@@ -2,14 +2,15 @@ package de.msg.jbit7.migration.itnrw.partner.support;
 
 import org.springframework.beans.BeanUtils;
 
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 
 class PartnerFactory {
-	
+
 	static final String BLANK = " ";
-	
+
 	public final PartnerCore newPartnerCore() {
 		final PartnerCore partnerCore = new PartnerCore();
 
@@ -105,7 +106,7 @@ class PartnerFactory {
 		return partnersRole;
 	}
 
-	public final  PMContract newContract() {
+	public final PMContract newContract() {
 
 		final PMContract contract = new PMContract();
 		contract.setContractType(5L);
@@ -127,7 +128,36 @@ class PartnerFactory {
 		return contract;
 
 	}
-	
+
+	public final Address newAddress() {
+		final Address address = new Address();
+		address.setAddressAddition1(PartnerFactory.BLANK);
+		address.setAddressAddition2(PartnerFactory.BLANK);
+		address.setAddressNr("1");
+		address.setAddressState(0L);
+		address.setAddressType(null);
+		address.setCity2(PartnerFactory.BLANK);
+		address.setCityCan("?");
+		address.setCityPhon("?");
+		address.setCoInformation(PartnerFactory.BLANK);
+		address.setContact(PartnerFactory.BLANK);
+		address.setDatastate("0");
+		address.setHistnr(1L);
+		address.setHouseNumber(PartnerFactory.BLANK);
+		address.setHouseNumberAddition(null);
+		address.setLatitude(null);
+		address.setLongitude(null);
+		address.setOutdated(0L);
+		address.setPoBox(PartnerFactory.BLANK);
+		address.setProximateTown(null);
+		address.setReasonForChange(0L);
+		address.setRprocessnr(null);
+		address.setTerminationflag(0L);
+		address.setValidationState(1L);
+		return address;
+
+	}
+
 	public final <T> T copy(final T source) {
 		@SuppressWarnings("unchecked")
 		final T target = (T) BeanUtils.instantiateClass(source.getClass());

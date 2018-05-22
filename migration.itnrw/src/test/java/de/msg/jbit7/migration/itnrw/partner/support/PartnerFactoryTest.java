@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PMContract;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
@@ -177,6 +178,32 @@ public class PartnerFactoryTest {
 	void assertEqualsNotNull(final Object expected, final Object actual) {
 		assertNotNull(expected);
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void newAddress() {
+		final Address address = partnerFactory.newAddress();
+		assertEquals(PartnerFactory.BLANK, address.getAddressAddition1());
+		assertEquals(PartnerFactory.BLANK, address.getAddressAddition2());
+		assertEquals("1", address.getAddressNr());
+		assertEquals(Long.valueOf(0L), address.getAddressState());
+		assertNull(address.getAddressType());
+		assertEquals(PartnerFactory.BLANK, address.getCity2());
+		assertEquals(PartnerFactory.BLANK, address.getCoInformation());
+		assertEquals(PartnerFactory.BLANK, address.getContact());
+		assertEquals("0", address.getDatastate());
+		assertEquals(Long.valueOf(1L), address.getHistnr());
+		assertEquals(PartnerFactory.BLANK, address.getHouseNumber());
+		assertNull(address.getHouseNumberAddition());
+		assertNull(address.getLatitude());
+		assertNull(address.getLongitude());
+		assertEquals(Long.valueOf(0L), address.getOutdated());
+		assertEquals(PartnerFactory.BLANK, address.getPoBox());
+		assertNull(address.getProximateTown());
+		assertEquals(Long.valueOf(0L), address.getReasonForChange());
+		assertNull(address.getRprocessnr());
+		assertEquals(Long.valueOf(0L), address.getTerminationflag());
+		assertEquals(Long.valueOf(1L), address.getValidationState());
 	}
 
 	
