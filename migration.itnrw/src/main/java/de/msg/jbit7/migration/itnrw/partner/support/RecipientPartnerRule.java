@@ -11,6 +11,7 @@ import org.jeasy.rules.annotation.Rule;
 import org.springframework.util.StringUtils;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
@@ -95,12 +96,33 @@ public class RecipientPartnerRule {
 				vpPartnersRole.setAddressNr(null);
 				results.add(vpPartnersRole);
 			}
-			
-			
-			
 		
+	}
+	
+	
+	@Action(order = 3)
+	public final void assignAddress(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+			@Fact(PartnerFacts.RECIPIENT) final Optional<Drittempfaenger> drittEmpfaenger,
+			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 		
+		if( ! drittEmpfaenger.isPresent()) {
+			return;
+		}
+		final Address address = partnerFactory.newAddress();
 		
+		final Drittempfaenger recipient = drittEmpfaenger.get();
+		address.setCity1(recipient.getOrt());
+		address.setDop(contractDate);
+		address.setInd(contractDate);
+		address.setPartnersNr(idMapping.getRecipient());
+		address.setPostcode(recipient.getPlz());
+		address.setProcessnr(idMapping.getProcessNumber());
+		address.setStreet(recipient.getStrasse());
+		address.setUserid(idMapping.getMigrationUser());
+		address.setMandator(idMapping.getMandator());
+		address.setCountry(notNull(recipient.getLaenderKennz()));
+		results.add(address);
 	}
 	
 	private Long salutationAndSex(final Drittempfaenger drittempfaenger) {

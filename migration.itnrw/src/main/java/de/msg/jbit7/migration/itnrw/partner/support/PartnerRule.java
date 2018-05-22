@@ -153,6 +153,7 @@ public class PartnerRule {
 		address.setProcessnr(idMapping.getProcessNumber());
 		address.setStreet(stamm.getStrasseNr());
 		address.setUserid(idMapping.getMigrationUser());
+		
 		results.add(address);
 	}
 

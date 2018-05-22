@@ -17,13 +17,14 @@ import org.junit.jupiter.api.Test;
 
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
+import de.msg.jbit7.migration.itnrw.partner.Address;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 import de.msg.jbit7.migration.itnrw.stamm.DrittempfaengerBuilder;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
 
-public class RecipientPartnerRuleTest {
+class RecipientPartnerRuleTest {
 	
 	private final PartnerFactory partnerFactory = new PartnerFactory();
 	
@@ -211,5 +212,46 @@ public class RecipientPartnerRuleTest {
 		assertPartnersRole((PartnersRole) results.get(0), true);
 	
 	}
-
+	
+	@Test
+	final void assignAddress() {
+		final List<Object> results = new ArrayList<>();
+		recipientPartnerRule.assignAddress(mapping, Optional.of(drittempfaenger), contractDate, results);
+		assertEquals(1, results.size());
+		final Address address = (Address) results.get(0);
+	
+	assertEquals(PartnerFactory.BLANK, address.getAddressAddition1());
+	assertEquals(PartnerFactory.BLANK, address.getAddressAddition2());
+	assertEquals("1", address.getAddressNr());
+	assertEquals(Long.valueOf(0), address.getAddressState());
+	assertNull(address.getAddressType());
+	assertEqualsRequired(drittempfaenger.getOrt(), address.getCity1());
+	
+	assertEquals(PartnerFactory.BLANK, address.getCity2());
+	assertEquals(PartnerFactory.BLANK, address.getCoInformation());
+	assertEquals(PartnerFactory.BLANK, address.getContact());
+	assertEquals("0", address.getDatastate());
+	assertEquals(contractDate, address.getDop());
+	assertEquals(Long.valueOf(1L), address.getHistnr());
+	assertEquals(PartnerFactory.BLANK, address.getHouseNumber());
+	assertNull(address.getHouseNumberAddition());
+	assertEquals(contractDate,address.getInd());
+	assertNull(address.getLatitude());
+	assertNull(address.getLongitude());
+	assertEquals(Long.valueOf(0l),address.getOutdated());
+	assertEqualsRequired(mapping.getRecipient(), address.getPartnersNr());
+	assertEquals(PartnerFactory.BLANK, address.getPoBox());
+	assertEqualsRequired(drittempfaenger.getPlz(), address.getPostcode());
+	assertEqualsRequired(mapping.getProcessNumber(), address.getProcessnr());
+	
+	assertEquals(Long.valueOf(0), address.getReasonForChange());
+	assertEqualsRequired(drittempfaenger.getStrasse(), address.getStreet());
+	assertEquals(Long.valueOf(0L), address.getTerminationflag());
+	assertEquals(Long.valueOf(1L), address.getValidationState());
+	assertEqualsRequired(mapping.getMigrationUser(), address.getUserid());
+	
+	assertEqualsRequired(mapping.getMandator(), address.getMandator());
+	
+	assertEqualsRequired(drittempfaenger.getLaenderKennz(), address.getCountry());
+	}
 }
