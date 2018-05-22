@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
 import de.msg.jbit7.migration.itnrw.partner.PartnerFacts;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 
 @Rule(name = "partnerRecipient", priority = 0)
@@ -37,7 +38,11 @@ public class RecipientPartnerRule {
 			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
 			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
 		
-			final Drittempfaenger recipient = drittEmpfaenger.orElseThrow(() -> new IllegalArgumentException("Drittempfaenger expected, recipientPartnerNr aware beihilfeNr:" + idMapping.getBeihilfenr())); 
+			if(! drittEmpfaenger.isPresent() ) {
+				return;
+			}
+		
+			final Drittempfaenger recipient = drittEmpfaenger.get();
 			final PartnerCore partnerCore = partnerFactory.newPartnerCore();
 			
 			partnerCore.setDefaultAddress("1");
@@ -58,6 +63,43 @@ public class RecipientPartnerRule {
 			partnerCore.setSecondName(recipient.getName());
 			partnerCore.setTitle(notNull(recipient.getTitel()));
 			results.add(partnerCore);
+		
+	}
+	
+	@Action(order = 2)
+	public final void assignPartnerRole(@Fact(PartnerFacts.ID_MAPPING) IdMapping idMapping,
+			@Fact(PartnerFacts.RECIPIENT) final Optional<Drittempfaenger> drittEmpfaenger,
+			@Fact(PartnerFacts.CONTRACT_DATE) final Date contractDate,
+			@Fact(PartnerFacts.RESULTS) Collection<Object> results) {
+		
+			if( ! drittEmpfaenger.isPresent()) {
+				return;
+			}
+		
+			final PartnersRole paPartnersRole = partnerFactory.newPartnersRole();
+			paPartnersRole.setMandator(idMapping.getMandator());
+			paPartnersRole.setProcessnr(idMapping.getProcessNumber());
+			paPartnersRole.setDop(contractDate);
+			paPartnersRole.setInd(contractDate);
+			paPartnersRole.setRole("PA");
+			paPartnersRole.setLeftSide("" + idMapping.getContractNumber());
+			paPartnersRole.setRightSide(idMapping.getRecipient());
+			paPartnersRole.setAddressNr("1");
+			paPartnersRole.setExternKey(""+idMapping.getBeihilfenr());
+			
+			results.add(paPartnersRole);
+			
+			if( notNull(drittEmpfaenger.get().getVollmacht()).equalsIgnoreCase("J") ) {
+				final PartnersRole vpPartnersRole = partnerFactory.copy(paPartnersRole);
+				vpPartnersRole.setRole("VP");
+				vpPartnersRole.setAddressNr(null);
+				results.add(vpPartnersRole);
+			}
+			
+			
+			
+		
+		
 		
 	}
 	

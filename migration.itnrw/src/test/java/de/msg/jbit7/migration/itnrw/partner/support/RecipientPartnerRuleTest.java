@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import de.msg.jbit7.migration.itnrw.mapping.IdMapping;
 import de.msg.jbit7.migration.itnrw.mapping.IdMappingBuilder;
 import de.msg.jbit7.migration.itnrw.partner.PartnerCore;
+import de.msg.jbit7.migration.itnrw.partner.PartnersRole;
 import de.msg.jbit7.migration.itnrw.stamm.Drittempfaenger;
 import de.msg.jbit7.migration.itnrw.stamm.DrittempfaengerBuilder;
 import de.msg.jbit7.migration.itnrw.util.TestUtil;
@@ -155,6 +157,59 @@ public class RecipientPartnerRuleTest {
 		assertEqualsRequired(drittempfaenger.getName(), partnerCore.getSecondName());
 		
 		assertEqualsRequired(drittempfaenger.getTitel(), partnerCore.getTitle()); 
+	}
+	
+	private void assertPartnersRole(final PartnersRole partnersRole, final boolean isPaRole) {
+		final String expectedRole = isPaRole ? "PA" : "VP";
+		
+		assertEquals(mapping.getMandator(), partnersRole.getMandator());
+		assertEquals("0", partnersRole.getDatastate());
+		assertEquals(mapping.getProcessNumber(), partnersRole.getProcessnr());
+		assertEquals(Long.valueOf(1), partnersRole.getHistnr());
+		assertNull(partnersRole.getRprocessnr());
+		assertEquals(contractDate, partnersRole.getDop());
+		assertNull(partnersRole.getDor());
+		assertEquals(contractDate, partnersRole.getInd());
+		assertEquals(Long.valueOf(0), partnersRole.getTerminationflag());
+		assertEquals(expectedRole, partnersRole.getRole());
+		assertEquals(Long.valueOf(1L), partnersRole.getOrderNrRole());
+		assertEquals("" + mapping.getContractNumber(), partnersRole.getLeftSide());
+		assertEquals("1", partnersRole.getOrderNrLeftSide());
+		assertEquals(mapping.getRecipient(), partnersRole.getRightSide());
+		if( isPaRole ) {
+			assertEquals("1", partnersRole.getAddressNr());
+		} else {
+			assertNull( partnersRole.getAddressNr());
+		}
+		assertNull( partnersRole.getBankNr());
+		assertNull(partnersRole.getCommunicationRoleKey());
+		
+		assertEquals("" + mapping.getBeihilfenr(), partnersRole.getExternKey());
+		assertEquals(Long.valueOf(1), partnersRole.getRoleState());
+		assertEquals(Long.valueOf(1), partnersRole.getRiskCarrier());
+	}
+	
+	@Test
+	final void assignPartnersPole() {
+		final List<Object> results = new ArrayList<>();
+		recipientPartnerRule.assignPartnerRole(mapping, Optional.of(drittempfaenger), contractDate, results);
+		
+		assertEquals(2, results.size());
+		
+		assertPartnersRole((PartnersRole) results.get(0), true);
+		assertPartnersRole((PartnersRole) results.get(1), false);
+	}	
+	
+	@Test
+	final void assignPartnersPoleNoVp() {
+		final List<Object> results = new ArrayList<>();
+		drittempfaenger.setVollmacht("n");
+		
+		recipientPartnerRule.assignPartnerRole(mapping, Optional.of(drittempfaenger), contractDate, results);
+		
+		assertEquals(1, results.size());
+		assertPartnersRole((PartnersRole) results.get(0), true);
+	
 	}
 
 }
